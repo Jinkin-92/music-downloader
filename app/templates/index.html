@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>音乐下载器</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 20px auto; padding: 20px; }
+        .search-box { margin-bottom: 20px; }
+        input { padding: 10px; width: 300px; }
+        button { padding: 10px 20px; background: #4361ee; color: white; border: none; cursor: pointer; }
+        button:hover { background: #3a56d4; }
+        .song-item { padding: 10px; border-bottom: 1px solid #eee; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>音乐下载器</h1>
+
+    <form method="POST" class="search-box">
+        <input type="text" name="keyword" placeholder="输入歌曲名或歌手..." required>
+        <button type="submit">搜索</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+        <h2>搜索结果 ({{ results|length }} 首)</h2>
+        {% for song in results %}
+        <div class="song-item">
+            <strong>{{ song.song_name }}</strong> - {{ song.singers }}
+            ({{ song.album }}) [{{ song.platform }}]
+        </div>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
