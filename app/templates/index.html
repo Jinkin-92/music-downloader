@@ -9,8 +9,10 @@
         input { padding: 10px; width: 300px; }
         button { padding: 10px 20px; background: #4361ee; color: white; border: none; cursor: pointer; }
         button:hover { background: #3a56d4; }
-        .song-item { padding: 10px; border-bottom: 1px solid #eee; }
+        .song-item { padding: 10px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px; }
+        .song-info { flex: 1; }
         .error { color: red; }
+        .download-btn { padding: 5px 15px; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -27,12 +29,30 @@
 
     {% if results %}
         <h2>搜索结果 ({{ results|length }} 首)</h2>
+        <input type="hidden" id="searchKeyword" value="{{ request.form.get('keyword', '') }}">
         {% for song in results %}
         <div class="song-item">
-            <strong>{{ song.song_name }}</strong> - {{ song.singers }}
-            ({{ song.album }}) [{{ song.platform }}]
+            <div class="song-info">
+                <strong>{{ song.song_name }}</strong> - {{ song.singers }}
+                ({{ song.album }}) [{{ song.platform }}]
+            </div>
+            <button class="download-btn" onclick="downloadSong('{{ song.platform }}', {{ loop.index0 }})">
+                下载
+            </button>
         </div>
         {% endfor %}
     {% endif %}
 </body>
+
+<script>
+function downloadSong(platform, index) {
+    const keyword = document.getElementById('searchKeyword').value;
+    if (!keyword) {
+        alert('请先搜索歌曲');
+        return;
+    }
+    const url = `/download/${platform}/${index}?keyword=${encodeURIComponent(keyword)}`;
+    window.location.href = url;
+}
+</script>
 </html>

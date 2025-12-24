@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from musicdl.musicdl import MusicClient
 import os
+import time
 
 app = Flask(__name__)
 
@@ -42,6 +43,33 @@ def index():
                 error = f'搜索失败: {str(e)}'
 
     return render_template('index.html', results=results, error=error)
+
+@app.route('/download/<platform>/<int:index>')
+def download(platform, index):
+    try:
+        # 从查询参数获取关键词重新搜索
+        keyword = request.args.get('keyword', '')
+        if not keyword:
+            return "缺少关键词", 400
+
+        client = MusicClient(
+            music_sources=['QQMusicClient'],
+            init_music_clients_cfg={'work_dir': DOWNLOAD_DIR}
+        )
+        results = client.search(keyword)
+
+        # 找到要下载的歌曲
+        if platform in results and index < len(results[platform]):
+            song = results[platform][index]
+            print(f"下载: {song.get('song_name')}")
+            client.download([song])
+            time.sleep(2)  # 等待下载完成
+            return f"下载完成: {song.get('song_name')} - 请检查 {DOWNLOAD_DIR} 目录"
+
+        return "下载失败", 404
+
+    except Exception as e:
+        return f"下载失败: {str(e)}", 500
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=False)
