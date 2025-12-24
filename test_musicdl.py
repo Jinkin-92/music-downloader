@@ -12,7 +12,9 @@ print("初始化 MusicClient...")
 client = MusicClient(
     music_sources=['QQMusicClient'],  # 先用一个平台测试
     init_music_clients_cfg={
-        'work_dir': DOWNLOAD_DIR
+        'QQMusicClient': {
+            'work_dir': DOWNLOAD_DIR
+        }
     }
 )
 
@@ -37,4 +39,34 @@ if results:
 
     print(f"\n开始下载: {first_song.get('song_name')}")
     client.download([first_song])
-    print(f"下载完成！请检查 {DOWNLOAD_DIR} 目录")
+
+    # 等待下载完成
+    print("等待下载完成...")
+    import time
+    time.sleep(15)
+
+    # 检查下载的文件
+    import glob
+    pattern = os.path.join(DOWNLOAD_DIR, first_platform, '*', '*.*')
+    files = glob.glob(pattern)
+    # 过滤掉 .pkl 文件
+    music_files = [f for f in files if not f.endswith('.pkl')]
+
+    if music_files:
+        for f in music_files:
+            size = os.path.getsize(f)
+            print(f"下载完成: {os.path.basename(f)} (大小: {size} 字节)")
+        print(f"下载目录: {DOWNLOAD_DIR}")
+    else:
+        print(f"错误: 未找到下载的文件!")
+        print(f"搜索路径: {pattern}")
+        # 列出 downloads 目录下的所有内容
+        for root, dirs, files in os.walk(DOWNLOAD_DIR):
+            level = root.replace(DOWNLOAD_DIR, '').count(os.sep)
+            indent = ' ' * 2 * level
+            print(f'{indent}{os.path.basename(root)}/')
+            subindent = ' ' * 2 * (level + 1)
+            for file in files:
+                fpath = os.path.join(root, file)
+                size = os.path.getsize(fpath)
+                print(f'{subindent}{file} ({size} bytes)')
