@@ -41,3 +41,42 @@ class SearchWorker(QThread):
             error_msg = f"Search failed: {str(e)}"
             logger.error(error_msg)
             self.search_error.emit(error_msg)
+
+
+class DownloadWorker(QThread):
+    """Worker thread for music download"""
+
+    # Signals
+    download_started = pyqtSignal()
+    download_progress = pyqtSignal(str, int)  # message, progress %
+    download_finished = pyqtSignal(list)  # successful downloads
+    download_error = pyqtSignal(str)
+
+    def __init__(self, songs):
+        super().__init__()
+        self.songs = songs
+        self.downloader = MusicDownloader()
+
+    def run(self):
+        """Execute download in background thread"""
+        try:
+            self.download_started.emit()
+            logger.info(f"Download started: {len(self.songs)} songs")
+
+            for i, song in enumerate(self.songs):
+                song_name = song.get('song_name', 'Unknown')
+                self.download_progress.emit(
+                    f"Downloading: {song_name}...",
+                    int((i / len(self.songs)) * 100)
+                )
+
+            self.downloader.download(self.songs)
+
+            self.download_progress.emit("Download complete!", 100)
+            logger.info("Download completed successfully")
+            self.download_finished.emit(self.songs)
+
+        except Exception as e:
+            error_msg = f"Download failed: {str(e)}"
+            logger.error(error_msg)
+            self.download_error.emit(error_msg)

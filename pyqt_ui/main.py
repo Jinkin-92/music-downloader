@@ -4,14 +4,15 @@ import logging
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QCheckBox, QGroupBox,
-    QTableWidget, QTableWidgetItem, QProgressBar, QHeaderView
+    QTableWidget, QTableWidgetItem, QProgressBar, QHeaderView,
+    QMenu, QMessageBox
 )
 from PyQt5.QtCore import Qt, pyqtSlot
 from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
     SOURCE_LABELS, DEFAULT_SOURCES
 )
-from .workers import SearchWorker
+from .workers import SearchWorker, DownloadWorker
 
 # Setup logging
 logging.basicConfig(
@@ -33,6 +34,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.source_checkboxes = {}
         self.search_worker = None
+        self.download_worker = None
         self.current_results = {}  # Store search results
         self.setup_ui()
 
@@ -112,6 +114,12 @@ class MainWindow(QMainWindow):
         self.results_table.setColumnWidth(0, 50)  # Index column
         self.results_table.setVisible(False)
         main_layout.addWidget(self.results_table)
+
+        # Setup context menu
+        self.results_table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.results_table.customContextMenuRequested.connect(
+            self.show_context_menu
+        )
 
         # Status bar
         self.statusBar().showMessage('Ready')
@@ -253,6 +261,143 @@ class MainWindow(QMainWindow):
                 row += 1
 
         logger.info(f"Table populated with {row} results")
+
+    def show_context_menu(self, pos):
+        """Show right-click context menu"""
+        if self.results_table.rowCount() == 0:
+            return
+
+        menu = QMenu(self)
+
+        # Download Selected
+        download_selected_action = menu.addAction("Download Selected")
+        download_selected_action.triggered.connect(self.download_selected)
+
+        # Download All
+        download_all_action = menu.addAction("Download All Results")
+        download_all_action.triggered.connect(self.download_all)
+
+        menu.addSeparator()
+
+        # Copy info
+        copy_action = menu.addAction("Copy Song Info")
+        copy_action.triggered.connect(self.copy_song_info)
+
+        menu.exec_(self.results_table.mapToGlobal(pos))
+
+    def get_selected_song(self):
+        """Get selected row's song data"""
+        current_row = self.results_table.currentRow()
+        if current_row < 0:
+            return None
+
+        item = self.results_table.item(current_row, 0)
+        song = item.data(Qt.UserRole)
+        return song
+
+    def download_selected(self):
+        """Download selected song"""
+        song = self.get_selected_song()
+        if song is None:
+            QMessageBox.warning(self, "No Selection", "Please select a song first")
+            return
+
+        self.start_download([song])
+
+    def download_all(self):
+        """Download all results"""
+        if self.results_table.rowCount() == 0:
+            return
+
+        songs = []
+        for row in range(self.results_table.rowCount()):
+            item = self.results_table.item(row, 0)
+            song = item.data(Qt.UserRole)
+            songs.append(song)
+
+        self.start_download(songs)
+
+    def start_download(self, songs):
+        """Start download with worker thread"""
+        # Disable controls
+        self.search_btn.setEnabled(False)
+        self.search_input.setEnabled(False)
+        self.results_table.setEnabled(False)
+
+        # Show progress
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setRange(0, 100)
+        self.progress_bar.setValue(0)
+        self.status_label.setVisible(True)
+
+        song_name = songs[0].get('song_name', 'Unknown')
+        self.status_label.setText(f"Preparing to download: {song_name}...")
+
+        # Start worker
+        self.download_worker = DownloadWorker(songs)
+        self.download_worker.download_started.connect(self.on_download_started)
+        self.download_worker.download_progress.connect(self.on_download_progress)
+        self.download_worker.download_finished.connect(self.on_download_finished)
+        self.download_worker.download_error.connect(self.on_download_error)
+        self.download_worker.start()
+
+    @pyqtSlot()
+    def on_download_started(self):
+        """Handle download started"""
+        self.statusBar().showMessage('Downloading...')
+
+    @pyqtSlot(str, int)
+    def on_download_progress(self, message, progress):
+        """Handle download progress"""
+        self.status_label.setText(message)
+        self.progress_bar.setValue(progress)
+
+    @pyqtSlot(list)
+    def on_download_finished(self, songs):
+        """Handle download completion"""
+        # Hide progress
+        self.progress_bar.setVisible(False)
+        self.status_label.setVisible(False)
+
+        # Re-enable controls
+        self.search_btn.setEnabled(True)
+        self.search_input.setEnabled(True)
+        self.results_table.setEnabled(True)
+
+        # Show success message
+        song_count = len(songs)
+        QMessageBox.information(
+            self,
+            "Download Complete",
+            f"Successfully downloaded {song_count} song(s)!\n\n"
+            f"Files saved to: musicdl_outputs/"
+        )
+
+        self.statusBar().showMessage(f'Downloaded {song_count} song(s)', 5000)
+        logger.info(f"Download completed: {song_count} songs")
+
+    @pyqtSlot(str)
+    def on_download_error(self, error_msg):
+        """Handle download error"""
+        self.progress_bar.setVisible(False)
+        self.status_label.setVisible(False)
+        self.search_btn.setEnabled(True)
+        self.search_input.setEnabled(True)
+        self.results_table.setEnabled(True)
+
+        QMessageBox.critical(self, "Download Error", error_msg)
+        self.statusBar().showMessage('Download failed', 5000)
+
+    def copy_song_info(self):
+        """Copy selected song info to clipboard"""
+        song = self.get_selected_song()
+        if song is None:
+            return
+
+        info = f"{song.get('song_name', '')} - {song.get('singers', '')}"
+        clipboard = QApplication.clipboard()
+        clipboard.setText(info)
+        self.statusBar().showMessage(f'Copied: {info}', 2000)
 
 
 def main():
