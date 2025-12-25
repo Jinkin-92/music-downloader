@@ -1,5 +1,5 @@
 """Worker Threads for Async Operations"""
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal
 from .music_downloader import MusicDownloader
 import logging
 

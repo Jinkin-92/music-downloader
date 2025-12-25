@@ -62,11 +62,30 @@ class MusicDownloader:
 
         try:
             results = self._client.search(keyword)
-            # Filter by selected sources
-            return {k: v for k, v in results.items() if k in sources}
+            # Convert SongInfo objects to dicts
+            formatted_results = {}
+            for source, songs in results.items():
+                if source in sources:
+                    formatted_results[source] = [
+                        self._songinfo_to_dict(song) for song in songs
+                    ]
+            return formatted_results
         except Exception as e:
             logger.error(f"Search error: {e}")
             raise
+
+    def _songinfo_to_dict(self, song_info):
+        """Convert SongInfo object to dictionary"""
+        return {
+            'song_name': getattr(song_info, 'song_name', ''),
+            'singers': getattr(song_info, 'singers', ''),
+            'album': getattr(song_info, 'album', ''),
+            'file_size': getattr(song_info, 'file_size', ''),
+            'duration': getattr(song_info, 'duration', ''),
+            'source': getattr(song_info, 'source', ''),
+            'ext': getattr(song_info, 'ext', ''),
+            'song_info_obj': song_info  # Keep reference for download
+        }
 
     def download(self, songs):
         """
@@ -80,7 +99,19 @@ class MusicDownloader:
 
         logger.info(f"Downloading {len(songs)} songs...")
         try:
-            self._client.download(songs)
+            # Extract SongInfo objects from dicts
+            song_info_objects = []
+            for song_dict in songs:
+                song_obj = song_dict.get('song_info_obj')
+                if song_obj:
+                    song_info_objects.append(song_obj)
+                else:
+                    logger.warning(f"No song_info_obj found in: {song_dict}")
+
+            if not song_info_objects:
+                raise ValueError("No valid SongInfo objects to download")
+
+            self._client.download(song_info_objects)
             logger.info("Download completed")
         except Exception as e:
             logger.error(f"Download error: {e}")

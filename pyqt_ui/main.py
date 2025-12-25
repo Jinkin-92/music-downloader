@@ -1,13 +1,13 @@
 """Main Application Window"""
 import sys
 import logging
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QCheckBox, QGroupBox,
     QTableWidget, QTableWidgetItem, QProgressBar, QHeaderView,
-    QMenu, QMessageBox
+    QMenu, QMessageBox, QAbstractItemView
 )
-from PyQt5.QtCore import Qt, pyqtSlot
+from PyQt6.QtCore import Qt, pyqtSlot
 from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
     SOURCE_LABELS, DEFAULT_SOURCES
@@ -103,22 +103,28 @@ class MainWindow(QMainWindow):
 
         # 4. Results Table
         self.results_table = QTableWidget()
-        self.results_table.setColumnCount(7)
+        self.results_table.setColumnCount(8)
         self.results_table.setHorizontalHeaderLabels([
-            '#', 'Song Name', 'Singer', 'Album', 'Size', 'Duration', 'Source'
+            '☐', '#', 'Song Name', 'Singer', 'Album', 'Size', 'Duration', 'Source'
         ])
-        self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
-        self.results_table.setSelectionMode(QTableWidget.SingleSelection)
-        self.results_table.setEditTriggers(QTableWidget.NoEditTriggers)
-        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        self.results_table.setColumnWidth(0, 50)  # Index column
+        self.results_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.results_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.results_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.results_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.results_table.setColumnWidth(0, 40)  # Checkbox column
+        self.results_table.setColumnWidth(1, 50)  # Index column
         self.results_table.setVisible(False)
         main_layout.addWidget(self.results_table)
 
         # Setup context menu
-        self.results_table.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.results_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.results_table.customContextMenuRequested.connect(
             self.show_context_menu
+        )
+
+        # Setup header click for select all
+        self.results_table.horizontalHeader().sectionClicked.connect(
+            self.on_header_clicked
         )
 
         # Status bar
@@ -129,7 +135,7 @@ class MainWindow(QMainWindow):
     @pyqtSlot(int)
     def on_select_all_toggled(self, state):
         """Handle Select All checkbox"""
-        checked = (state == Qt.Checked)
+        checked = (state == Qt.CheckState.Checked.value)
         for cb in self.source_checkboxes.values():
             cb.setChecked(checked)
 
@@ -219,44 +225,50 @@ class MainWindow(QMainWindow):
             for song in songs:
                 self.results_table.insertRow(row)
 
-                # Index
-                idx_item = QTableWidgetItem(str(row + 1))
-                idx_item.setTextAlignment(Qt.AlignCenter)
-                self.results_table.setItem(row, 0, idx_item)
+                # Column 0: Checkbox
+                checkbox_item = QTableWidgetItem()
+                checkbox_item.setCheckState(Qt.CheckState.Unchecked)
+                checkbox_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.results_table.setItem(row, 0, checkbox_item)
 
-                # Song name
-                self.results_table.setItem(row, 1, QTableWidgetItem(
+                # Store song data in checkbox column
+                checkbox_item.setData(Qt.ItemDataRole.UserRole, song)
+
+                # Column 1: Index
+                idx_item = QTableWidgetItem(str(row + 1))
+                idx_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.results_table.setItem(row, 1, idx_item)
+
+                # Column 2: Song name
+                self.results_table.setItem(row, 2, QTableWidgetItem(
                     song.get('song_name', 'N/A')
                 ))
 
-                # Singer
-                self.results_table.setItem(row, 2, QTableWidgetItem(
+                # Column 3: Singer
+                self.results_table.setItem(row, 3, QTableWidgetItem(
                     song.get('singers', 'N/A')
                 ))
 
-                # Album
-                self.results_table.setItem(row, 3, QTableWidgetItem(
+                # Column 4: Album
+                self.results_table.setItem(row, 4, QTableWidgetItem(
                     song.get('album', 'N/A')
                 ))
 
-                # Size
+                # Column 5: Size
                 size_item = QTableWidgetItem(song.get('file_size', 'N/A'))
-                size_item.setTextAlignment(Qt.AlignCenter)
-                self.results_table.setItem(row, 4, size_item)
+                size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.results_table.setItem(row, 5, size_item)
 
-                # Duration
+                # Column 6: Duration
                 duration_item = QTableWidgetItem(song.get('duration', 'N/A'))
-                duration_item.setTextAlignment(Qt.AlignCenter)
-                self.results_table.setItem(row, 5, duration_item)
+                duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.results_table.setItem(row, 6, duration_item)
 
-                # Source
+                # Column 7: Source
                 source_label = source.replace('MusicClient', '')
                 source_item = QTableWidgetItem(source_label)
-                source_item.setTextAlignment(Qt.AlignCenter)
-                self.results_table.setItem(row, 6, source_item)
-
-                # Store song data in row
-                self.results_table.item(row, 0).setData(Qt.UserRole, song)
+                source_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                self.results_table.setItem(row, 7, source_item)
 
                 row += 1
 
@@ -269,21 +281,43 @@ class MainWindow(QMainWindow):
 
         menu = QMenu(self)
 
-        # Download Selected
+        # Download Checked (new feature)
+        checked_count = self.get_checked_count()
+        download_checked_action = menu.addAction(
+            f"Download Checked ({checked_count})"
+        )
+        download_checked_action.triggered.connect(self.download_checked)
+        download_checked_action.setEnabled(checked_count > 0)
+
+        # Download Selected (original feature)
         download_selected_action = menu.addAction("Download Selected")
         download_selected_action.triggered.connect(self.download_selected)
 
-        # Download All
+        # Download All (original feature)
         download_all_action = menu.addAction("Download All Results")
         download_all_action.triggered.connect(self.download_all)
 
         menu.addSeparator()
 
-        # Copy info
+        # Select All (new feature)
+        select_all_action = menu.addAction("Select All")
+        select_all_action.triggered.connect(self.select_all)
+
+        # Invert Selection (new feature)
+        invert_action = menu.addAction("Invert Selection")
+        invert_action.triggered.connect(self.on_invert_selection)
+
+        # Uncheck All (new feature)
+        uncheck_all_action = menu.addAction("Uncheck All")
+        uncheck_all_action.triggered.connect(self.uncheck_all)
+
+        menu.addSeparator()
+
+        # Copy info (original feature)
         copy_action = menu.addAction("Copy Song Info")
         copy_action.triggered.connect(self.copy_song_info)
 
-        menu.exec_(self.results_table.mapToGlobal(pos))
+        menu.exec(self.results_table.mapToGlobal(pos))
 
     def get_selected_song(self):
         """Get selected row's song data"""
@@ -292,7 +326,10 @@ class MainWindow(QMainWindow):
             return None
 
         item = self.results_table.item(current_row, 0)
-        song = item.data(Qt.UserRole)
+        if item is None:
+            return None
+
+        song = item.data(Qt.ItemDataRole.UserRole)
         return song
 
     def download_selected(self):
@@ -312,10 +349,13 @@ class MainWindow(QMainWindow):
         songs = []
         for row in range(self.results_table.rowCount()):
             item = self.results_table.item(row, 0)
-            song = item.data(Qt.UserRole)
-            songs.append(song)
+            if item:
+                song = item.data(Qt.ItemDataRole.UserRole)
+                if song:
+                    songs.append(song)
 
-        self.start_download(songs)
+        if songs:
+            self.start_download(songs)
 
     def start_download(self, songs):
         """Start download with worker thread"""
@@ -399,6 +439,109 @@ class MainWindow(QMainWindow):
         clipboard.setText(info)
         self.statusBar().showMessage(f'Copied: {info}', 2000)
 
+    def get_checked_count(self):
+        """Get number of checked songs"""
+        count = 0
+        for row in range(self.results_table.rowCount()):
+            item = self.results_table.item(row, 0)
+            if item and item.checkState() == Qt.CheckState.Checked:
+                count += 1
+        return count
+
+    def get_checked_songs(self):
+        """Get list of checked songs"""
+        songs = []
+        for row in range(self.results_table.rowCount()):
+            item = self.results_table.item(row, 0)
+            if item and item.checkState() == Qt.CheckState.Checked:
+                song = item.data(Qt.ItemDataRole.UserRole)
+                if song:
+                    songs.append(song)
+        return songs
+
+    @pyqtSlot(int)
+    def on_header_clicked(self, logical_index):
+        """Handle header click - toggle select all"""
+        if logical_index == 0:  # Checkbox column
+            # Check if all rows are checked
+            all_checked = all(
+                self.results_table.item(row, 0).checkState() == Qt.CheckState.Checked
+                for row in range(self.results_table.rowCount())
+                if self.results_table.item(row, 0) is not None
+            )
+
+            new_state = Qt.CheckState.Unchecked if all_checked else Qt.CheckState.Checked
+
+            for row in range(self.results_table.rowCount()):
+                item = self.results_table.item(row, 0)
+                if item:
+                    item.setCheckState(new_state)
+
+            checked_count = self.get_checked_count()
+            self.statusBar().showMessage(
+                f'{"Uncheck all" if all_checked else "Select all"}: {checked_count} songs',
+                2000
+            )
+
+    def select_all(self):
+        """Select all songs"""
+        for row in range(self.results_table.rowCount()):
+            item = self.results_table.item(row, 0)
+            if item:
+                item.setCheckState(Qt.CheckState.Checked)
+        self.statusBar().showMessage(f'Selected {self.results_table.rowCount()} songs', 2000)
+
+    def uncheck_all(self):
+        """Uncheck all songs"""
+        for row in range(self.results_table.rowCount()):
+            item = self.results_table.item(row, 0)
+            if item:
+                item.setCheckState(Qt.CheckState.Unchecked)
+        self.statusBar().showMessage('Uncheck all', 2000)
+
+    def on_invert_selection(self):
+        """Invert all checkbox states"""
+        for row in range(self.results_table.rowCount()):
+            item = self.results_table.item(row, 0)
+            if item:
+                current_state = item.checkState()
+                new_state = (
+                    Qt.CheckState.Checked if current_state == Qt.CheckState.Unchecked
+                    else Qt.CheckState.Unchecked
+                )
+                item.setCheckState(new_state)
+
+        checked_count = self.get_checked_count()
+        self.statusBar().showMessage(f'{checked_count} songs selected', 2000)
+
+    def download_checked(self):
+        """Download checked songs"""
+        if self.results_table.rowCount() == 0:
+            QMessageBox.warning(self, "No Results", "No songs to download")
+            return
+
+        checked_songs = self.get_checked_songs()
+
+        if not checked_songs:
+            QMessageBox.warning(
+                self,
+                "No Selection",
+                "Please check at least one song to download"
+            )
+            return
+
+        # Confirm download
+        reply = QMessageBox.question(
+            self,
+            "Confirm Download",
+            f"Download {len(checked_songs)} checked song(s)?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            self.start_download(checked_songs)
+
 
 def main():
     """Application entry point"""
@@ -408,7 +551,7 @@ def main():
     window = MainWindow()
     window.show()
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == '__main__':
