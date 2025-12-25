@@ -1,194 +1,247 @@
-# CLAUDE.md
+# CLAUDE.md - 音乐下载器开发指南
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 项目概述
 
-## Project Overview
+基于 **Flask + musicdl** 的本地音乐下载工具，提供 Web 界面进行音乐搜索和下载。
 
-This is a **NEW** music download software project based on Python Flask and the `musicdl` library. The project will provide a Web interface for searching and downloading music from multiple platforms.
+**当前状态**: 全新项目 - 从零开始
 
-**Current Status**: Starting from scratch - no code implementation yet.
+## 技术栈
 
-## Project Goals
+- **后端**: Python 3.7+ / Flask / musicdl
+- **前端**: HTML5 / CSS3 / 原生 JavaScript (ES6+)
+- **架构**: 单页应用 + RESTful API
 
-### Core Features (Priority Order)
-1. **Music Search** - Search across multiple platforms (QQ Music, Netease, Kugou, Kuwo)
-2. **Download Function** - Download individual songs or batch downloads
-3. **Web UI** - Clean and responsive interface for search and download
-4. **Progress Display** - Show download progress and status in real-time
+## 核心功能（按优先级）
 
-## Technical Stack
+1. **音乐搜索** - 搜索多平台音乐（QQ音乐、网易云、酷狗、酷我）
+2. **下载功能** - 单曲下载和批量下载
+3. **Web UI** - 简洁的搜索和下载界面
+4. **进度显示** - 实时显示下载状态
 
-### Backend
-- **Language**: Python 3.7+
-- **Framework**: Flask (lightweight web framework)
-- **Music Library**: musicdl (multi-platform music downloader)
-- **Architecture**: RESTful API + single page application
+## 项目结构
 
-### Frontend
-- **Language**: HTML5, CSS3, JavaScript (ES6+)
-- **Style**: Custom CSS (no framework)
-- **Icons**: Font Awesome 6
-- **Communication**: Fetch API for async requests
-
-## Planned Architecture
-
-### File Structure
 ```
 app/
 ├── __init__.py
-├── main.py                 # Entry point with --web flag
+├── main.py                 # 程序入口（支持 --web 参数）
 ├── core/
 │   ├── __init__.py
-│   └── downloader.py       # MusicDownloader wrapper class
+│   └── downloader.py       # musicdl 封装类
 └── web/
-    ├── app.py              # Flask application & routes
+    ├── app.py              # Flask 应用和路由
     ├── templates/
-    │   ├── base.html       # Base template with common layout
-    │   └── index.html      # Main search/download interface
+    │   ├── base.html       # 基础模板
+    │   └── index.html      # 主界面
     └── static/
         ├── css/
-        │   └── style.css   # Main stylesheet
+        │   └── style.css   # 样式文件
         └── js/
-            └── main.js     # Frontend logic
+            └── main.js     # 前端逻辑
+config/
+└── settings.json           # 配置文件
+downloads/                  # 下载目录
+logs/                       # 日志目录
 ```
 
-### API Endpoints (Planned)
-- `GET /` - Serve main page
-- `POST /api/search` - Search for songs
-  - Input: `{keywords: string, platforms: array}`
-  - Output: `{results: array}`
-- `POST /api/download` - Download songs
-  - Input: `{songs: array}`
-  - Output: `{success: boolean, message: string}`
-- `GET /api/status/<task_id>` - Get download status (optional for progress tracking)
+## API 端点设计
 
-## Design Principles
+- `GET /` - 主页面
+- `POST /api/search` - 搜索歌曲
+  - 输入: `{keyword: string}`
+  - 输出: `{results: [{song_name, singers, album, platform, ...}]}`
+- `POST /api/download` - 下载歌曲
+  - 输入: `{songs: array}`
+  - 输出: `{success: boolean, message: string}`
 
-### 1. Simplicity First
-- Start with minimum viable product
-- Focus on core functionality (search + download)
-- Avoid over-engineering
-- Use vanilla JavaScript instead of frameworks
+## 关键技术点
 
-### 2. Modular Architecture
-- Separate concerns (core logic vs web interface)
-- Reusable downloader class
-- Clean API boundaries
+### musicdl 库特性
 
-### 3. Error Handling
-- Graceful degradation when platforms fail
-- User-friendly error messages
-- Comprehensive logging for debugging
+1. **初始化**:
+```python
+from musicdl.musicdl import MusicClient
+client = MusicClient(
+    music_sources=['QQMusicClient', 'NeteaseMusicClient'],
+    init_music_clients_cfg={
+        'QQMusicClient': {'work_dir': 'downloads'}
+    }
+)
+```
 
-### 4. Performance Considerations
-- Cache MusicClient instance (avoid re-initialization)
-- Async operations for I/O
-- Efficient database/file handling
+2. **搜索返回**: `{platform: [SongInfo, ...]}`
+   - `SongInfo` 是**对象**，不是字典
+   - 使用 `getattr(song, 'song_name', '')` 访问属性
+   - **不要**使用 `song.get('song_name')`（这是字典方法）
 
-## Known Challenges (From Previous Experience)
+3. **下载**: `client.download([song])`
+   - 返回 `None`，无法通过返回值判断成功
+   - 需要检查文件系统确认下载结果
 
-### Windows Compatibility Issues
-1. **Encoding Problem**: Windows console uses GBK encoding
-   - Solution: Avoid Chinese characters in print statements
-   - Use ASCII-only console output or redirect to file
+### Windows 兼容性
 
-2. **File Path Issues**: Windows uses backslashes
-   - Solution: Always use `os.path.join()` for paths
-   - Handle path separators carefully
+1. **路径编码**: 避免中文路径
+   - ❌ `os.path.join(os.getcwd(), "下载")`
+   - ✅ 使用绝对路径：`r"D:\project\downloads"`
 
-3. **Flask + musicdl Compatibility**: May have conflicts
-   - Solution: Use subprocess isolation if needed
-   - Test search and download separately before integration
+2. **控制台编码**: 避免中文 print
+   - ❌ `print("创建中...")`
+   - ✅ `print("Creating...")` 或使用日志文件
 
-### musicdl Library Specifics
-1. **Search Returns Nested Dict**: `{platform: [SongInfo, ...]}`
-2. **Download Returns None**: Cannot rely on return value for success check
-3. **SongInfo Object**: Use `getattr()` to safely access attributes
+3. **路径分隔符**: 始终使用 `os.path.join()`
 
-## Development Workflow
+### Flask 最佳实践
 
-1. **Setup Phase**
-   - Create project structure
-   - Install dependencies (musicdl, flask)
-   - Test musicdl independently
+1. **全局客户端**: 缓存 `MusicClient` 实例（单例模式）
+```python
+_music_client = None
+_lock = threading.Lock()
 
-2. **Core Logic First**
-   - Implement `MusicDownloader` class
-   - Test search functionality (CLI)
-   - Test download functionality (CLI)
+def get_client():
+    global _music_client
+    if _music_client is None:
+        with _lock:
+            if _music_client is None:
+                _music_client = MusicClient(...)
+    return _music_client
+```
 
-3. **Web Layer**
-   - Create basic Flask app
-   - Implement search API
-   - Implement download API
-   - Test with curl/Postman
+2. **错误处理**: 不要暴露堆栈信息
+```python
+except Exception as e:
+    # ❌ traceback.print_exc()
+    # ✅ 记录日志并返回友好消息
+    logger.error(f"Error: {e}")
+    return {"error": str(e)}, 500
+```
 
-4. **Frontend**
-   - Build HTML structure
-   - Add CSS styling
-   - Implement JavaScript interaction
-   - Test full workflow
+## 开发流程
 
-5. **Integration Testing**
-   - End-to-end testing
-   - Error handling
-   - Edge cases
+### 第一步：核心封装
 
-## Testing Strategy
+创建 `core/downloader.py`:
+```python
+class MusicDownloader:
+    def __init__(self, download_dir):
+        self.client = MusicClient(...)
+        self.download_dir = download_dir
 
-### Unit Testing
-- Test `MusicDownloader` methods independently
-- Mock musicdl responses if needed
+    def search(self, keyword):
+        """搜索并返回统一格式"""
+        results = self.client.search(keyword)
+        # 转换 SongInfo 为字典
+        return self._format_results(results)
 
-### Integration Testing
-- Test Flask routes with test client
-- Verify API contracts
+    def download(self, songs):
+        """下载歌曲"""
+        self.client.download(songs)
+```
 
-### Manual Testing
-- Test search with various keywords
-- Test download of different platforms
-- Verify file outputs
+### 第二步：Flask 应用
 
-## Configuration
+创建 `web/app.py`:
+```python
+app = Flask(__name__)
+downloader = MusicDownloader('downloads')
 
-### settings.json (Planned)
+@app.route('/api/search', methods=['POST'])
+def search():
+    keyword = request.json.get('keyword')
+    results = downloader.search(keyword)
+    return jsonify(results)
+```
+
+### 第三步：前端界面
+
+创建 `templates/index.html`:
+- 简洁的搜索表单
+- 结果列表展示
+- 下载按钮
+
+### 第四步：集成测试
+
+1. 使用 curl 测试 API
+2. 使用浏览器测试 UI
+3. 验证下载文件
+
+## 测试策略
+
+### 单元测试（可选）
+```python
+# test_downloader.py
+def test_search():
+    downloader = MusicDownloader('test_downloads')
+    results = downloader.search('周杰伦')
+    assert len(results) > 0
+```
+
+### 手动测试
+```bash
+# 测试 musicdl 直接调用
+python -c "from musicdl.musicdl import MusicClient; c = MusicClient(); print(c.search('test'))"
+
+# 测试 Flask API
+curl -X POST http://127.0.0.1:5000/api/search -H "Content-Type: application/json" -d '{"keyword":"test"}'
+```
+
+## 常见问题
+
+### Q: 搜索结果显示为 UUID？
+**A**: SongInfo 对象被当作字典访问了。使用 `getattr()` 而不是 `.get()`
+
+### Q: Windows 路径错误？
+**A**: 避免中文路径和 `os.getcwd()`，使用绝对路径
+
+### Q: 中文显示乱码？
+**A**: 确保 HTML 使用 UTF-8 编码：`<meta charset="UTF-8">`
+
+### Q: 下载后找不到文件？
+**A**: 检查 `work_dir` 配置，使用绝对路径
+
+## 配置文件
+
+`config/settings.json`:
 ```json
 {
-  "log_path": "logs/musicdl.log",
-  "download_path": "downloads",
-  "default_platforms": ["qq", "netease", "kugou", "kuwo"],
-  "max_results": 50
+  "download_path": "D:\\code\\downloads",
+  "default_platforms": ["QQMusicClient", "NeteaseMusicClient"],
+  "max_results": 50,
+  "log_file": "logs/musicdl.log"
 }
 ```
 
-## Common Commands
+## 开发原则
+
+1. **简单优先**: 先实现核心功能，避免过度设计
+2. **小步迭代**: 每个功能都要测试验证
+3. **错误友好**: 捕获异常，返回清晰错误信息
+4. **日志记录**: 使用日志代替 print
+5. **Windows 兼容**: 注意路径和编码问题
+
+## 命令速查
 
 ```bash
-# Install dependencies
+# 安装依赖
 pip install musicdl flask
 
-# Run application (when implemented)
+# 运行应用
 python -m app.main --web
 
-# Test musicdl directly
-python -c "from musicdl.musicdl import MusicClient; client = MusicClient(); print(client.search('周杰伦'))"
+# 测试 API
+curl -X POST http://127.0.0.1:5000/api/search -d '{"keyword":"周杰伦"}'
+
+# 查看日志
+tail -f logs/musicdl.log
 ```
 
-## Important Notes
+## 版本管理
 
-1. **Start Simple**: Don't build all features at once
-2. **Test Incrementally**: Verify each component before moving to next
-3. **Document Decisions**: Note why certain approaches are chosen
-4. **Handle Errors**: Always use try-except blocks
-5. **Windows Caution**: Be aware of platform-specific issues
-
-## Version Management
-
-When implementing features:
-1. Update VERSION file
-2. Document changes in README.md
-3. Tag releases in git (when ready)
+更新 VERSION 文件：
+- 0.1.0: 基础搜索功能
+- 0.2.0: 添加下载功能
+- 0.3.0: Web UI 完善
 
 ---
 
-**Last Updated**: 2025-12-24 (Project Reset - Starting from Scratch)
+**最后更新**: 2025-12-25
+**版本**: 1.0.0 (全新开始)
