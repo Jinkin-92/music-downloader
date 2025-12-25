@@ -1,0 +1,5 @@
+# PyQt5 Music Downloader Requirements
+
+# Core dependencies
+musicdl>=2.0.0
+PyQt5>=5.15.0
