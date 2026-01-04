@@ -3,7 +3,7 @@ import sys
 import logging
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QLabel, QLineEdit, QPushButton, QCheckBox, QGroupBox,
+    QLabel, QLineEdit, QTextEdit, QPushButton, QCheckBox, QGroupBox,
     QTableWidget, QTableWidgetItem, QProgressBar, QHeaderView,
     QMenu, QMessageBox, QAbstractItemView, QTabWidget
 )
@@ -139,6 +139,29 @@ class MainWindow(QMainWindow):
         
         # Add single mode tab to tab widget
         self.mode_tab_widget.addTab(single_tab, "单曲下载")
+        # Create batch mode tab
+        batch_tab = QWidget()
+        batch_layout = QVBoxLayout(batch_tab)
+        
+        # Batch input area
+        self.batch_input = QTextEdit()
+        self.batch_input.setPlaceholderText("Enter songs (format: Song Name - Artist, one per line)")
+        self.batch_input.setMinimumHeight(200)
+        batch_layout.addWidget(self.batch_input)
+        
+        # Batch search button
+        self.batch_search_btn = QPushButton("Batch Search")
+        self.batch_search_btn.setMinimumHeight(40)
+        self.batch_search_btn.clicked.connect(self.on_batch_search_clicked)
+        batch_layout.addWidget(self.batch_search_btn)
+        
+        # Add stretch to push content to top
+        batch_layout.addStretch()
+        
+        # Add batch mode tab to tab widget
+        self.mode_tab_widget.addTab(batch_tab, "批量下载")
+        
+
         
         # Status bar
         self.statusBar().showMessage('Ready')
@@ -191,6 +214,11 @@ class MainWindow(QMainWindow):
         self.search_worker.start()
 
     @pyqtSlot()
+    def on_batch_search_clicked(self):
+        """Handle batch search button click - TODO: Implement in Cycle 6"""
+        pass
+
+
     def on_search_started(self):
         """Handle search started"""
         self.statusBar().showMessage('Searching...')
