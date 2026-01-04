@@ -12,7 +12,7 @@ from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
     SOURCE_LABELS, DEFAULT_SOURCES
 )
-from .workers import SearchWorker, DownloadWorker
+from .workers import SearchWorker, DownloadWorker, BatchSearchWorker
 
 # Setup logging
 logging.basicConfig(
@@ -233,8 +233,111 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot()
     def on_batch_search_clicked(self):
-        """Handle batch search button click - TODO: Implement in Cycle 6"""
-        pass
+        """Handle batch search button click"""
+        batch_text = self.batch_input.toPlainText().strip()
+
+        if not batch_text:
+            self.statusBar().showMessage('Please enter song list', 3000)
+            return
+
+        # Get selected sources
+        selected_sources = [
+            source for source, cb in self.source_checkboxes.items()
+            if cb.isChecked()
+        ]
+
+        if not selected_sources:
+            self.statusBar().showMessage('Please select at least one source', 3000)
+            return
+
+        # Disable batch search button
+        self.batch_search_btn.setEnabled(False)
+        self.batch_input.setEnabled(False)
+
+        # Show progress
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setRange(0, 0)
+        self.status_label.setVisible(True)
+        self.status_label.setText("Preparing batch search...")
+        self.batch_results_table.setVisible(False)
+
+        # Create and start batch search worker
+        self.batch_search_worker = BatchSearchWorker(batch_text, selected_sources)
+        self.batch_search_worker.search_started.connect(self.on_batch_search_started)
+        self.batch_search_worker.search_progress.connect(self.on_batch_search_progress)
+        self.batch_search_worker.search_finished.connect(self.on_batch_search_finished)
+        self.batch_search_worker.search_error.connect(self.on_batch_search_error)
+        self.batch_search_worker.start()
+
+    def on_batch_search_started(self):
+        """Handle batch search started"""
+        self.statusBar().showMessage('Batch search in progress...')
+
+    @pyqtSlot(str)
+    def on_batch_search_progress(self, message):
+        """Handle batch search progress update"""
+        self.status_label.setText(message)
+
+    @pyqtSlot(dict)
+    def on_batch_search_finished(self, matched_results):
+        """Handle batch search finished - display results"""
+        # Re-enable controls
+        self.batch_search_btn.setEnabled(True)
+        self.batch_input.setEnabled(True)
+        self.progress_bar.setVisible(False)
+        self.status_label.setVisible(False)
+
+        # Populate batch results table
+        self.populate_batch_results_table(matched_results)
+
+        total_matched = len(matched_results)
+        self.statusBar().showMessage(f'Batch search completed: {total_matched} songs found', 5000)
+
+    @pyqtSlot(str)
+    def on_batch_search_error(self, error_msg):
+        """Handle batch search error"""
+        self.batch_search_btn.setEnabled(True)
+        self.batch_input.setEnabled(True)
+        self.progress_bar.setVisible(False)
+        self.status_label.setVisible(False)
+        self.statusBar().showMessage(error_msg, 5000)
+
+    def populate_batch_results_table(self, matched_results):
+        """Populate batch results table with matched songs"""
+        from PyQt6.QtWidgets import QTableWidgetItem
+        from PyQt6.QtCore import Qt
+
+        self.batch_results_table.setRowCount(len(matched_results))
+        self.batch_results_table.setVisible(True)
+
+        for row, (original_text, result) in enumerate(matched_results.items()):
+            # Checkbox column
+            checkbox_item = QTableWidgetItem()
+            checkbox_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+            checkbox_item.setCheckState(Qt.CheckState.Unchecked)
+            self.batch_results_table.setItem(row, 0, checkbox_item)
+
+            # Index
+            self.batch_results_table.setItem(row, 1, QTableWidgetItem(str(row + 1)))
+
+            # Song name (matched)
+            song_name = result.get('matched_song_name', 'N/A')
+            self.batch_results_table.setItem(row, 2, QTableWidgetItem(song_name))
+
+            # Singer (matched)
+            singer = result.get('matched_singer', 'N/A')
+            self.batch_results_table.setItem(row, 3, QTableWidgetItem(singer))
+
+            # Album
+            album = getattr(result['match'], 'album', 'N/A') if 'match' in result else 'N/A'
+            self.batch_results_table.setItem(row, 4, QTableWidgetItem(str(album)))
+
+            # Source
+            source = getattr(result['match'], 'source', 'N/A') if 'match' in result else 'N/A'
+            if source != 'N/A':
+                source = source.replace('MusicClient', '')
+            self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
+
 
 
     def on_search_started(self):
