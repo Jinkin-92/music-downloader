@@ -56,14 +56,10 @@ class MainWindow(QMainWindow):
         # Tab widget for mode switching
         self.mode_tab_widget = QTabWidget()
         main_layout.addWidget(self.mode_tab_widget)
-        
-        # Create single mode tab
-        single_tab = QWidget()
-        single_layout = QVBoxLayout(single_tab)
-        
 
+        # Music Source Selection (shared between modes)
         # 1. Source Selection Group
-        source_group = QGroupBox("Music Sources")
+        self.source_group = QGroupBox("Music Sources")
         source_layout = QHBoxLayout()
 
         self.select_all_cb = QCheckBox("Select All")
@@ -77,8 +73,14 @@ class MainWindow(QMainWindow):
             self.source_checkboxes[source] = cb
             source_layout.addWidget(cb)
 
-        source_group.setLayout(source_layout)
-        single_layout.addWidget(source_group)
+        self.source_group.setLayout(source_layout)
+        main_layout.addWidget(self.source_group)
+        
+        # Create single mode tab
+        single_tab = QWidget()
+        single_layout = QVBoxLayout(single_tab)
+        
+
 
         # 2. Search Input Group
         search_layout = QHBoxLayout()

@@ -39,4 +39,24 @@ class TestMainWindowTabs:
         
         # Check that batch tab has a text input area
         assert hasattr(window, 'batch_input'), "Window should have batch_input attribute"
+    def test_music_sources_shared_between_modes(self, qtbot):
+        """Test music source selection is shared between single and batch modes"""
+        from pyqt_ui.main import MainWindow
+
+        window = MainWindow()
+        qtbot.add_widget(window)
+        
+        # Check that source_group is accessible from window
+        assert hasattr(window, 'source_group'), "Window should have source_group attribute"
+        
+        # Check that source_group is a QGroupBox
+        from PyQt6.QtWidgets import QGroupBox
+        assert isinstance(window.source_group, QGroupBox), "source_group should be a QGroupBox"
+        
+        # Check that select_all checkbox exists
+        assert hasattr(window, 'select_all_cb'), "Window should have select_all_cb attribute"
+        
+        # Check that source_checkboxes dict exists and has entries
+        assert hasattr(window, 'source_checkboxes'), "Window should have source_checkboxes"
+        assert len(window.source_checkboxes) > 0, "Should have at least one source checkbox"
 
