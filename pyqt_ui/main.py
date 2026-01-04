@@ -174,6 +174,13 @@ class MainWindow(QMainWindow):
         self.batch_results_table.setVisible(False)
         batch_layout.addWidget(self.batch_results_table)
         
+        # Batch download button
+        self.batch_download_btn = QPushButton("Download Selected")
+        self.batch_download_btn.setMinimumHeight(40)
+        self.batch_download_btn.setEnabled(False)
+        self.batch_download_btn.clicked.connect(self.on_batch_download_clicked)
+        batch_layout.addWidget(self.batch_download_btn)
+        
         batch_layout.addStretch()
         
         # Add batch mode tab to tab widget
@@ -302,6 +309,39 @@ class MainWindow(QMainWindow):
         self.status_label.setVisible(False)
         self.statusBar().showMessage(error_msg, 5000)
 
+
+    def on_batch_download_clicked(self):
+        """Handle batch download button click"""
+        from PyQt6.QtCore import Qt
+        
+        # Get checked songs
+        checked_songs = self.get_checked_batch_songs()
+        
+        if not checked_songs:
+            self.statusBar().showMessage('Please select at least one song', 3000)
+            return
+        
+        # Disable controls
+        self.batch_download_btn.setEnabled(False)
+        self.batch_results_table.setEnabled(False)
+        
+        # Use existing download logic
+        self.start_download(checked_songs)
+    
+    def get_checked_batch_songs(self):
+        """Get all checked songs from batch results table"""
+        from PyQt6.QtCore import Qt
+        
+        checked_songs = []
+        for row in range(self.batch_results_table.rowCount()):
+            checkbox_item = self.batch_results_table.item(row, 0)
+            if checkbox_item and checkbox_item.checkState() == Qt.CheckState.Checked:
+                # Retrieve song data from UserRole
+                song_dict = checkbox_item.data(Qt.ItemDataRole.UserRole)
+                if song_dict:
+                    checked_songs.append(song_dict)
+        
+        return checked_songs
     def populate_batch_results_table(self, matched_results):
         """Populate batch results table with matched songs"""
         from PyQt6.QtWidgets import QTableWidgetItem
@@ -309,12 +349,23 @@ class MainWindow(QMainWindow):
 
         self.batch_results_table.setRowCount(len(matched_results))
         self.batch_results_table.setVisible(True)
+        
+        # Enable batch download button if there are results
+        if matched_results:
+            self.batch_download_btn.setEnabled(True)
 
         for row, (original_text, result) in enumerate(matched_results.items()):
             # Checkbox column
             checkbox_item = QTableWidgetItem()
             checkbox_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
             checkbox_item.setCheckState(Qt.CheckState.Unchecked)
+            # Store song data in checkbox for later download
+            song_info = result.get('match')
+            if song_info:
+                from pyqt_ui.music_downloader import MusicDownloader
+                downloader = MusicDownloader()
+                song_dict = downloader._songinfo_to_dict(song_info)
+                checkbox_item.setData(Qt.ItemDataRole.UserRole, song_dict)
             self.batch_results_table.setItem(row, 0, checkbox_item)
 
             # Index
@@ -565,6 +616,10 @@ class MainWindow(QMainWindow):
         self.search_btn.setEnabled(True)
         self.search_input.setEnabled(True)
         self.results_table.setEnabled(True)
+        self.batch_download_btn.setEnabled(True)
+        self.batch_results_table.setEnabled(True)
+        self.batch_download_btn.setEnabled(True)
+        self.batch_results_table.setEnabled(True)
 
         # Show success message
         song_count = len(songs)
@@ -586,6 +641,8 @@ class MainWindow(QMainWindow):
         self.search_btn.setEnabled(True)
         self.search_input.setEnabled(True)
         self.results_table.setEnabled(True)
+        self.batch_download_btn.setEnabled(True)
+        self.batch_results_table.setEnabled(True)
 
         QMessageBox.critical(self, "Download Error", error_msg)
         self.statusBar().showMessage('Download failed', 5000)
