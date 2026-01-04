@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QCheckBox, QGroupBox,
     QTableWidget, QTableWidgetItem, QProgressBar, QHeaderView,
-    QMenu, QMessageBox, QAbstractItemView
+    QMenu, QMessageBox, QAbstractItemView, QTabWidget
 )
 from PyQt6.QtCore import Qt, pyqtSlot
 from .config import (
@@ -52,6 +52,10 @@ class MainWindow(QMainWindow):
         main_layout = QVBoxLayout(central_widget)
         main_layout.setSpacing(10)
         main_layout.setContentsMargins(20, 20, 20, 20)
+
+        # Tab widget for mode switching
+        self.mode_tab_widget = QTabWidget()
+        main_layout.addWidget(self.mode_tab_widget)
 
         # 1. Source Selection Group
         source_group = QGroupBox("Music Sources")
