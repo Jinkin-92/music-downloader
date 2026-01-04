@@ -125,7 +125,7 @@ class BatchSearchWorker(QThread):
             total_songs = len(parsed_songs)
             
             for idx, parsed_song in enumerate(parsed_songs):
-                song_name = parsed_song['song_name']
+                song_name = parsed_song['name']
                 singer = parsed_song['singer']
                 
                 self.search_progress.emit(
@@ -151,7 +151,7 @@ class BatchSearchWorker(QThread):
                     )
                     
                     if best_match:
-                        matched_results[parsed_song['original']] = {
+                        matched_results[parsed_song['original_line']] = {
                             'parsed': parsed_song,
                             'match': best_match,
                             'matched_song_name': getattr(best_match, 'song_name', ''),
