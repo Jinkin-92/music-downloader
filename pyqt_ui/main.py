@@ -158,6 +158,22 @@ class MainWindow(QMainWindow):
         batch_layout.addWidget(self.batch_search_btn)
         
         # Add stretch to push content to top
+        
+        # Batch Results Table
+        self.batch_results_table = QTableWidget()
+        self.batch_results_table.setColumnCount(6)
+        self.batch_results_table.setHorizontalHeaderLabels([
+            '[checkbox]', '#', 'Song Name', 'Singer', 'Album', 'Source'
+        ])
+        self.batch_results_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.batch_results_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.batch_results_table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.batch_results_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.batch_results_table.setColumnWidth(0, 40)
+        self.batch_results_table.setColumnWidth(1, 50)
+        self.batch_results_table.setVisible(False)
+        batch_layout.addWidget(self.batch_results_table)
+        
         batch_layout.addStretch()
         
         # Add batch mode tab to tab widget
