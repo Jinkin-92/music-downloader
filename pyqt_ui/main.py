@@ -56,6 +56,11 @@ class MainWindow(QMainWindow):
         # Tab widget for mode switching
         self.mode_tab_widget = QTabWidget()
         main_layout.addWidget(self.mode_tab_widget)
+        
+        # Create single mode tab
+        single_tab = QWidget()
+        single_layout = QVBoxLayout(single_tab)
+        
 
         # 1. Source Selection Group
         source_group = QGroupBox("Music Sources")
@@ -73,7 +78,7 @@ class MainWindow(QMainWindow):
             source_layout.addWidget(cb)
 
         source_group.setLayout(source_layout)
-        main_layout.addWidget(source_group)
+        single_layout.addWidget(source_group)
 
         # 2. Search Input Group
         search_layout = QHBoxLayout()
@@ -89,7 +94,7 @@ class MainWindow(QMainWindow):
         self.search_btn.clicked.connect(self.on_search_clicked)
         search_layout.addWidget(self.search_btn)
 
-        main_layout.addLayout(search_layout)
+        single_layout.addLayout(search_layout)
 
         # 3. Progress Bar
         progress_layout = QVBoxLayout()
@@ -103,7 +108,7 @@ class MainWindow(QMainWindow):
         self.status_label.setVisible(False)
         progress_layout.addWidget(self.status_label)
 
-        main_layout.addLayout(progress_layout)
+        single_layout.addLayout(progress_layout)
 
         # 4. Results Table
         self.results_table = QTableWidget()
@@ -118,7 +123,7 @@ class MainWindow(QMainWindow):
         self.results_table.setColumnWidth(0, 40)  # Checkbox column
         self.results_table.setColumnWidth(1, 50)  # Index column
         self.results_table.setVisible(False)
-        main_layout.addWidget(self.results_table)
+        single_layout.addWidget(self.results_table)
 
         # Setup context menu
         self.results_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
@@ -131,6 +136,10 @@ class MainWindow(QMainWindow):
             self.on_header_clicked
         )
 
+        
+        # Add single mode tab to tab widget
+        self.mode_tab_widget.addTab(single_tab, "单曲下载")
+        
         # Status bar
         self.statusBar().showMessage('Ready')
 
