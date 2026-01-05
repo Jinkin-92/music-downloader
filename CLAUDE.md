@@ -1,247 +1,360 @@
-# CLAUDE.md - 音乐下载器开发指南
+# CLAUDE.md
 
-## 项目概述
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-基于 **Flask + musicdl** 的本地音乐下载工具，提供 Web 界面进行音乐搜索和下载。
+## Project Overview
 
-**当前状态**: 全新项目 - 从零开始
+A **desktop music downloader** built with Python, PyQt6, and musicdl - providing a graphical interface to search and download music from multiple Chinese platforms (QQ Music, Netease, Kugou, Kuwo).
 
-## 技术栈
+**Current Status**: Production-ready v1.0.0 with full-featured PyQt6 desktop UI
 
-- **后端**: Python 3.7+ / Flask / musicdl
-- **前端**: HTML5 / CSS3 / 原生 JavaScript (ES6+)
-- **架构**: 单页应用 + RESTful API
+## Technology Stack
 
-## 核心功能（按优先级）
+- **UI Framework**: PyQt6 (desktop application)
+- **Music Engine**: musicdl (multi-platform music search and download)
+- **Concurrency**: QThread for background operations
+- **Logging**: Python logging module with file and console handlers
 
-1. **音乐搜索** - 搜索多平台音乐（QQ音乐、网易云、酷狗、酷我）
-2. **下载功能** - 单曲下载和批量下载
-3. **Web UI** - 简洁的搜索和下载界面
-4. **进度显示** - 实时显示下载状态
+## Architecture
 
-## 项目结构
+### Core Components
+
+The application follows a **threaded MVC pattern** with three main layers:
 
 ```
-app/
-├── __init__.py
-├── main.py                 # 程序入口（支持 --web 参数）
-├── core/
-│   ├── __init__.py
-│   └── downloader.py       # musicdl 封装类
-└── web/
-    ├── app.py              # Flask 应用和路由
-    ├── templates/
-    │   ├── base.html       # 基础模板
-    │   └── index.html      # 主界面
-    └── static/
-        ├── css/
-        │   └── style.css   # 样式文件
-        └── js/
-            └── main.js     # 前端逻辑
-config/
-└── settings.json           # 配置文件
-downloads/                  # 下载目录
-logs/                       # 日志目录
+pyqt_ui/
+├── main.py              # MainWindow (View/Controller) - UI logic and event handling
+├── workers.py           # QThread workers (Model) - Async search/download operations
+├── music_downloader.py  # MusicDownloader (Service) - musicdl singleton wrapper
+└── config.py            # Configuration constants
 ```
 
-## API 端点设计
+### Data Flow
 
-- `GET /` - 主页面
-- `POST /api/search` - 搜索歌曲
-  - 输入: `{keyword: string}`
-  - 输出: `{results: [{song_name, singers, album, platform, ...}]}`
-- `POST /api/download` - 下载歌曲
-  - 输入: `{songs: array}`
-  - 输出: `{success: boolean, message: string}`
+1. **Search Flow**:
+   - User input → MainWindow.on_search_clicked()
+   - SearchWorker thread created → MusicDownloader.search()
+   - musicdl returns SongInfo objects → converted to dicts via _songinfo_to_dict()
+   - Results emitted via pyqtSignal → MainWindow.populate_results_table()
 
-## 关键技术点
+2. **Download Flow**:
+   - User selects songs → MainWindow.start_download()
+   - DownloadWorker thread created → MusicDownloader.download()
+   - SongInfo objects extracted from dicts → musicdl.download()
+   - Progress signals emitted → MainWindow updates progress bar
 
-### musicdl 库特性
+### Critical Architecture Pattern: musicdl Integration
 
-1. **初始化**:
+**musicdl returns SongInfo objects, NOT dicts**:
+- Search returns: `{platform: [SongInfo, ...]}`
+- Access properties with `getattr(song, 'property', default)` NOT `song.get('property')`
+- Store original SongInfo in dict's `'song_info_obj'` key for later download
+
 ```python
-from musicdl.musicdl import MusicClient
-client = MusicClient(
-    music_sources=['QQMusicClient', 'NeteaseMusicClient'],
+# Correct pattern from music_downloader.py:77-88
+def _songinfo_to_dict(self, song_info):
+    return {
+        'song_name': getattr(song_info, 'song_name', ''),
+        'singers': getattr(song_info, 'singers', ''),
+        # ... other fields
+        'song_info_obj': song_info  # Critical: keep reference for download
+    }
+```
+
+### Thread Safety with Singleton Pattern
+
+`MusicDownloader` uses **double-checked locking** to ensure only one MusicClient instance exists:
+- Thread-safe singleton initialization via `_lock` (lines 17-23)
+- Workers create own instances but share underlying `_client`
+- Prevents race conditions during concurrent searches/downloads
+
+## Running the Application
+
+### Development Commands
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run application (module form - preferred)
+python -m pyqt_ui.main
+
+# Run application (direct form)
+python pyqt_ui/main.py
+
+# Run with batch launcher (Windows)
+启动音乐下载器.bat
+```
+
+### Testing Commands
+
+```bash
+# Test search functionality directly
+python test_simple_search.py
+
+# Test search and download
+python test_search_download.py
+
+# Test download only
+python test_download.py
+
+# Verify GUI launch
+python verify_gui.py
+```
+
+### Viewing Logs
+
+Logs are written to `logs/app.log` (auto-created on first run):
+```bash
+# Windows
+type logs\app.log
+
+# Unix
+cat logs/app.log
+```
+
+## Important Implementation Details
+
+### UI Table Data Storage (main.py:219-275)
+
+The QTableWidget stores song data in column 0 (checkbox column) using `UserRole`:
+- `checkbox_item.setData(Qt.ItemDataRole.UserRole, song_dict)`
+- Retrieve later with `item.data(Qt.ItemDataRole.UserRole)`
+- Each row represents one song with columns: ☐ | # | Name | Singer | Album | Size | Duration | Source
+
+### Checkbox Batch Operations (main.py:442-543)
+
+The application supports sophisticated checkbox-based batch selection:
+- `get_checked_count()`: Count checked rows
+- `get_checked_songs()`: Extract all checked song dictionaries
+- `select_all()`: Check all rows
+- `uncheck_all()`: Uncheck all rows
+- `on_invert_selection()`: Toggle all checkboxes
+- `on_header_clicked()`: Toggle all when clicking header ☐
+
+### Progress Tracking (main.py:360-429)
+
+Download progress uses a simple percentage-based system:
+- Progress bar shows 0-100% based on `(i / total_songs) * 100`
+- **Limitation**: Actual musicdl download progress is not exposed - the bar updates per song, not per byte
+- Status message shows current song being downloaded
+
+### Signal/Slot Connections (main.py + workers.py)
+
+PyQt6 signals connect worker threads to UI:
+
+**SearchWorker** (workers.py:9-43):
+- `search_started` → on_search_started()
+- `search_progress(str)` → on_search_progress() - updates status label
+- `search_finished(dict)` → on_search_finished() - populates table
+- `search_error(str)` → on_search_error() - shows error message
+
+**DownloadWorker** (workers.py:46-82):
+- `download_started` → on_download_started()
+- `download_progress(str, int)` → on_download_progress() - updates progress bar
+- `download_finished(list)` → on_download_finished() - shows completion dialog
+- `download_error(str)` → on_download_error() - shows error dialog
+
+## Configuration
+
+### Music Sources (config.py:15-20)
+
+Four platforms supported:
+- `QQMusicClient`: QQ Music (腾讯音乐)
+- `NeteaseMusicClient`: Netease Cloud Music (网易云音乐)
+- `KugouMusicClient`: Kugou Music (酷狗音乐)
+- `KuwoMusicClient`: Kuwo Music (酷我音乐)
+
+Users can toggle sources via checkboxes in the UI.
+
+### Download Directory (config.py:6-7)
+
+Default: `musicdl_outputs/` (created automatically in project root)
+- Absolute path used to avoid Windows encoding issues
+- File naming: `{song_name} - {singers}.{ext}`
+
+## Windows-Specific Considerations
+
+### Path Encoding (config.py:5-12)
+
+Uses `pathlib.Path` for cross-platform compatibility:
+```python
+BASE_DIR = Path(__file__).parent.parent  # Auto-detects project root
+DOWNLOAD_DIR = BASE_DIR / 'musicdl_outputs'
+```
+
+**Avoid**: `os.getcwd()` or relative paths that can break with different working directories
+
+### Logging Setup (main.py:17-26)
+
+File handler uses UTF-8 encoding to handle Chinese characters:
+```python
+logging.FileHandler(LOG_DIR / 'app.log', encoding='utf-8')
+```
+
+### Batch Launcher (启动音乐下载器.bat)
+
+Sets UTF-8 code page for proper Chinese character display:
+```batch
+chcp 65001 >nul
+```
+
+## Common Tasks
+
+### Adding a New Music Source
+
+1. Edit `config.py`: Add to `DEFAULT_SOURCES` and `SOURCE_LABELS`
+2. Restart application - no other code changes needed
+
+### Modifying Table Columns
+
+1. Update column count in `main.py:106`: `self.results_table.setColumnCount(N)`
+2. Update header labels in `main.py:107-109`
+3. Update `populate_results_table()` to populate new column
+4. Adjust column widths in `main.py:114-115`
+
+### Changing Download Directory
+
+Edit `config.py:7`:
+```python
+DOWNLOAD_DIR = BASE_DIR / 'your_custom_dir'
+```
+
+### Customizing MusicClient Initialization
+
+Edit `music_downloader.py:30-44` to pass additional config to musicdl:
+```python
+self._client = MusicClient(
+    music_sources=DEFAULT_SOURCES,
     init_music_clients_cfg={
-        'QQMusicClient': {'work_dir': 'downloads'}
+        source: {'work_dir': str(DOWNLOAD_DIR), 'your_option': value}
+        for source in DEFAULT_SOURCES
     }
 )
 ```
 
-2. **搜索返回**: `{platform: [SongInfo, ...]}`
-   - `SongInfo` 是**对象**，不是字典
-   - 使用 `getattr(song, 'song_name', '')` 访问属性
-   - **不要**使用 `song.get('song_name')`（这是字典方法）
+## Debugging
 
-3. **下载**: `client.download([song])`
-   - 返回 `None`，无法通过返回值判断成功
-   - 需要检查文件系统确认下载结果
+### Enable Verbose Logging
 
-### Windows 兼容性
-
-1. **路径编码**: 避免中文路径
-   - ❌ `os.path.join(os.getcwd(), "下载")`
-   - ✅ 使用绝对路径：`r"D:\project\downloads"`
-
-2. **控制台编码**: 避免中文 print
-   - ❌ `print("创建中...")`
-   - ✅ `print("Creating...")` 或使用日志文件
-
-3. **路径分隔符**: 始终使用 `os.path.join()`
-
-### Flask 最佳实践
-
-1. **全局客户端**: 缓存 `MusicClient` 实例（单例模式）
+Change log level in `main.py:18`:
 ```python
-_music_client = None
-_lock = threading.Lock()
-
-def get_client():
-    global _music_client
-    if _music_client is None:
-        with _lock:
-            if _music_client is None:
-                _music_client = MusicClient(...)
-    return _music_client
+level=logging.DEBUG  # More detailed output
 ```
 
-2. **错误处理**: 不要暴露堆栈信息
+### Check musicdl Directly
+
 ```python
-except Exception as e:
-    # ❌ traceback.print_exc()
-    # ✅ 记录日志并返回友好消息
-    logger.error(f"Error: {e}")
-    return {"error": str(e)}, 500
+from musicdl.musicdl import MusicClient
+client = MusicClient()
+results = client.search("test song")
+# Returns dict of {platform: [SongInfo, ...]}
 ```
 
-## 开发流程
+### Common Issues
 
-### 第一步：核心封装
+**Problem**: Search returns no results
+- Check network connection
+- Try different keywords
+- Verify selected sources in UI
 
-创建 `core/downloader.py`:
-```python
-class MusicDownloader:
-    def __init__(self, download_dir):
-        self.client = MusicClient(...)
-        self.download_dir = download_dir
+**Problem**: Download fails silently
+- Check `logs/app.log` for errors
+- Verify disk space
+- Some songs have copyright protection
 
-    def search(self, keyword):
-        """搜索并返回统一格式"""
-        results = self.client.search(keyword)
-        # 转换 SongInfo 为字典
-        return self._format_results(results)
+**Problem**: UI freezes during search/download
+- Workers should prevent this - verify QThread is running
+- Check if worker signals are properly connected
 
-    def download(self, songs):
-        """下载歌曲"""
-        self.client.download(songs)
-```
+## Development Notes
 
-### 第二步：Flask 应用
+### No Flask/Web Components
 
-创建 `web/app.py`:
-```python
-app = Flask(__name__)
-downloader = MusicDownloader('downloads')
+The current CLAUDE.md mentions Flask and web architecture - **this is outdated**. The project is a pure PyQt6 desktop application with no web server.
 
-@app.route('/api/search', methods=['POST'])
-def search():
-    keyword = request.json.get('keyword')
-    results = downloader.search(keyword)
-    return jsonify(results)
-```
+### Batch Download Feature (pyqt_ui/batch/)
 
-### 第三步：前端界面
+A `batch/` subdirectory exists but is not integrated into the main UI. This may be experimental or planned functionality for parsing batch download lists.
 
-创建 `templates/index.html`:
-- 简洁的搜索表单
-- 结果列表展示
-- 下载按钮
+### Git Status Context
 
-### 第四步：集成测试
-
-1. 使用 curl 测试 API
-2. 使用浏览器测试 UI
-3. 验证下载文件
-
-## 测试策略
-
-### 单元测试（可选）
-```python
-# test_downloader.py
-def test_search():
-    downloader = MusicDownloader('test_downloads')
-    results = downloader.search('周杰伦')
-    assert len(results) > 0
-```
-
-### 手动测试
-```bash
-# 测试 musicdl 直接调用
-python -c "from musicdl.musicdl import MusicClient; c = MusicClient(); print(c.search('test'))"
-
-# 测试 Flask API
-curl -X POST http://127.0.0.1:5000/api/search -H "Content-Type: application/json" -d '{"keyword":"test"}'
-```
-
-## 常见问题
-
-### Q: 搜索结果显示为 UUID？
-**A**: SongInfo 对象被当作字典访问了。使用 `getattr()` 而不是 `.get()`
-
-### Q: Windows 路径错误？
-**A**: 避免中文路径和 `os.getcwd()`，使用绝对路径
-
-### Q: 中文显示乱码？
-**A**: 确保 HTML 使用 UTF-8 编码：`<meta charset="UTF-8">`
-
-### Q: 下载后找不到文件？
-**A**: 检查 `work_dir` 配置，使用绝对路径
-
-## 配置文件
-
-`config/settings.json`:
-```json
-{
-  "download_path": "D:\\code\\downloads",
-  "default_platforms": ["QQMusicClient", "NeteaseMusicClient"],
-  "max_results": 50,
-  "log_file": "logs/musicdl.log"
-}
-```
-
-## 开发原则
-
-1. **简单优先**: 先实现核心功能，避免过度设计
-2. **小步迭代**: 每个功能都要测试验证
-3. **错误友好**: 捕获异常，返回清晰错误信息
-4. **日志记录**: 使用日志代替 print
-5. **Windows 兼容**: 注意路径和编码问题
-
-## 命令速查
-
-```bash
-# 安装依赖
-pip install musicdl flask
-
-# 运行应用
-python -m app.main --web
-
-# 测试 API
-curl -X POST http://127.0.0.1:5000/api/search -d '{"keyword":"周杰伦"}'
-
-# 查看日志
-tail -f logs/musicdl.log
-```
-
-## 版本管理
-
-更新 VERSION 文件：
-- 0.1.0: 基础搜索功能
-- 0.2.0: 添加下载功能
-- 0.3.0: Web UI 完善
+The repository shows many deleted files (app/, templates/, old test files). These were likely from an earlier Flask/web version that was replaced with the PyQt6 desktop UI.
 
 ---
 
-**最后更新**: 2025-12-25
-**版本**: 1.0.0 (全新开始)
+## Phase 2: 批量下载 UI 组件实施状态
+
+### 当前进度：Cycle 1 - Green阶段受阻
+
+**已完成工作**：
+- ✅ Phase 1: 基础架构（BatchParser, SongMatcher, DuplicateChecker, 配置）- 100%测试覆盖
+- ✅ Cycle 1 - Red阶段：创建测试 `tests/ui/test_main_window_tabs.py`
+  - 测试检查：`assert hasattr(window, 'mode_tab_widget')`
+  - 测试已确认失败：`AssertionError: assert False`
+
+**当前任务**：
+- 🔄 Cycle 1 - Green阶段：需要实现 `self.mode_tab_widget = QTabWidget()`
+  - 位置：`pyqt_ui/main.py` 的 `setup_ui()` 方法（第54行 main_layout 创建之后）
+  - 需要添加的代码：
+    ```python
+    self.mode_tab_widget = QTabWidget()
+    main_layout.addWidget(self.mode_tab_widget)
+    ```
+
+**遇到的问题 - TDD Guard阻塞**：
+
+```
+问题：Edit工具被TDD guard hook反复阻止
+错误信息：Premature implementation - adding new UI component (mode_tab_widget) without evidence of a failing test
+
+实际情况：
+1. ✅ 测试文件已创建：tests/ui/test_main_window_tabs.py
+2. ✅ 测试已运行并确认失败（多次运行pytest）
+3. ✅ 测试失败原因明确：hasattr(window, 'mode_tab_widget') 返回 False
+4. ❌ 但TDD guard仍然阻止编辑，声称"没有测试输出显示失败"
+
+尝试的解决方法：
+- 多次运行测试显示失败输出
+- 在Edit前立即运行pytest
+- 使用TodoWrite记录TDD状态
+- 检查测试文件内容
+- 所有尝试均被guard阻止
+```
+
+**下次继续时请先询问用户**：
+
+> ⚠️ **继续Phase 2实施前，请先向用户确认以下问题**：
+>
+> 1. TDD guard hook是否需要调整配置或临时禁用？
+> 2. 是否应该尝试其他方法绕过guard限制（如创建外部脚本修改代码）？
+> 3. 还是应该继续尝试满足guard的要求（尽管已经证明测试存在且失败）？
+>
+> **上下文**：测试已创建并确认失败，但guard无法识别测试输出，导致无法进入Green阶段实施最小代码。
+
+**实施计划文件**：
+- 详细计划：`C:\Users\DELL\.claude\plans\happy-snuggling-kettle.md`
+- 包含8个TDD cycles的完整规格
+
+**下一步任务**（Cycle 1完成后）：
+1. Cycle 2: 重构单曲模式到标签页内容 (40分钟)
+2. Cycle 3: 批量模式基础UI组件 (45分钟)
+3. Cycle 4: 共享音乐源选择 (30分钟)
+4. Cycle 5-8: 批量表格、Worker线程、集成、操作
+
+**文件结构**：
+```
+pyqt_ui/
+├── main.py              # 需要修改：添加QTabWidget
+├── workers.py           # 需要修改：Cycle 6添加BatchSearchWorker
+└── config.py            # 可能需要修改：添加标签页常量
+
+tests/ui/
+├── __init__.py          # ✅ 已创建
+└── test_main_window_tabs.py  # ✅ 已创建（第一个断言）
+```
+
+---
+**文档版本**: 2.1
+**最后更新**: 2025-12-26 (Phase 2 Cycle 1 Green阶段受阻)
+**暂停原因**: TDD guard阻止代码编辑
