@@ -127,51 +127,52 @@ class BatchSearchWorker(QThread):
             for idx, parsed_song in enumerate(parsed_songs):
                 song_name = parsed_song['name']
                 singer = parsed_song['singer']
-                
-                self.search_progress.emit(
-                    f"Searching [{idx+1}/{total_songs}]: {song_name} - {singer}"
-                )
-                
-                # Search across all sources
-                search_results = self.downloader.search(
-                    f"{song_name} {singer}",
-                    self.sources
-                )
-                
-                # Flatten results from all sources
-                all_results = []
-                for source, songs in search_results.items():
-                    all_results.extend(songs)
 
-                # Debug: Log search results
-                logger.debug(f'Search results from {len(search_results)} sources')
-                for source, songs in search_results.items():
-                    logger.debug(f'  {source}: {len(songs) if songs else 0} songs')
-                    if songs and len(songs) > 0:
-                        first = songs[0]
-                        # Fix: Results are now dicts, use .get() instead of getattr()
-                        logger.debug(f'    First result: {first.get("song_name", "N/A")} - {first.get("singers", "N/A")}')
-                
-                if all_results:
-                    # Use matcher to find best match
-                    best_match = self.matcher.find_best_match(
-                        parsed_song,
-                        all_results
+                # Search sources sequentially until match found
+                best_match = None
+                matched_source = None
+
+                for source in self.sources:
+                    self.search_progress.emit(
+                        f"Searching [{idx+1}/{total_songs}]: {song_name} - {singer} ({source})"
                     )
-                    
-                    if best_match:
-                        matched_results[parsed_song['original_line']] = {
-                            'parsed': parsed_song,
-                            'match': best_match,
-                            # Fix: best_match is now a dict, use .get() instead of getattr()
-                            'matched_song_name': best_match.get('song_name', ''),
-                            'matched_singer': best_match.get('singers', '')
-                        }
-                        logger.info(f"Match found: {song_name} - {singer}")
-                    else:
-                        logger.warning(f"No match found: {song_name} - {singer}")
+
+                    # Search single source
+                    search_results = self.downloader.search(
+                        f"{song_name} {singer}",
+                        [source]  # Single source
+                    )
+
+                    # Extract results from this source
+                    source_results = search_results.get(source, [])
+
+                    logger.debug(f'{source}: {len(source_results) if source_results else 0} songs')
+                    if source_results and len(source_results) > 0:
+                        first = source_results[0]
+                        logger.debug(f'  First result: {first.get("song_name", "N/A")} - {first.get("singers", "N/A")}')
+
+                    # Try to find match in this source's results
+                    if source_results:
+                        best_match = self.matcher.find_best_match(
+                            parsed_song,
+                            source_results
+                        )
+
+                        if best_match:
+                            matched_source = source
+                            logger.info(f"Match found in {source}: {song_name} - {singer}")
+                            break  # Stop searching other sources
+
+                if best_match:
+                    matched_results[parsed_song['original_line']] = {
+                        'parsed': parsed_song,
+                        'match': best_match,
+                        'matched_source': matched_source,
+                        'matched_song_name': best_match.get('song_name', ''),
+                        'matched_singer': best_match.get('singers', '')
+                    }
                 else:
-                    logger.warning(f"No results found: {song_name} - {singer}")
+                    logger.warning(f"No match found: {song_name} - {singer}")
 
             # Step 3: Send results
             total_matched = len(matched_results)
