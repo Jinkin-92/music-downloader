@@ -142,6 +142,15 @@ class BatchSearchWorker(QThread):
                 all_results = []
                 for source, songs in search_results.items():
                     all_results.extend(songs)
+
+                # Debug: Log search results
+                logger.debug(f'Search results from {len(search_results)} sources')
+                for source, songs in search_results.items():
+                    logger.debug(f'  {source}: {len(songs) if songs else 0} songs')
+                    if songs and len(songs) > 0:
+                        first = songs[0]
+                        # Fix: Results are now dicts, use .get() instead of getattr()
+                        logger.debug(f'    First result: {first.get("song_name", "N/A")} - {first.get("singers", "N/A")}')
                 
                 if all_results:
                     # Use matcher to find best match
@@ -154,8 +163,9 @@ class BatchSearchWorker(QThread):
                         matched_results[parsed_song['original_line']] = {
                             'parsed': parsed_song,
                             'match': best_match,
-                            'matched_song_name': getattr(best_match, 'song_name', ''),
-                            'matched_singer': getattr(best_match, 'singers', '')
+                            # Fix: best_match is now a dict, use .get() instead of getattr()
+                            'matched_song_name': best_match.get('song_name', ''),
+                            'matched_singer': best_match.get('singers', '')
                         }
                         logger.info(f"Match found: {song_name} - {singer}")
                     else:

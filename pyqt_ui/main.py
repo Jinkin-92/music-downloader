@@ -380,11 +380,18 @@ class MainWindow(QMainWindow):
             self.batch_results_table.setItem(row, 3, QTableWidgetItem(singer))
 
             # Album
-            album = getattr(result['match'], 'album', 'N/A') if 'match' in result else 'N/A'
+            match_obj = result.get('match')
+            if isinstance(match_obj, dict):
+                album = match_obj.get('album', 'N/A')
+            else:
+                album = getattr(match_obj, 'album', 'N/A') if match_obj else 'N/A'
             self.batch_results_table.setItem(row, 4, QTableWidgetItem(str(album)))
 
             # Source
-            source = getattr(result['match'], 'source', 'N/A') if 'match' in result else 'N/A'
+            if isinstance(match_obj, dict):
+                source = match_obj.get('source', 'N/A')
+            else:
+                source = getattr(match_obj, 'source', 'N/A') if match_obj else 'N/A'
             if source != 'N/A':
                 source = source.replace('MusicClient', '')
             self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
