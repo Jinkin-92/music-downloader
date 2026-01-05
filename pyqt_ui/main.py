@@ -362,9 +362,8 @@ class MainWindow(QMainWindow):
             # Store song data in checkbox for later download
             song_info = result.get('match')
             if song_info:
-                from pyqt_ui.music_downloader import MusicDownloader
-                downloader = MusicDownloader()
-                song_dict = downloader._songinfo_to_dict(song_info)
+                # song_info is already a dict from search results, use directly
+                song_dict = song_info
                 checkbox_item.setData(Qt.ItemDataRole.UserRole, song_dict)
             self.batch_results_table.setItem(row, 0, checkbox_item)
 
