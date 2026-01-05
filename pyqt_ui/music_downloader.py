@@ -140,7 +140,8 @@ class MusicDownloader:
         """
         # Use custom directory if provided, otherwise use default client
         if download_dir:
-            logger.info(f"Downloading to custom directory: {download_dir}")
+            logger.info(f"[CUSTOM PATH] Downloading to custom directory: {download_dir}")
+            logger.info(f"[CUSTOM PATH] Type: {type(download_dir)}")
             # Create a temporary MusicClient with custom download directory
             from musicdl.musicdl import MusicClient
             
@@ -157,7 +158,8 @@ class MusicDownloader:
             if self._client is None:
                 self._initialize_client()
             client = self._client
-            logger.info(f"Downloading to default directory: {DOWNLOAD_DIR}")
+            logger.warning(f"[DEFAULT PATH] Downloading to default directory: {DOWNLOAD_DIR}")
+            logger.warning(f"[DEFAULT PATH] custom download_dir was: {download_dir}")
 
         logger.info(f"Downloading {len(songs)} songs...")
         try:
