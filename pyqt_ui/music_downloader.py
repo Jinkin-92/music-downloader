@@ -175,6 +175,15 @@ class MusicDownloader:
             if not song_info_objects:
                 raise ValueError("No valid SongInfo objects to download")
 
+            # CRITICAL FIX: Modify work_dir in each SongInfo object
+            # musicdl downloads use song_info.work_dir, not client's work_dir
+            if download_dir:
+                for song_obj in song_info_objects:
+                    if hasattr(song_obj, 'work_dir'):
+                        old_dir = getattr(song_obj, 'work_dir', '')
+                        song_obj.work_dir = str(download_dir)
+                        logger.info(f"Modified SongInfo work_dir: {old_dir} -> {download_dir}")
+
             client.download(song_info_objects)
             logger.info("Download completed")
         except Exception as e:
