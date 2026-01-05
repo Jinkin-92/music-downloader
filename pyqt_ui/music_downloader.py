@@ -130,15 +130,34 @@ class MusicDownloader:
             'song_info_obj': song_info  # Keep reference for download
         }
 
-    def download(self, songs):
+    def download(self, songs, download_dir=None):
         """
         Download songs
 
         Args:
             songs: List of song_info dictionaries
+            download_dir: Optional custom download directory (Path or str)
         """
-        if self._client is None:
-            self._initialize_client()
+        # Use custom directory if provided, otherwise use default client
+        if download_dir:
+            logger.info(f"Downloading to custom directory: {download_dir}")
+            # Create a temporary MusicClient with custom download directory
+            from musicdl.musicdl import MusicClient
+            
+            temp_client = MusicClient(
+                music_sources=DEFAULT_SOURCES,
+                init_music_clients_cfg={
+                    source: {'work_dir': str(download_dir)}
+                    for source in DEFAULT_SOURCES
+                }
+            )
+            client = temp_client
+        else:
+            # Use default client
+            if self._client is None:
+                self._initialize_client()
+            client = self._client
+            logger.info(f"Downloading to default directory: {DOWNLOAD_DIR}")
 
         logger.info(f"Downloading {len(songs)} songs...")
         try:
@@ -154,7 +173,7 @@ class MusicDownloader:
             if not song_info_objects:
                 raise ValueError("No valid SongInfo objects to download")
 
-            self._client.download(song_info_objects)
+            client.download(song_info_objects)
             logger.info("Download completed")
         except Exception as e:
             logger.error(f"Download error: {e}")

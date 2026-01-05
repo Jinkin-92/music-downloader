@@ -56,9 +56,10 @@ class DownloadWorker(QThread):
     download_finished = pyqtSignal(list)  # successful downloads
     download_error = pyqtSignal(str)
 
-    def __init__(self, songs):
+    def __init__(self, songs, download_dir=None):
         super().__init__()
         self.songs = songs
+        self.download_dir = download_dir
         self.downloader = MusicDownloader()
 
     def run(self):
@@ -74,7 +75,7 @@ class DownloadWorker(QThread):
                     int((i / len(self.songs)) * 100)
                 )
 
-            self.downloader.download(self.songs)
+            self.downloader.download(self.songs, download_dir=self.download_dir)
 
             self.download_progress.emit("Download complete!", 100)
             logger.info("Download completed successfully")

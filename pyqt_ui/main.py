@@ -606,7 +606,9 @@ class MainWindow(QMainWindow):
         self.status_label.setText(f"Preparing to download: {song_name}...")
 
         # Start worker
-        self.download_worker = DownloadWorker(songs)
+        # Pass custom download directory if set, otherwise use default
+        download_dir = self.custom_download_dir if hasattr(self, 'custom_download_dir') and self.custom_download_dir else None
+        self.download_worker = DownloadWorker(songs, download_dir)
         self.download_worker.download_started.connect(self.on_download_started)
         self.download_worker.download_progress.connect(self.on_download_progress)
         self.download_worker.download_finished.connect(self.on_download_finished)
