@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSlot
 from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
-    SOURCE_LABELS, DEFAULT_SOURCES
+    SOURCE_LABELS, DEFAULT_SOURCES, DOWNLOAD_DIR
 )
 from .workers import SearchWorker, DownloadWorker, BatchSearchWorker
 
@@ -157,6 +157,19 @@ class MainWindow(QMainWindow):
         self.batch_search_btn.clicked.connect(self.on_batch_search_clicked)
         batch_layout.addWidget(self.batch_search_btn)
         
+        # Download path selection
+        path_layout = QHBoxLayout()
+        self.download_path_label = QLabel(f"Download to: {DOWNLOAD_DIR}")
+        self.download_path_label.setWordWrap(True)
+        self.select_path_btn = QPushButton("Change Path")
+        self.select_path_btn.setMaximumWidth(120)
+        self.select_path_btn.clicked.connect(self.on_select_download_path)
+        path_layout.addWidget(self.download_path_label)
+        path_layout.addWidget(self.select_path_btn)
+        batch_layout.addLayout(path_layout)
+
+        # Store custom download path
+        self.custom_download_dir = None
         # Add stretch to push content to top
         
         # Batch Results Table
@@ -766,6 +779,29 @@ class MainWindow(QMainWindow):
 
         if reply == QMessageBox.StandardButton.Yes:
             self.start_download(checked_songs)
+
+
+    def on_select_download_path(self):
+        """Handle download path selection button click"""
+        from PyQt6.QtWidgets import QFileDialog
+        from pathlib import Path
+
+        # Open directory selection dialog
+        selected_dir = QFileDialog.getExistingDirectory(
+            self,
+            "Select Download Directory",
+            str(self.custom_download_dir or DOWNLOAD_DIR)
+        )
+
+        if selected_dir:
+            # Update custom download directory
+            self.custom_download_dir = Path(selected_dir)
+
+            # Update label to show new path
+            self.download_path_label.setText(f"Download to: {self.custom_download_dir}")
+
+            # Show confirmation in status bar
+            self.statusBar().showMessage(f'Download path changed to: {self.custom_download_dir}', 3000)
 
 
 def main():
