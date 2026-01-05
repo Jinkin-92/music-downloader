@@ -138,9 +138,9 @@ class BatchSearchWorker(QThread):
                     )
 
                     # Search single source
-                    search_results = self.downloader.search(
+                    search_results = self.downloader.search_single_source(
                         f"{song_name} {singer}",
-                        [source]  # Single source
+                        source  # Single source
                     )
 
                     # Extract results from this source

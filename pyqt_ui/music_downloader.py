@@ -74,6 +74,49 @@ class MusicDownloader:
             logger.error(f"Search error: {e}")
             raise
 
+    def search_single_source(self, keyword, source):
+        """
+        Search for music from a single source only
+
+        Args:
+            keyword: Search keyword
+            source: Single source name (e.g., 'QQMusicClient')
+
+        Returns:
+            {source: [song_dict, ...]} or {} if no results
+        """
+        logger.info(f"Searching single source '{source}' for '{keyword}'")
+        
+        try:
+            # Create a temporary MusicClient with only one source
+            from musicdl.musicdl import MusicClient
+            from pathlib import Path
+            
+            temp_client = MusicClient(
+                music_sources=[source],
+                init_music_clients_cfg={
+                    source: {'work_dir': str(DOWNLOAD_DIR)}
+                }
+            )
+            
+            # Search only this source
+            results = temp_client.search(keyword)
+            
+            # Convert SongInfo objects to dicts
+            formatted_results = {}
+            for src, songs in results.items():
+                if src == source:
+                    formatted_results[source] = [
+                        self._songinfo_to_dict(song) for song in songs
+                    ]
+            
+            logger.info(f"Found {len(formatted_results.get(source, []))} results from {source}")
+            return formatted_results
+            
+        except Exception as e:
+            logger.error(f"Single source search error for {source}: {e}")
+            return {}
+
     def _songinfo_to_dict(self, song_info):
         """Convert SongInfo object to dictionary"""
         return {
