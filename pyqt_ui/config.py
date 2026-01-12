@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from enum import Enum
 
 # Paths
 BASE_DIR = Path(__file__).parent.parent
@@ -47,4 +48,32 @@ BATCH_STATUS_LABELS = {
     "downloading": "下载中",
     "completed": "已完成",
     "failed": "失败",
+}
+
+# Match Mode Configuration
+class MatchMode(Enum):
+    """匹配模式枚举"""
+    STRICT = "strict"      # ≥90%
+    STANDARD = "standard"  # ≥60%
+    LOOSE = "loose"        # ≥40%
+    CUSTOM = "custom"      # 自定义
+
+# Default Match Configuration
+DEFAULT_MATCH_MODE = MatchMode.STANDARD
+DEFAULT_MATCH_THRESHOLD = 0.60
+DEFAULT_SIMILARITY_WEIGHTS = {"name": 0.7, "singer": 0.3}
+
+# Preset Thresholds for Each Mode
+MATCH_THRESHOLDS = {
+    MatchMode.STRICT: 0.90,
+    MatchMode.STANDARD: 0.60,
+    MatchMode.LOOSE: 0.40,
+}
+
+# Match Mode Labels (for UI display)
+MATCH_MODE_LABELS = {
+    MatchMode.STRICT: "严格(≥90%)",
+    MatchMode.STANDARD: "标准(≥60%)",
+    MatchMode.LOOSE: "宽松(≥40%)",
+    MatchMode.CUSTOM: "自定义",
 }
