@@ -176,9 +176,9 @@ class MainWindow(QMainWindow):
         
         # Batch Results Table
         self.batch_results_table = QTableWidget()
-        self.batch_results_table.setColumnCount(6)
+        self.batch_results_table.setColumnCount(7)  # Added similarity column
         self.batch_results_table.setHorizontalHeaderLabels([
-            '[checkbox]', '#', 'Song Name', 'Singer', 'Album', 'Source'
+            '[checkbox]', '#', 'Song Name', 'Singer', 'Album', 'Source', 'Similarity'
         ])
         self.batch_results_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.batch_results_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
@@ -426,43 +426,77 @@ class MainWindow(QMainWindow):
                 source = song_match.current_match.source.replace('MusicClient', '')
                 self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
 
-                # Similarity with color coding
+                # Similarity column with quick switch button
+                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
+
+                similarity_widget = QWidget()
+                similarity_layout = QHBoxLayout(similarity_widget)
+                similarity_layout.setContentsMargins(4, 2, 4, 2)
+
+                # Similarity label
                 similarity_value = song_match.current_match.similarity_score
-                similarity_item = QTableWidgetItem(f"{similarity_value:.2%}")
-                similarity_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                similarity_text = f"{similarity_value:.2%}"
+
+                similarity_label = QLabel(similarity_text)
+                similarity_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
                 # Color based on similarity
                 if similarity_value >= 0.8:
-                    similarity_item.setForeground(Qt.GlobalColor.darkGreen)
+                    similarity_label.setStyleSheet("color: darkgreen;")
                 elif similarity_value >= 0.6:
-                    similarity_item.setForeground(Qt.GlobalColor.darkYellow)
+                    similarity_label.setStyleSheet("color: darkorange;")
                 else:
-                    similarity_item.setForeground(Qt.GlobalColor.red)
+                    similarity_label.setStyleSheet("color: red;")
 
                 # Mark if below threshold
                 if similarity_value < min_similarity:
-                    # Italic or different background to indicate below threshold
-                    font = similarity_item.font()
+                    from PyQt6.QtGui import QFont
+                    font = similarity_label.font()
                     font.setItalic(True)
-                    similarity_item.setFont(font)
+                    similarity_label.setFont(font)
 
-                self.batch_results_table.setItem(row, 6, similarity_item)
+                similarity_layout.addWidget(similarity_label)
 
-                # Action button (switch match)
-                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton
+                # Quick switch button (if multiple candidates from current source)
+                current_source_candidates = song_match.get_all_candidates_from_current_source()
 
-                switch_btn_widget = QWidget()
-                switch_layout = QHBoxLayout(switch_btn_widget)
-                switch_layout.setContentsMargins(4, 2, 4, 2)
+                if len(current_source_candidates) > 1:
+                    # Create quick switch button
+                    quick_switch_btn = QPushButton("▼")
+                    quick_switch_btn.setMaximumSize(22, 22)
+                    quick_switch_btn.setToolTip(
+                        f"Current source ({song_match.current_source}) has {len(current_source_candidates)} candidates"
+                    )
 
-                switch_btn = QPushButton("Switch")
-                switch_btn.setMaximumWidth(60)
-                switch_btn.clicked.connect(
-                    lambda checked, line=original_line: self.on_switch_match(line)
-                )
-                switch_layout.addWidget(switch_btn)
+                    # Button style
+                    quick_switch_btn.setStyleSheet("""
+                        QPushButton {
+                            border: 1px solid #ccc;
+                            border-radius: 3px;
+                            padding: 0px;
+                            background: #f5f5f5;
+                        }
+                        QPushButton:hover {
+                            background: #e0e0e0;
+                            border: 1px solid #999;
+                        }
+                        QPushButton:pressed {
+                            background: #d0d0d0;
+                        }
+                    """)
 
-                self.batch_results_table.setCellWidget(row, 6, switch_btn_widget)
+                    # Connect click event
+                    quick_switch_btn.clicked.connect(
+                        lambda checked, line=original_line, btn=quick_switch_btn:
+                            self.show_quick_switch_menu(line, btn)
+                    )
+
+                    similarity_layout.addWidget(quick_switch_btn)
+
+                similarity_layout.addStretch()
+
+                # Set widget to table
+                self.batch_results_table.setCellWidget(row, 6, similarity_widget)
 
             else:
                 # No match found
@@ -478,27 +512,17 @@ class MainWindow(QMainWindow):
                     row, 3, QTableWidgetItem(song_match.query['singer'])
                 )
 
+                # Album - show empty
+                self.batch_results_table.setItem(row, 4, QTableWidgetItem(""))
+
                 # Source - show "Not Found"
                 self.batch_results_table.setItem(row, 5, QTableWidgetItem("Not Found"))
 
-                # Similarity
+                # Similarity - show "N/A"
                 self.batch_results_table.setItem(row, 6, QTableWidgetItem("N/A"))
 
-                # Action button (retry search)
-                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton
-
-                retry_btn_widget = QWidget()
-                retry_layout = QHBoxLayout(retry_btn_widget)
-                retry_layout.setContentsMargins(4, 2, 4, 2)
-
-                retry_btn = QPushButton("Retry")
-                retry_btn.setMaximumWidth(60)
-                retry_btn.clicked.connect(
-                    lambda checked, line=original_line: self.on_retry_search(line)
-                )
-                retry_layout.addWidget(retry_btn)
-
-                self.batch_results_table.setCellWidget(row, 6, retry_btn_widget)
+                # Action button (retry search) - add to a new column if needed, or skip for now
+                # For now, we'll skip the retry button to focus on quick switch feature
 
             # Index
             self.batch_results_table.setItem(row, 1, QTableWidgetItem(str(row + 1)))
@@ -911,6 +935,138 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(
                 f"Switched match: {new_candidate.song_name} - {new_candidate.singers}", 3000
             )
+
+    def show_quick_switch_menu(self, original_line: str, button: QPushButton):
+        """
+        Display quick switch menu (candidates from current source)
+
+        Args:
+            original_line: Original input line (song identifier)
+            button: Trigger button (used to position menu)
+        """
+        if not hasattr(self, "current_batch_search_result"):
+            return
+
+        song_match = self.current_batch_search_result.matches.get(original_line)
+        if not song_match:
+            return
+
+        from PyQt6.QtWidgets import QMenu
+        from PyQt6.QtGui import QFont
+
+        # Create menu
+        menu = QMenu(self)
+        menu.setStyleSheet("""
+            QMenu {
+                border: 1px solid #ccc;
+                padding: 5px;
+            }
+            QMenu::item {
+                padding: 5px 30px 5px 20px;
+                border: 1px solid transparent;
+            }
+            QMenu::item:selected {
+                border-color: #3399ff;
+                background: #e6f2ff;
+            }
+            QMenu::item:checked {
+                font-weight: bold;
+                color: #0066cc;
+            }
+        """)
+
+        # Get candidates from current source
+        current_source = song_match.current_source
+        candidates = song_match.get_all_candidates_from_current_source()
+
+        # Sort by similarity (descending)
+        candidates_sorted = sorted(
+            candidates,
+            key=lambda x: x.similarity_score,
+            reverse=True
+        )
+
+        # Add menu title
+        title_action = menu.addAction(
+            f"[{current_source}] {len(candidates)} candidates"
+        )
+        title_action.setEnabled(False)
+
+        menu.addSeparator()
+
+        # Add candidate items
+        for candidate in candidates_sorted:
+            # Check if this is the current match
+            is_current = (
+                song_match.current_match and
+                candidate.song_name == song_match.current_match.song_name and
+                candidate.singers == song_match.current_match.singers and
+                candidate.source == song_match.current_match.source
+            )
+
+            # Create menu item
+            text = (
+                f"{candidate.song_name} - {candidate.singers} "
+                f"({candidate.similarity_score:.2%})"
+            )
+
+            action = menu.addAction(text)
+            action.setCheckable(True)
+            action.setChecked(is_current)
+
+            # If current, make it bold
+            if is_current:
+                font = action.font()
+                font.setBold(True)
+                action.setFont(font)
+
+            # Connect switch event
+            action.triggered.connect(
+                lambda checked, c=candidate: self.quick_switch_to_candidate(
+                    original_line, c
+                )
+            )
+
+        # Show menu (below button)
+        menu.exec(button.mapToGlobal(button.rect().bottomLeft()))
+
+    def quick_switch_to_candidate(self, original_line: str, new_candidate):
+        """
+        Quick switch to specified candidate (via menu)
+
+        Args:
+            original_line: Original input line
+            new_candidate: Candidate to switch to
+        """
+        if not hasattr(self, "current_batch_search_result"):
+            QMessageBox.warning(self, "Error", "No batch search results found")
+            return
+
+        song_match = self.current_batch_search_result.matches.get(original_line)
+        if not song_match:
+            return
+
+        # Record old candidate (for undo, if implemented later)
+        old_candidate = song_match.current_match
+
+        # Perform switch
+        from .batch.models import MatchSource
+        song_match.switch_to_candidate(new_candidate, MatchSource.USER_SELECTED)
+
+        # Refresh table (with current threshold if set)
+        current_threshold = getattr(self, 'current_threshold', 0.0)
+        self.populate_batch_results_table(
+            self.current_batch_search_result,
+            min_similarity=current_threshold
+        )
+
+        # Update status bar
+        source_short = new_candidate.source.replace('MusicClient', '')
+        self.statusBar().showMessage(
+            f"Switched to: {new_candidate.song_name} - {new_candidate.singers} "
+            f"({source_short}, {new_candidate.similarity_score:.2%})",
+            4000
+        )
 
     def on_retry_search(self, original_line: str):
         """Retry searching for a specific song"""

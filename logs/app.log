@@ -384,3 +384,39 @@ AttributeError: 'SongMatcher' object has no attribute 'find_best_match'
 2026-01-12 11:00:31,548 - pyqt_ui.music_downloader - INFO - Download completed
 2026-01-12 11:00:31,548 - pyqt_ui.workers - INFO - Download completed successfully
 2026-01-12 11:00:32,881 - pyqt_ui.main - INFO - Download completed: 2 songs
+2026-01-12 11:32:52,466 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:33:10,778 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:33:28,519 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:33:46,961 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:34:14,383 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:34:33,550 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:34:57,208 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:35:09,853 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:38:13,671 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:38:13,672 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 11:38:13,673 - pyqt_ui.main - INFO - Match mode changed to strict (threshold: 90.00%)
+2026-01-12 11:38:13,676 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:38:13,677 - pyqt_ui.main - INFO - Loaded match preferences: strict (threshold: 90.00%)
+2026-01-12 11:39:51,966 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:39:51,967 - pyqt_ui.main - INFO - Loaded match preferences: strict (threshold: 90.00%)
+2026-01-12 11:40:14,772 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:40:14,773 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 11:40:27,926 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:40:27,927 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 11:40:27,943 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:40:27,943 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 11:40:27,943 - pyqt_ui.main - INFO - Match mode changed to strict (threshold: 90.00%)
+2026-01-12 11:40:27,950 - pyqt_ui.main - INFO - Match mode changed to loose (threshold: 40.00%)
+2026-01-12 11:40:27,952 - pyqt_ui.main - INFO - Match mode changed to standard (threshold: 60.00%)
+2026-01-12 11:40:27,953 - pyqt_ui.main - INFO - Custom threshold changed to 75.00% (Custom mode)
+2026-01-12 11:40:27,969 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:40:27,969 - pyqt_ui.main - INFO - Loaded match preferences: strict (threshold: 90.00%)
+2026-01-12 11:40:27,969 - pyqt_ui.main - INFO - Match mode changed to loose (threshold: 40.00%)
+2026-01-12 11:40:27,972 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:40:27,972 - pyqt_ui.main - INFO - Loaded match preferences: loose (threshold: 40.00%)
+2026-01-12 11:40:27,988 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 11:40:27,988 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 12:06:02,723 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 12:06:02,723 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 12:06:02,759 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 12:06:02,760 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
