@@ -44,7 +44,14 @@ class MainWindow(QMainWindow):
         self.current_match_mode = DEFAULT_MATCH_MODE
         self.current_threshold = DEFAULT_MATCH_THRESHOLD
 
+        # Undo history for quick switch
+        self.switch_history = []  # [(original_line, old_candidate, new_candidate), ...]
+        self.max_history_size = 50
+
         self.setup_ui()
+
+        # Setup keyboard shortcuts
+        self.setup_shortcuts()
 
         # Load user preferences after UI is set up
         self.load_match_preferences()
@@ -462,28 +469,80 @@ class MainWindow(QMainWindow):
 
                 if len(current_source_candidates) > 1:
                     # Create quick switch button
-                    quick_switch_btn = QPushButton("▼")
-                    quick_switch_btn.setMaximumSize(22, 22)
+                    num_candidates = len(current_source_candidates)
+
+                    # Button style based on candidate count
+                    if num_candidates > 10:
+                        # Many candidates - prominent badge style
+                        btn_text = f"▼{num_candidates}"
+                        btn_style = """
+                            QPushButton {
+                                background: #ff9800;
+                                color: white;
+                                border: 1px solid #f57c00;
+                                border-radius: 4px;
+                                padding: 2px 6px;
+                                font-weight: bold;
+                                font-size: 11px;
+                            }
+                            QPushButton:hover {
+                                background: #fb8c00;
+                                border: 1px solid #ef6c00;
+                            }
+                            QPushButton:pressed {
+                                background: #f57c00;
+                            }
+                        """
+                        btn_min_size = (50, 22)
+                    elif num_candidates > 3:
+                        # Medium number - badge style
+                        btn_text = f"▼{num_candidates}"
+                        btn_style = """
+                            QPushButton {
+                                border: 1px solid #2196F3;
+                                border-radius: 4px;
+                                padding: 2px 5px;
+                                background: #E3F2FD;
+                                color: #1976D2;
+                                font-size: 11px;
+                            }
+                            QPushButton:hover {
+                                background: #BBDEFB;
+                                border: 1px solid #1976D2;
+                            }
+                            QPushButton:pressed {
+                                background: #90CAF9;
+                            }
+                        """
+                        btn_min_size = (45, 22)
+                    else:
+                        # Few candidates (2-3) - simple style
+                        btn_text = "▼"
+                        btn_style = """
+                            QPushButton {
+                                border: 1px solid #ccc;
+                                border-radius: 3px;
+                                padding: 0px;
+                                background: #f5f5f5;
+                            }
+                            QPushButton:hover {
+                                background: #e0e0e0;
+                                border: 1px solid #999;
+                            }
+                            QPushButton:pressed {
+                                background: #d0d0d0;
+                            }
+                        """
+                        btn_min_size = (22, 22)
+
+                    quick_switch_btn = QPushButton(btn_text)
+                    quick_switch_btn.setMinimumSize(*btn_min_size)
                     quick_switch_btn.setToolTip(
-                        f"Current source ({song_match.current_source}) has {len(current_source_candidates)} candidates"
+                        f"Current source ({song_match.current_source}) has {num_candidates} candidates"
                     )
 
-                    # Button style
-                    quick_switch_btn.setStyleSheet("""
-                        QPushButton {
-                            border: 1px solid #ccc;
-                            border-radius: 3px;
-                            padding: 0px;
-                            background: #f5f5f5;
-                        }
-                        QPushButton:hover {
-                            background: #e0e0e0;
-                            border: 1px solid #999;
-                        }
-                        QPushButton:pressed {
-                            background: #d0d0d0;
-                        }
-                    """)
+                    # Apply button style
+                    quick_switch_btn.setStyleSheet(btn_style)
 
                     # Connect click event
                     quick_switch_btn.clicked.connect(
@@ -938,7 +997,7 @@ class MainWindow(QMainWindow):
 
     def show_quick_switch_menu(self, original_line: str, button: QPushButton):
         """
-        Display quick switch menu (candidates from current source)
+        Display quick switch menu (candidates from current source + all sources)
 
         Args:
             original_line: Original input line (song identifier)
@@ -975,27 +1034,27 @@ class MainWindow(QMainWindow):
             }
         """)
 
-        # Get candidates from current source
+        # ===== Current Source Candidates =====
         current_source = song_match.current_source
-        candidates = song_match.get_all_candidates_from_current_source()
+        current_candidates = song_match.get_all_candidates_from_current_source()
 
         # Sort by similarity (descending)
-        candidates_sorted = sorted(
-            candidates,
+        current_candidates_sorted = sorted(
+            current_candidates,
             key=lambda x: x.similarity_score,
             reverse=True
         )
 
-        # Add menu title
+        # Add menu title for current source
         title_action = menu.addAction(
-            f"[{current_source}] {len(candidates)} candidates"
+            f"[{current_source}] {len(current_candidates)} candidates"
         )
         title_action.setEnabled(False)
 
         menu.addSeparator()
 
-        # Add candidate items
-        for candidate in candidates_sorted:
+        # Add current source candidate items
+        for candidate in current_candidates_sorted:
             # Check if this is the current match
             is_current = (
                 song_match.current_match and
@@ -1027,6 +1086,65 @@ class MainWindow(QMainWindow):
                 )
             )
 
+        # ===== All Sources Candidates (Cross-Source) =====
+        menu.addSeparator()
+
+        # Add "All Sources" submenu
+        all_sources_menu = menu.addMenu("All Sources (by similarity)")
+
+        # Get all candidates from all sources
+        all_candidates = song_match.get_all_candidates()
+
+        # Sort by similarity (descending)
+        all_candidates_sorted = sorted(
+            all_candidates,
+            key=lambda x: x.similarity_score,
+            reverse=True
+        )
+
+        # Limit display count (avoid menu too long)
+        max_display = 15
+        display_candidates = all_candidates_sorted[:max_display]
+
+        for candidate in display_candidates:
+            # Check if this is the current match
+            is_current = (
+                song_match.current_match and
+                candidate.song_name == song_match.current_match.song_name and
+                candidate.singers == song_match.current_match.singers and
+                candidate.source == song_match.current_match.source
+            )
+
+            # Create menu item with source mark
+            source_short = candidate.source.replace('MusicClient', '')
+            text = (
+                f"{candidate.song_name} - {candidate.singers} "
+                f"[{source_short}] ({candidate.similarity_score:.2%})"
+            )
+
+            action = all_sources_menu.addAction(text)
+            action.setCheckable(True)
+            action.setChecked(is_current)
+
+            if is_current:
+                font = action.font()
+                font.setBold(True)
+                action.setFont(font)
+
+            # Connect switch event
+            action.triggered.connect(
+                lambda checked, c=candidate: self.quick_switch_to_candidate(
+                    original_line, c
+                )
+            )
+
+        # If there are more candidates, show tip
+        if len(all_candidates) > max_display:
+            tip_action = all_sources_menu.addAction(
+                f"... {len(all_candidates) - max_display} more candidates"
+            )
+            tip_action.setEnabled(False)
+
         # Show menu (below button)
         menu.exec(button.mapToGlobal(button.rect().bottomLeft()))
 
@@ -1046,12 +1164,15 @@ class MainWindow(QMainWindow):
         if not song_match:
             return
 
-        # Record old candidate (for undo, if implemented later)
+        # Record old candidate (for undo)
         old_candidate = song_match.current_match
 
         # Perform switch
         from .batch.models import MatchSource
         song_match.switch_to_candidate(new_candidate, MatchSource.USER_SELECTED)
+
+        # Add to undo history
+        self._add_to_undo_history(original_line, old_candidate, new_candidate)
 
         # Refresh table (with current threshold if set)
         current_threshold = getattr(self, 'current_threshold', 0.0)
@@ -1067,6 +1188,70 @@ class MainWindow(QMainWindow):
             f"({source_short}, {new_candidate.similarity_score:.2%})",
             4000
         )
+
+    def _add_to_undo_history(self, original_line: str, old_candidate, new_candidate):
+        """
+        Add switch operation to history
+
+        Args:
+            original_line: Original input line
+            old_candidate: Previous candidate
+            new_candidate: New candidate
+        """
+        self.switch_history.append((original_line, old_candidate, new_candidate))
+
+        # Limit history size
+        if len(self.switch_history) > self.max_history_size:
+            self.switch_history.pop(0)
+
+    def undo_last_switch(self):
+        """Undo last quick switch operation"""
+        if not self.switch_history:
+            QMessageBox.information(self, "Undo", "No operations to undo")
+            return
+
+        original_line, old_candidate, new_candidate = self.switch_history.pop()
+
+        # Check if batch search result still exists
+        if not hasattr(self, "current_batch_search_result"):
+            QMessageBox.warning(self, "Error", "Batch search results not found")
+            return
+
+        song_match = self.current_batch_search_result.matches.get(original_line)
+        if not song_match:
+            QMessageBox.warning(self, "Error", "Song match information not found")
+            return
+
+        # Revert to old candidate
+        from .batch.models import MatchSource
+        song_match.switch_to_candidate(old_candidate, MatchSource.USER_SELECTED)
+
+        # Refresh table
+        current_threshold = getattr(self, 'current_threshold', 0.0)
+        self.populate_batch_results_table(
+            self.current_batch_search_result,
+            min_similarity=current_threshold
+        )
+
+        # Update status bar
+        self.statusBar().showMessage(
+            f"Undo: Switched back to {old_candidate.song_name} - {old_candidate.singers}",
+            3000
+        )
+
+    def setup_shortcuts(self):
+        """Setup keyboard shortcuts for batch download"""
+        from PyQt6.QtGui import QShortcut, QKeySequence
+
+        # Ctrl+Z: Undo last switch
+        self.undo_shortcut = QShortcut(
+            QKeySequence("Ctrl+Z"),
+            self
+        )
+        self.undo_shortcut.activated.connect(self.undo_last_switch)
+
+        # Note: Ctrl+K for quick switch could be added here
+        # but requires tracking which row is currently selected
 
     def on_retry_search(self, original_line: str):
         """Retry searching for a specific song"""

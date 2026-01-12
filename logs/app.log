@@ -420,3 +420,7 @@ AttributeError: 'SongMatcher' object has no attribute 'find_best_match'
 2026-01-12 12:06:02,723 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
 2026-01-12 12:06:02,759 - pyqt_ui.main - INFO - UI components initialized
 2026-01-12 12:06:02,760 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 12:17:03,934 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 12:17:03,983 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
+2026-01-12 12:17:04,002 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 12:17:04,002 - pyqt_ui.main - INFO - Loaded match preferences: standard (threshold: 60.00%)
