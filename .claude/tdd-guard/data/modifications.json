@@ -1,0 +1,10 @@
+{
+  "session_id": "41ac25cd-8a05-4a75-a697-46d64fa71207",
+  "transcript_path": "C:\\Users\\DELL\\.claude\\projects\\D--code-------\\41ac25cd-8a05-4a75-a697-46d64fa71207.jsonl",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\code\\下载音乐软件\\.gitignore_clean",
+    "content": "# 临时文件和备份\n*.backup\nnul\ntest_find_best_match_failure.txt\n\n# 临时测试脚本（在tests目录中的除外）\ntest_batch_parser.py\ntest_batch_search_debug.py\ntest_batch_search_e2e.py\ntest_batch_worker_direct.py\ntest_complete.py\ntest_download.py\ntest_haobuyirong.py\ntest_real_download.py\ntest_search_download.py\ntest_simple_search.py\nverify_gui.py\n"
+  }
+}

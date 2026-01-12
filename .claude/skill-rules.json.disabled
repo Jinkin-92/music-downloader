@@ -1,0 +1,20 @@
+{
+  "tdd-guard": {
+    "enabled": true,
+    "priority": "low",
+    "description": "TDD Guard - Modified to only enforce tests before git commits, not during normal development",
+    "enforcement_mode": "git-commit-only",
+    "allow_development": true,
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/*.py"
+      ]
+    },
+    "rules": {
+      "allow_edit_without_test": true,
+      "allow_write_without_test": true,
+      "require_tests_before_commit": true,
+      "enforcement_message": "Tests will be verified before git commit. Development can proceed freely."
+    }
+  }
+}

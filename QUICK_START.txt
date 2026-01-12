@@ -1,0 +1,71 @@
+================================================================================
+                 Music Downloader - How to Start
+================================================================================
+
+QUICKEST METHOD: Double-click launcher.py
+================================================================================
+
+Just double-click the file named: launcher.py
+
+That's it! The application will start.
+
+No Chinese characters, no encoding problems, just works!
+
+================================================================================
+IF DOUBLE-CLICK DOESN'T WORK
+================================================================================
+
+Open Command Prompt, navigate to project folder, then run:
+
+  python launcher.py
+
+OR
+
+  python -m pyqt_ui.main
+
+================================================================================
+ALL AVAILABLE START METHODS
+================================================================================
+
+1. launcher.py    - Double-click this (RECOMMENDED)
+2. RUN.bat        - Double-click this (simple batch file)
+3. START.bat      - Double-click this (detailed batch file)
+4. run_app.py     - Run: python run_app.py
+5. Python module  - Run: python -m pyqt_ui.main
+
+================================================================================
+VERIFICATION
+================================================================================
+
+Run this to test if everything works:
+
+  python verify_startup.py
+
+You should see: "ALL CHECKS PASSED"
+
+================================================================================
+ERROR: Python not found
+================================================================================
+
+Solution: Install Python from https://www.python.org
+          During installation, CHECK "Add Python to PATH"
+
+================================================================================
+ERROR: No module named PyQt6
+================================================================================
+
+Solution: Run this command:
+
+  pip install PyQt6 musicdl
+
+================================================================================
+APPLICATION FEATURES
+================================================================================
+
+Working:
+  - Search and download songs
+  - Multiple music sources
+  - Custom download folder
+  - Progress display
+
+================================================================================

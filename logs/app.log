@@ -1,0 +1,386 @@
+2025-12-25 14:11:37,786 - __main__ - INFO - UI components initialized
+2025-12-25 14:11:58,319 - __main__ - INFO - UI components initialized
+2025-12-25 14:13:04,212 - __main__ - INFO - UI components initialized
+2025-12-25 14:13:11,583 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 14:13:12,335 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 14:13:12,337 - pyqt_ui.workers - INFO - Search started: 好不容易
+2025-12-25 14:13:12,337 - pyqt_ui.music_downloader - INFO - Searching for '好不容易' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2025-12-25 14:13:12,338 - musicdl - INFO - Searching [93m好不容易[0m From [93mKugouMusicClient|NeteaseMusicClient|KuwoMusicClient|QQMusicClient[0m
+2025-12-25 14:15:35,899 - pyqt_ui.workers - INFO - Search completed: 13 results
+2025-12-25 14:44:01,411 - pyqt_ui.main - INFO - UI components initialized
+2025-12-25 14:44:01,486 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 14:44:02,405 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 14:44:02,405 - pyqt_ui.music_downloader - INFO - Searching for 'test' from ['QQMusicClient']
+2025-12-25 14:44:02,405 - musicdl - INFO - Searching [93mtest[0m From [93mQQMusicClient|NeteaseMusicClient|KuwoMusicClient|KugouMusicClient[0m
+2025-12-25 14:45:21,235 - pyqt_ui.main - INFO - UI components initialized
+2025-12-25 14:45:21,359 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 14:45:22,136 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 14:45:22,136 - pyqt_ui.music_downloader - INFO - Searching for 'test' from ['QQMusicClient']
+2025-12-25 14:45:22,136 - musicdl - INFO - Searching [93mtest[0m From [93mQQMusicClient|NeteaseMusicClient|KuwoMusicClient|KugouMusicClient[0m
+2025-12-25 14:46:43,790 - __main__ - INFO - UI components initialized
+2025-12-25 14:46:50,264 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 14:46:51,131 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 14:46:51,132 - pyqt_ui.workers - INFO - Search started: 好不容易
+2025-12-25 14:46:51,133 - pyqt_ui.music_downloader - INFO - Searching for '好不容易' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2025-12-25 14:46:51,133 - musicdl - INFO - Searching [93m好不容易[0m From [93mKuwoMusicClient|NeteaseMusicClient|KugouMusicClient|QQMusicClient[0m
+2025-12-25 14:48:56,111 - pyqt_ui.workers - INFO - Search completed: 13 results
+2025-12-25 15:01:27,933 - pyqt_ui.main - INFO - UI components initialized
+2025-12-25 15:01:28,041 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 15:01:28,858 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 15:01:28,858 - pyqt_ui.music_downloader - INFO - Searching for 'test' from ['QQMusicClient']
+2025-12-25 15:01:28,858 - musicdl - INFO - Searching [93mtest[0m From [93mKuwoMusicClient|QQMusicClient|NeteaseMusicClient|KugouMusicClient[0m
+2025-12-25 15:05:48,728 - __main__ - INFO - UI components initialized
+2025-12-25 15:05:54,049 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 15:05:54,870 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 15:05:54,873 - pyqt_ui.workers - INFO - Search started: 好不容易
+2025-12-25 15:05:54,873 - pyqt_ui.music_downloader - INFO - Searching for '好不容易' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2025-12-25 15:05:54,873 - musicdl - INFO - Searching [93m好不容易[0m From [93mNeteaseMusicClient|QQMusicClient|KugouMusicClient|KuwoMusicClient[0m
+2025-12-25 15:07:53,833 - pyqt_ui.workers - INFO - Search completed: 13 results
+2025-12-25 15:07:53,859 - __main__ - INFO - Table populated with 13 results
+2025-12-25 15:26:23,205 - __main__ - INFO - UI components initialized
+2025-12-25 15:26:30,056 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2025-12-25 15:26:30,807 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2025-12-25 15:26:30,812 - pyqt_ui.workers - INFO - Search started: 好不容易
+2025-12-25 15:26:30,812 - pyqt_ui.music_downloader - INFO - Searching for '好不容易' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2025-12-25 15:26:30,812 - musicdl - INFO - Searching [93m好不容易[0m From [93mKugouMusicClient|NeteaseMusicClient|KuwoMusicClient|QQMusicClient[0m
+2025-12-25 15:28:34,689 - pyqt_ui.workers - INFO - Search completed: 13 results
+2025-12-25 15:28:34,693 - __main__ - INFO - Table populated with 13 results
+2025-12-25 15:29:05,530 - pyqt_ui.workers - INFO - Download started: 1 songs
+2025-12-25 15:29:05,530 - pyqt_ui.music_downloader - INFO - Downloading 1 songs...
+2025-12-25 15:29:21,524 - pyqt_ui.music_downloader - INFO - Download completed
+2025-12-25 15:29:21,524 - pyqt_ui.workers - INFO - Download completed successfully
+2025-12-25 15:29:23,359 - __main__ - INFO - Download completed: 1 songs
+2026-01-04 15:05:15,840 - __main__ - INFO - UI components initialized
+2026-01-04 15:05:45,226 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:05:52,923 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:09:13,350 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:20:40,453 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:33:51,718 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:38:32,809 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:49:32,734 - __main__ - INFO - UI components initialized
+2026-01-04 15:52:05,966 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-04 15:52:06,737 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-04 15:52:06,739 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 15:52:06,739 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 15:52:06,739 - pyqt_ui.workers - ERROR - Batch search failed: 'song_name'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 128, in run
+    song_name = parsed_song['song_name']
+                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'song_name'
+2026-01-04 15:52:11,982 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 15:52:11,983 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 15:52:11,983 - pyqt_ui.workers - ERROR - Batch search failed: 'song_name'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 128, in run
+    song_name = parsed_song['song_name']
+                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'song_name'
+2026-01-04 15:52:14,048 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 15:52:14,048 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 15:52:14,048 - pyqt_ui.workers - ERROR - Batch search failed: 'song_name'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 128, in run
+    song_name = parsed_song['song_name']
+                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'song_name'
+2026-01-04 15:52:14,584 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 15:52:14,584 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 15:52:14,584 - pyqt_ui.workers - ERROR - Batch search failed: 'song_name'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 128, in run
+    song_name = parsed_song['song_name']
+                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'song_name'
+2026-01-04 15:52:14,807 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 15:52:14,807 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 15:52:14,808 - pyqt_ui.workers - ERROR - Batch search failed: 'song_name'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 128, in run
+    song_name = parsed_song['song_name']
+                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'song_name'
+2026-01-04 15:52:15,022 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 15:52:15,023 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 15:52:15,023 - pyqt_ui.workers - ERROR - Batch search failed: 'song_name'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 128, in run
+    song_name = parsed_song['song_name']
+                ~~~~~~~~~~~^^^^^^^^^^^^^
+KeyError: 'song_name'
+2026-01-04 15:52:54,508 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:54:24,779 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 15:56:02,340 - pyqt_ui.main - INFO - UI components initialized
+2026-01-04 16:00:29,501 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-04 16:00:30,320 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-04 16:00:30,322 - pyqt_ui.workers - INFO - Batch search started with 3 lines
+2026-01-04 16:00:30,322 - pyqt_ui.workers - INFO - Parsed 3 songs from batch input
+2026-01-04 16:00:30,323 - pyqt_ui.music_downloader - INFO - Searching for '七里香 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-04 16:00:30,323 - musicdl - INFO - Searching [93m七里香 周杰伦[0m From [93mKugouMusicClient|KuwoMusicClient|NeteaseMusicClient|QQMusicClient[0m
+2026-01-04 16:01:46,519 - pyqt_ui.workers - ERROR - Batch search failed: 'SongMatcher' object has no attribute 'find_best_match'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 148, in run
+    best_match = self.matcher.find_best_match(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SongMatcher' object has no attribute 'find_best_match'
+2026-01-04 16:24:40,938 - __main__ - INFO - UI components initialized
+2026-01-04 16:27:53,228 - __main__ - INFO - UI components initialized
+2026-01-04 16:28:15,710 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-04 16:28:16,461 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-04 16:28:16,464 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 16:28:16,464 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 16:28:16,465 - pyqt_ui.music_downloader - INFO - Searching for '七里香 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-04 16:28:16,465 - musicdl - INFO - Searching [93m七里香 周杰伦[0m From [93mKugouMusicClient|KuwoMusicClient|QQMusicClient|NeteaseMusicClient[0m
+2026-01-04 16:29:36,298 - pyqt_ui.workers - ERROR - Batch search failed: 'SongMatcher' object has no attribute 'find_best_match'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 148, in run
+    best_match = self.matcher.find_best_match(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SongMatcher' object has no attribute 'find_best_match'
+2026-01-04 16:30:06,336 - pyqt_ui.workers - INFO - Search started: 七里香 - 周杰伦
+2026-01-04 16:30:06,337 - pyqt_ui.music_downloader - INFO - Searching for '七里香 - 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-04 16:30:06,337 - musicdl - INFO - Searching [93m七里香 - 周杰伦[0m From [93mKugouMusicClient|KuwoMusicClient|QQMusicClient|NeteaseMusicClient[0m
+2026-01-04 16:30:56,232 - pyqt_ui.workers - INFO - Search completed: 13 results
+2026-01-04 16:30:56,235 - __main__ - INFO - Table populated with 13 results
+2026-01-04 17:07:25,869 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-04 17:07:25,870 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-04 17:07:25,870 - pyqt_ui.music_downloader - INFO - Searching for '七里香 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-04 17:07:25,871 - musicdl - INFO - Searching [93m七里香 周杰伦[0m From [93mKugouMusicClient|KuwoMusicClient|QQMusicClient|NeteaseMusicClient[0m
+2026-01-04 17:08:46,055 - pyqt_ui.workers - ERROR - Batch search failed: 'SongMatcher' object has no attribute 'find_best_match'
+Traceback (most recent call last):
+  File "D:\code\下载音乐软件\pyqt_ui\workers.py", line 148, in run
+    best_match = self.matcher.find_best_match(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'SongMatcher' object has no attribute 'find_best_match'
+2026-01-05 11:14:37,523 - __main__ - INFO - UI components initialized
+2026-01-05 11:15:22,020 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 11:15:23,003 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 11:15:23,014 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 11:15:23,014 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 11:15:23,015 - pyqt_ui.music_downloader - INFO - Searching for '七里香 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 11:15:23,015 - musicdl - INFO - Searching [93m七里香 周杰伦[0m From [93mQQMusicClient|NeteaseMusicClient|KugouMusicClient|KuwoMusicClient[0m
+2026-01-05 11:16:06,416 - pyqt_ui.workers - INFO - Match found: 七里香 - 周杰伦
+2026-01-05 11:16:06,416 - pyqt_ui.music_downloader - INFO - Searching for '轨迹 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 11:16:06,416 - musicdl - INFO - Searching [93m轨迹 周杰伦[0m From [93mQQMusicClient|NeteaseMusicClient|KugouMusicClient|KuwoMusicClient[0m
+2026-01-05 11:17:22,575 - pyqt_ui.workers - INFO - Match found: 轨迹 - 周杰伦
+2026-01-05 11:17:22,575 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 11:17:38,164 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 11:17:38,164 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 11:17:38,188 - pyqt_ui.music_downloader - ERROR - Download error: 'dict' object has no attribute 'song_name'
+2026-01-05 11:17:38,189 - pyqt_ui.workers - ERROR - Download failed: 'dict' object has no attribute 'song_name'
+2026-01-05 13:47:33,133 - __main__ - INFO - UI components initialized
+2026-01-05 13:51:13,867 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 13:51:14,742 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 13:51:14,743 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 13:51:14,744 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 13:51:14,744 - pyqt_ui.music_downloader - INFO - Searching for '七里香 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 13:51:14,744 - musicdl - INFO - Searching [93m七里香 周杰伦[0m From [93mQQMusicClient|NeteaseMusicClient|KuwoMusicClient|KugouMusicClient[0m
+2026-01-05 13:52:27,813 - pyqt_ui.workers - INFO - Match found: 七里香 - 周杰伦
+2026-01-05 13:52:27,813 - pyqt_ui.music_downloader - INFO - Searching for '轨迹 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 13:52:27,813 - musicdl - INFO - Searching [93m轨迹 周杰伦[0m From [93mQQMusicClient|NeteaseMusicClient|KuwoMusicClient|KugouMusicClient[0m
+2026-01-05 13:53:07,164 - pyqt_ui.workers - INFO - Match found: 轨迹 - 周杰伦
+2026-01-05 13:53:07,164 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 13:57:27,355 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 13:57:27,356 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 13:57:27,360 - pyqt_ui.music_downloader - ERROR - Download error: 'dict' object has no attribute 'song_name'
+2026-01-05 13:57:27,360 - pyqt_ui.workers - ERROR - Download failed: 'dict' object has no attribute 'song_name'
+2026-01-05 14:01:19,689 - __main__ - INFO - UI components initialized
+2026-01-05 14:01:33,962 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 14:01:34,787 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 14:01:34,789 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 14:01:34,789 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 14:01:34,790 - pyqt_ui.music_downloader - INFO - Searching for '七里香 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 14:01:34,790 - musicdl - INFO - Searching [93m七里香 周杰伦[0m From [93mNeteaseMusicClient|QQMusicClient|KuwoMusicClient|KugouMusicClient[0m
+2026-01-05 14:02:46,582 - pyqt_ui.workers - INFO - Match found: 七里香 - 周杰伦
+2026-01-05 14:02:46,582 - pyqt_ui.music_downloader - INFO - Searching for '轨迹 周杰伦' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 14:02:46,583 - musicdl - INFO - Searching [93m轨迹 周杰伦[0m From [93mNeteaseMusicClient|QQMusicClient|KuwoMusicClient|KugouMusicClient[0m
+2026-01-05 14:03:58,098 - pyqt_ui.workers - INFO - Match found: 轨迹 - 周杰伦
+2026-01-05 14:03:58,099 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 14:04:09,980 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 14:04:09,981 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 14:04:11,242 - pyqt_ui.music_downloader - INFO - Download completed
+2026-01-05 14:04:11,242 - pyqt_ui.workers - INFO - Download completed successfully
+2026-01-05 14:04:17,279 - __main__ - INFO - Download completed: 2 songs
+2026-01-05 14:29:03,520 - __main__ - INFO - UI components initialized
+2026-01-05 14:29:40,819 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 14:29:41,561 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 14:29:41,563 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 14:29:41,563 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 14:29:41,563 - pyqt_ui.music_downloader - INFO - Searching for '好不容易 告五人' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 14:29:41,563 - musicdl - INFO - Searching [93m好不容易 告五人[0m From [93mKuwoMusicClient|QQMusicClient|KugouMusicClient|NeteaseMusicClient[0m
+2026-01-05 14:30:36,681 - pyqt_ui.workers - INFO - Match found: 好不容易 - 告五人
+2026-01-05 14:30:36,681 - pyqt_ui.music_downloader - INFO - Searching for '给我一瓶魔法药水 告五人' from ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient']
+2026-01-05 14:30:36,682 - musicdl - INFO - Searching [93m给我一瓶魔法药水 告五人[0m From [93mKuwoMusicClient|QQMusicClient|KugouMusicClient|NeteaseMusicClient[0m
+2026-01-05 14:31:48,720 - pyqt_ui.workers - INFO - Match found: 给我一瓶魔法药水 - 告五人
+2026-01-05 14:31:48,720 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 14:36:43,844 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 14:36:43,844 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 14:36:54,245 - pyqt_ui.music_downloader - INFO - Download completed
+2026-01-05 14:36:54,245 - pyqt_ui.workers - INFO - Download completed successfully
+2026-01-05 14:36:56,463 - __main__ - INFO - Download completed: 2 songs
+2026-01-05 14:58:27,432 - __main__ - INFO - UI components initialized
+2026-01-05 14:59:33,804 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 14:59:34,536 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 14:59:34,538 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 14:59:34,539 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 14:59:34,539 - pyqt_ui.music_downloader - INFO - Searching for '瘸子之舞 裘德' from ['QQMusicClient']
+2026-01-05 14:59:34,539 - musicdl - INFO - Searching [93m瘸子之舞 裘德[0m From [93mKugouMusicClient|KuwoMusicClient|NeteaseMusicClient|QQMusicClient[0m
+2026-01-05 15:00:55,065 - pyqt_ui.workers - INFO - Match found in QQMusicClient: 瘸子之舞 - 裘德
+2026-01-05 15:00:55,065 - pyqt_ui.music_downloader - INFO - Searching for '浓缩蓝鲸 裘德' from ['QQMusicClient']
+2026-01-05 15:00:55,066 - musicdl - INFO - Searching [93m浓缩蓝鲸 裘德[0m From [93mKugouMusicClient|KuwoMusicClient|NeteaseMusicClient|QQMusicClient[0m
+2026-01-05 15:02:12,060 - pyqt_ui.music_downloader - INFO - Searching for '浓缩蓝鲸 裘德' from ['NeteaseMusicClient']
+2026-01-05 15:02:12,060 - musicdl - INFO - Searching [93m浓缩蓝鲸 裘德[0m From [93mKugouMusicClient|KuwoMusicClient|NeteaseMusicClient|QQMusicClient[0m
+2026-01-05 15:03:34,225 - pyqt_ui.workers - INFO - Match found in NeteaseMusicClient: 浓缩蓝鲸 - 裘德
+2026-01-05 15:03:34,225 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 15:05:04,356 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 15:05:04,357 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 15:05:07,653 - pyqt_ui.music_downloader - INFO - Download completed
+2026-01-05 15:05:07,653 - pyqt_ui.workers - INFO - Download completed successfully
+2026-01-05 15:05:13,688 - __main__ - INFO - Download completed: 2 songs
+2026-01-05 15:32:23,299 - __main__ - INFO - UI components initialized
+2026-01-05 15:33:28,844 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 15:33:29,559 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 15:33:29,561 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 15:33:29,561 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 15:33:29,562 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '泡沫 邓紫棋'
+2026-01-05 15:33:30,088 - musicdl - INFO - Searching [93m泡沫 邓紫棋[0m From [93mQQMusicClient[0m
+2026-01-05 15:34:07,316 - pyqt_ui.music_downloader - INFO - Found 0 results from QQMusicClient
+2026-01-05 15:34:07,316 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '泡沫 邓紫棋'
+2026-01-05 15:34:07,388 - musicdl - INFO - Searching [93m泡沫 邓紫棋[0m From [93mNeteaseMusicClient[0m
+2026-01-05 15:34:38,380 - pyqt_ui.music_downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-01-05 15:34:38,381 - pyqt_ui.music_downloader - INFO - Searching single source 'KugouMusicClient' for '泡沫 邓紫棋'
+2026-01-05 15:34:38,441 - musicdl - INFO - Searching [93m泡沫 邓紫棋[0m From [93mKugouMusicClient[0m
+2026-01-05 15:34:43,198 - pyqt_ui.music_downloader - INFO - Found 4 results from KugouMusicClient
+2026-01-05 15:34:43,199 - pyqt_ui.music_downloader - INFO - Searching single source 'KuwoMusicClient' for '泡沫 邓紫棋'
+2026-01-05 15:34:43,256 - musicdl - INFO - Searching [93m泡沫 邓紫棋[0m From [93mKuwoMusicClient[0m
+2026-01-05 15:34:58,438 - pyqt_ui.music_downloader - INFO - Found 5 results from KuwoMusicClient
+2026-01-05 15:34:58,439 - pyqt_ui.workers - INFO - Match found in KuwoMusicClient: 泡沫 - 邓紫棋
+2026-01-05 15:34:58,439 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '香草吧噗 南拳妈妈'
+2026-01-05 15:34:59,028 - musicdl - INFO - Searching [93m香草吧噗 南拳妈妈[0m From [93mQQMusicClient[0m
+2026-01-05 15:35:27,426 - pyqt_ui.music_downloader - INFO - Found 4 results from QQMusicClient
+2026-01-05 15:35:27,426 - pyqt_ui.workers - INFO - Match found in QQMusicClient: 香草吧噗 - 南拳妈妈
+2026-01-05 15:35:27,426 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 15:35:55,774 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 15:35:55,774 - pyqt_ui.music_downloader - INFO - Downloading to custom directory: F:\下载音乐\下载器
+2026-01-05 15:35:56,508 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 15:36:02,964 - pyqt_ui.music_downloader - INFO - Download completed
+2026-01-05 15:36:02,964 - pyqt_ui.workers - INFO - Download completed successfully
+2026-01-05 15:36:05,992 - __main__ - INFO - Download completed: 2 songs
+2026-01-05 15:39:10,539 - pyqt_ui.main - INFO - UI components initialized
+2026-01-05 15:39:10,540 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 15:39:11,331 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 15:41:59,730 - pyqt_ui.main - INFO - UI components initialized
+2026-01-05 15:41:59,732 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 15:42:00,621 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 15:42:00,621 - pyqt_ui.music_downloader - INFO - [CUSTOM PATH] Downloading to custom directory: test_custom_download_end_to_end
+2026-01-05 15:42:00,621 - pyqt_ui.music_downloader - INFO - [CUSTOM PATH] Type: <class 'pathlib._local.WindowsPath'>
+2026-01-05 15:42:01,422 - pyqt_ui.music_downloader - INFO - Downloading 1 songs...
+2026-01-05 15:42:01,422 - pyqt_ui.music_downloader - WARNING - No song_info_obj found in: {'song_name': 'Test Song', 'singers': 'Test Artist', 'song_info_obj': None}
+2026-01-05 15:42:01,422 - pyqt_ui.music_downloader - ERROR - Download error: No valid SongInfo objects to download
+2026-01-05 15:56:38,244 - __main__ - INFO - UI components initialized
+2026-01-05 15:57:16,829 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-05 15:57:17,604 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-05 15:57:17,605 - pyqt_ui.workers - INFO - Batch search started with 2 lines
+2026-01-05 15:57:17,606 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-05 15:57:17,606 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '一路向北 周杰伦'
+2026-01-05 15:57:18,201 - musicdl - INFO - Searching [93m一路向北 周杰伦[0m From [93mQQMusicClient[0m
+2026-01-05 15:57:54,562 - pyqt_ui.music_downloader - INFO - Found 0 results from QQMusicClient
+2026-01-05 15:57:54,563 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '一路向北 周杰伦'
+2026-01-05 15:57:54,623 - musicdl - INFO - Searching [93m一路向北 周杰伦[0m From [93mNeteaseMusicClient[0m
+2026-01-05 15:58:17,833 - pyqt_ui.music_downloader - INFO - Found 5 results from NeteaseMusicClient
+2026-01-05 15:58:17,833 - pyqt_ui.workers - INFO - Match found in NeteaseMusicClient: 一路向北 - 周杰伦
+2026-01-05 15:58:17,833 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '一万个小时 宇宙人'
+2026-01-05 15:58:18,474 - musicdl - INFO - Searching [93m一万个小时 宇宙人[0m From [93mQQMusicClient[0m
+2026-01-05 15:58:55,160 - pyqt_ui.music_downloader - INFO - Found 0 results from QQMusicClient
+2026-01-05 15:58:55,160 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '一万个小时 宇宙人'
+2026-01-05 15:58:55,222 - musicdl - INFO - Searching [93m一万个小时 宇宙人[0m From [93mNeteaseMusicClient[0m
+2026-01-05 15:59:22,443 - pyqt_ui.music_downloader - INFO - Found 3 results from NeteaseMusicClient
+2026-01-05 15:59:22,444 - pyqt_ui.music_downloader - INFO - Searching single source 'KugouMusicClient' for '一万个小时 宇宙人'
+2026-01-05 15:59:22,532 - musicdl - INFO - Searching [93m一万个小时 宇宙人[0m From [93mKugouMusicClient[0m
+2026-01-05 15:59:27,639 - pyqt_ui.music_downloader - INFO - Found 4 results from KugouMusicClient
+2026-01-05 15:59:27,639 - pyqt_ui.music_downloader - INFO - Searching single source 'KuwoMusicClient' for '一万个小时 宇宙人'
+2026-01-05 15:59:27,698 - musicdl - INFO - Searching [93m一万个小时 宇宙人[0m From [93mKuwoMusicClient[0m
+2026-01-05 15:59:43,688 - pyqt_ui.music_downloader - INFO - Found 5 results from KuwoMusicClient
+2026-01-05 15:59:43,689 - pyqt_ui.workers - INFO - Match found in KuwoMusicClient: 一万个小时 - 宇宙人
+2026-01-05 15:59:43,689 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched
+2026-01-05 16:00:15,719 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-05 16:00:15,720 - pyqt_ui.music_downloader - INFO - [CUSTOM PATH] Downloading to custom directory: F:\下载音乐\下载器
+2026-01-05 16:00:15,720 - pyqt_ui.music_downloader - INFO - [CUSTOM PATH] Type: <class 'pathlib._local.WindowsPath'>
+2026-01-05 16:00:16,421 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-05 16:00:16,422 - pyqt_ui.music_downloader - INFO - Modified SongInfo work_dir: D:\code\下载音乐软件\musicdl_outputs\NeteaseMusicClient\2026-01-05-15-58-17 一路向北周杰伦 -> F:\下载音乐\下载器
+2026-01-05 16:00:16,422 - pyqt_ui.music_downloader - INFO - Modified SongInfo work_dir: D:\code\下载音乐软件\musicdl_outputs\KuwoMusicClient\2026-01-05-15-59-43 一万个小时宇宙人 -> F:\下载音乐\下载器
+2026-01-05 16:00:18,832 - pyqt_ui.music_downloader - INFO - Download completed
+2026-01-05 16:00:18,832 - pyqt_ui.workers - INFO - Download completed successfully
+2026-01-05 16:00:20,888 - __main__ - INFO - Download completed: 2 songs
+2026-01-12 10:37:33,503 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:42:11,725 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:43:02,259 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:45:02,965 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:47:30,800 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:50:16,550 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:50:56,782 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-12 10:50:57,571 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-12 10:50:57,573 - pyqt_ui.workers - INFO - Batch search started with search_all_sources=True
+2026-01-12 10:50:57,573 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-12 10:50:57,584 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:50:58,129 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mQQMusicClient[0m
+2026-01-12 10:51:19,647 - pyqt_ui.music_downloader - INFO - Found 5 results from QQMusicClient
+2026-01-12 10:51:19,648 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:51:19,709 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mNeteaseMusicClient[0m
+2026-01-12 10:51:32,248 - pyqt_ui.music_downloader - INFO - Found 5 results from NeteaseMusicClient
+2026-01-12 10:51:32,249 - pyqt_ui.music_downloader - INFO - Searching single source 'KugouMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:51:32,325 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mKugouMusicClient[0m
+2026-01-12 10:51:36,563 - pyqt_ui.music_downloader - INFO - Found 3 results from KugouMusicClient
+2026-01-12 10:51:36,564 - pyqt_ui.music_downloader - INFO - Searching single source 'KuwoMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:51:36,640 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mKuwoMusicClient[0m
+2026-01-12 10:51:54,631 - pyqt_ui.music_downloader - INFO - Found 5 results from KuwoMusicClient
+2026-01-12 10:51:54,631 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '鲜花 回春丹'
+2026-01-12 10:51:55,556 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mQQMusicClient[0m
+2026-01-12 10:51:56,077 - pyqt_ui.music_downloader - INFO - Found 0 results from QQMusicClient
+2026-01-12 10:51:56,077 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '鲜花 回春丹'
+2026-01-12 10:51:56,140 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mNeteaseMusicClient[0m
+2026-01-12 10:52:08,122 - pyqt_ui.music_downloader - INFO - Found 5 results from NeteaseMusicClient
+2026-01-12 10:52:08,123 - pyqt_ui.music_downloader - INFO - Searching single source 'KugouMusicClient' for '鲜花 回春丹'
+2026-01-12 10:52:08,182 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mKugouMusicClient[0m
+2026-01-12 10:52:13,902 - pyqt_ui.music_downloader - INFO - Found 5 results from KugouMusicClient
+2026-01-12 10:52:13,903 - pyqt_ui.music_downloader - INFO - Searching single source 'KuwoMusicClient' for '鲜花 回春丹'
+2026-01-12 10:52:13,960 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mKuwoMusicClient[0m
+2026-01-12 10:52:27,637 - pyqt_ui.music_downloader - INFO - Found 5 results from KuwoMusicClient
+2026-01-12 10:52:27,637 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched in 90.05s
+2026-01-12 10:57:41,825 - pyqt_ui.main - INFO - UI components initialized
+2026-01-12 10:58:06,341 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-01-12 10:58:07,115 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully
+2026-01-12 10:58:07,117 - pyqt_ui.workers - INFO - Batch search started with search_all_sources=True
+2026-01-12 10:58:07,117 - pyqt_ui.workers - INFO - Parsed 2 songs from batch input
+2026-01-12 10:58:07,119 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:58:07,706 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mQQMusicClient[0m
+2026-01-12 10:58:28,788 - pyqt_ui.music_downloader - INFO - Found 5 results from QQMusicClient
+2026-01-12 10:58:28,789 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:58:28,863 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mNeteaseMusicClient[0m
+2026-01-12 10:58:41,526 - pyqt_ui.music_downloader - INFO - Found 5 results from NeteaseMusicClient
+2026-01-12 10:58:41,527 - pyqt_ui.music_downloader - INFO - Searching single source 'KugouMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:58:41,599 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mKugouMusicClient[0m
+2026-01-12 10:58:45,022 - pyqt_ui.music_downloader - INFO - Found 3 results from KugouMusicClient
+2026-01-12 10:58:45,022 - pyqt_ui.music_downloader - INFO - Searching single source 'KuwoMusicClient' for '等你吃饭 旅行团乐队'
+2026-01-12 10:58:45,102 - musicdl - INFO - Searching [93m等你吃饭 旅行团乐队[0m From [93mKuwoMusicClient[0m
+2026-01-12 10:59:01,192 - pyqt_ui.music_downloader - INFO - Found 5 results from KuwoMusicClient
+2026-01-12 10:59:01,193 - pyqt_ui.music_downloader - INFO - Searching single source 'QQMusicClient' for '鲜花 回春丹'
+2026-01-12 10:59:01,818 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mQQMusicClient[0m
+2026-01-12 10:59:31,560 - pyqt_ui.music_downloader - INFO - Found 3 results from QQMusicClient
+2026-01-12 10:59:31,561 - pyqt_ui.music_downloader - INFO - Searching single source 'NeteaseMusicClient' for '鲜花 回春丹'
+2026-01-12 10:59:31,648 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mNeteaseMusicClient[0m
+2026-01-12 10:59:43,955 - pyqt_ui.music_downloader - INFO - Found 5 results from NeteaseMusicClient
+2026-01-12 10:59:43,956 - pyqt_ui.music_downloader - INFO - Searching single source 'KugouMusicClient' for '鲜花 回春丹'
+2026-01-12 10:59:44,046 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mKugouMusicClient[0m
+2026-01-12 10:59:49,000 - pyqt_ui.music_downloader - INFO - Found 5 results from KugouMusicClient
+2026-01-12 10:59:49,001 - pyqt_ui.music_downloader - INFO - Searching single source 'KuwoMusicClient' for '鲜花 回春丹'
+2026-01-12 10:59:49,067 - musicdl - INFO - Searching [93m鲜花 回春丹[0m From [93mKuwoMusicClient[0m
+2026-01-12 11:00:05,079 - pyqt_ui.music_downloader - INFO - Found 5 results from KuwoMusicClient
+2026-01-12 11:00:05,080 - pyqt_ui.workers - INFO - Batch search completed: 2/2 matched in 117.96s
+2026-01-12 11:00:26,687 - pyqt_ui.workers - INFO - Download started: 2 songs
+2026-01-12 11:00:26,688 - pyqt_ui.music_downloader - WARNING - [DEFAULT PATH] Downloading to default directory: d:\code\下载音乐软件\musicdl_outputs
+2026-01-12 11:00:26,688 - pyqt_ui.music_downloader - WARNING - [DEFAULT PATH] custom download_dir was: None
+2026-01-12 11:00:26,688 - pyqt_ui.music_downloader - INFO - Downloading 2 songs...
+2026-01-12 11:00:31,548 - pyqt_ui.music_downloader - INFO - Download completed
+2026-01-12 11:00:31,548 - pyqt_ui.workers - INFO - Download completed successfully
+2026-01-12 11:00:32,881 - pyqt_ui.main - INFO - Download completed: 2 songs

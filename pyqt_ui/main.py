@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSlot
 from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
-    SOURCE_LABELS, DEFAULT_SOURCES, DOWNLOAD_DIR
+    SOURCE_LABELS, DEFAULT_SOURCES
 )
 from .workers import SearchWorker, DownloadWorker, BatchSearchWorker
 
@@ -157,19 +157,6 @@ class MainWindow(QMainWindow):
         self.batch_search_btn.clicked.connect(self.on_batch_search_clicked)
         batch_layout.addWidget(self.batch_search_btn)
         
-        # Download path selection
-        path_layout = QHBoxLayout()
-        self.download_path_label = QLabel(f"Download to: {DOWNLOAD_DIR}")
-        self.download_path_label.setWordWrap(True)
-        self.select_path_btn = QPushButton("Change Path")
-        self.select_path_btn.setMaximumWidth(120)
-        self.select_path_btn.clicked.connect(self.on_select_download_path)
-        path_layout.addWidget(self.download_path_label)
-        path_layout.addWidget(self.select_path_btn)
-        batch_layout.addLayout(path_layout)
-
-        # Store custom download path
-        self.custom_download_dir = None
         # Add stretch to push content to top
         
         # Batch Results Table
@@ -298,8 +285,8 @@ class MainWindow(QMainWindow):
         """Handle batch search progress update"""
         self.status_label.setText(message)
 
-    @pyqtSlot(dict)
-    def on_batch_search_finished(self, matched_results):
+    @pyqtSlot(object)
+    def on_batch_search_finished(self, search_result):
         """Handle batch search finished - display results"""
         # Re-enable controls
         self.batch_search_btn.setEnabled(True)
@@ -307,10 +294,13 @@ class MainWindow(QMainWindow):
         self.progress_bar.setVisible(False)
         self.status_label.setVisible(False)
 
-        # Populate batch results table
-        self.populate_batch_results_table(matched_results)
+        # Store result for later use (e.g., match switching)
+        self.current_batch_search_result = search_result
 
-        total_matched = len(matched_results)
+        # Populate batch results table
+        self.populate_batch_results_table(search_result)
+
+        total_matched = search_result.get_match_count()
         self.statusBar().showMessage(f'Batch search completed: {total_matched} songs found', 5000)
 
     @pyqtSlot(str)
@@ -355,58 +345,125 @@ class MainWindow(QMainWindow):
                     checked_songs.append(song_dict)
         
         return checked_songs
-    def populate_batch_results_table(self, matched_results):
+    def populate_batch_results_table(self, search_result):
         """Populate batch results table with matched songs"""
         from PyQt6.QtWidgets import QTableWidgetItem
         from PyQt6.QtCore import Qt
 
-        self.batch_results_table.setRowCount(len(matched_results))
+        # search_result is BatchSearchResult object
+        total_songs = search_result.total_songs
+        matches = search_result.matches
+
+        self.batch_results_table.setRowCount(total_songs)
         self.batch_results_table.setVisible(True)
-        
+
         # Enable batch download button if there are results
-        if matched_results:
+        if search_result.get_match_count() > 0:
             self.batch_download_btn.setEnabled(True)
 
-        for row, (original_text, result) in enumerate(matched_results.items()):
+        for row, (original_line, song_match) in enumerate(matches.items()):
             # Checkbox column
             checkbox_item = QTableWidgetItem()
             checkbox_item.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
             checkbox_item.setCheckState(Qt.CheckState.Unchecked)
-            # Store song data in checkbox for later download
-            song_info = result.get('match')
-            if song_info:
-                # song_info is already a dict from search results, use directly
-                song_dict = song_info
+
+            # Get current match data
+            if song_match.has_match and song_match.current_match:
+                song_dict = song_match.get_current_match_dict()
                 checkbox_item.setData(Qt.ItemDataRole.UserRole, song_dict)
-            self.batch_results_table.setItem(row, 0, checkbox_item)
+                checkbox_item.setData(Qt.ItemDataRole.UserRole + 1, song_dict)
+
+                # Song name
+                self.batch_results_table.setItem(
+                    row, 2, QTableWidgetItem(song_match.current_match.song_name)
+                )
+
+                # Singer
+                self.batch_results_table.setItem(
+                    row, 3, QTableWidgetItem(song_match.current_match.singers)
+                )
+
+                # Album
+                self.batch_results_table.setItem(
+                    row, 4, QTableWidgetItem(song_match.current_match.album)
+                )
+
+                # Source
+                source = song_match.current_match.source.replace('MusicClient', '')
+                self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
+
+                # Similarity
+                similarity_item = QTableWidgetItem(
+                    f"{song_match.current_match.similarity_score:.2%}"
+                )
+                similarity_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
+                if song_match.current_match.similarity_score >= 0.8:
+                    similarity_item.setForeground(Qt.GlobalColor.darkGreen)
+                elif song_match.current_match.similarity_score >= 0.6:
+                    similarity_item.setForeground(Qt.GlobalColor.darkYellow)
+                else:
+                    similarity_item.setForeground(Qt.GlobalColor.red)
+
+                self.batch_results_table.setItem(row, 6, similarity_item)
+
+                # Action button (switch match)
+                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QStyle
+
+                switch_btn_widget = QWidget()
+                switch_layout = QHBoxLayout(switch_btn_widget)
+                switch_layout.setContentsMargins(4, 2, 4, 2)
+
+                switch_btn = QPushButton("Switch")
+                switch_btn.setMaximumWidth(60)
+                switch_btn.clicked.connect(
+                    lambda checked, line=original_line: self.on_switch_match(line)
+                )
+                switch_layout.addWidget(switch_btn)
+
+                self.batch_results_table.setCellWidget(row, 6, switch_btn_widget)
+
+            else:
+                # No match found
+                checkbox_item.setData(Qt.ItemDataRole.UserRole, original_line)
+
+                # Song name - show original query
+                self.batch_results_table.setItem(
+                    row, 2, QTableWidgetItem(song_match.query['name'])
+                )
+
+                # Singer
+                self.batch_results_table.setItem(
+                    row, 3, QTableWidgetItem(song_match.query['singer'])
+                )
+
+                # Source - show "Not Found"
+                self.batch_results_table.setItem(row, 5, QTableWidgetItem("Not Found"))
+
+                # Similarity
+                self.batch_results_table.setItem(row, 6, QTableWidgetItem("N/A"))
+
+                # Action button (retry search)
+                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton
+
+                retry_btn_widget = QWidget()
+                retry_layout = QHBoxLayout(retry_btn_widget)
+                retry_layout.setContentsMargins(4, 2, 4, 2)
+
+                retry_btn = QPushButton("Retry")
+                retry_btn.setMaximumWidth(60)
+                retry_btn.clicked.connect(
+                    lambda checked, line=original_line: self.on_retry_search(line)
+                )
+                retry_layout.addWidget(retry_btn)
+
+                self.batch_results_table.setCellWidget(row, 6, retry_btn_widget)
 
             # Index
             self.batch_results_table.setItem(row, 1, QTableWidgetItem(str(row + 1)))
 
-            # Song name (matched)
-            song_name = result.get('matched_song_name', 'N/A')
-            self.batch_results_table.setItem(row, 2, QTableWidgetItem(song_name))
-
-            # Singer (matched)
-            singer = result.get('matched_singer', 'N/A')
-            self.batch_results_table.setItem(row, 3, QTableWidgetItem(singer))
-
-            # Album
-            match_obj = result.get('match')
-            if isinstance(match_obj, dict):
-                album = match_obj.get('album', 'N/A')
-            else:
-                album = getattr(match_obj, 'album', 'N/A') if match_obj else 'N/A'
-            self.batch_results_table.setItem(row, 4, QTableWidgetItem(str(album)))
-
-            # Source
-            if isinstance(match_obj, dict):
-                source = match_obj.get('source', 'N/A')
-            else:
-                source = getattr(match_obj, 'source', 'N/A') if match_obj else 'N/A'
-            if source != 'N/A':
-                source = source.replace('MusicClient', '')
-            self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
+            # Checkbox
+            self.batch_results_table.setItem(row, 0, checkbox_item)
 
 
 
@@ -606,9 +663,7 @@ class MainWindow(QMainWindow):
         self.status_label.setText(f"Preparing to download: {song_name}...")
 
         # Start worker
-        # Pass custom download directory if set, otherwise use default
-        download_dir = self.custom_download_dir if hasattr(self, 'custom_download_dir') and self.custom_download_dir else None
-        self.download_worker = DownloadWorker(songs, download_dir)
+        self.download_worker = DownloadWorker(songs)
         self.download_worker.download_started.connect(self.on_download_started)
         self.download_worker.download_progress.connect(self.on_download_progress)
         self.download_worker.download_finished.connect(self.on_download_finished)
@@ -782,28 +837,57 @@ class MainWindow(QMainWindow):
         if reply == QMessageBox.StandardButton.Yes:
             self.start_download(checked_songs)
 
+    def on_switch_match(self, original_line: str):
+        """Open match switcher dialog for batch result"""
+        if not hasattr(self, "current_batch_search_result"):
+            QMessageBox.warning(self, "Error", "No batch search results found")
+            return
 
-    def on_select_download_path(self):
-        """Handle download path selection button click"""
-        from PyQt6.QtWidgets import QFileDialog
-        from pathlib import Path
+        song_match = self.current_batch_search_result.matches.get(original_line)
+        if not song_match:
+            QMessageBox.warning(self, "Error", "Song match information not found")
+            return
 
-        # Open directory selection dialog
-        selected_dir = QFileDialog.getExistingDirectory(
+        from .batch.match_switcher_dialog import MatchSwitcherDialog
+
+        dialog = MatchSwitcherDialog(song_match, self)
+        dialog.match_changed.connect(self.on_match_changed)
+        dialog.exec()
+
+    def on_match_changed(self, original_line: str, new_candidate):
+        """Handle match change from switcher dialog"""
+        if not hasattr(self, "current_batch_search_result"):
+            return
+
+        song_match = self.current_batch_search_result.matches.get(original_line)
+        if song_match:
+            from .batch.models import MatchSource
+            song_match.switch_to_candidate(new_candidate, MatchSource.USER_SELECTED)
+
+            # Refresh the batch results table
+            self.populate_batch_results_table(self.current_batch_search_result)
+
+            self.statusBar().showMessage(
+                f"Switched match: {new_candidate.song_name} - {new_candidate.singers}", 3000
+            )
+
+    def on_retry_search(self, original_line: str):
+        """Retry searching for a specific song"""
+        if not hasattr(self, "current_batch_search_result"):
+            QMessageBox.warning(self, "Error", "No batch search results found")
+            return
+
+        song_match = self.current_batch_search_result.matches.get(original_line)
+        if not song_match:
+            return
+
+        # For now, just show a message - full implementation would retry search
+        QMessageBox.information(
             self,
-            "Select Download Directory",
-            str(self.custom_download_dir or DOWNLOAD_DIR)
+            "Retry Search",
+            f"Retry search for: {song_match.query['name']} - {song_match.query['singer']}\n\n"
+            "This feature is not yet implemented. Use the batch search button to search again."
         )
-
-        if selected_dir:
-            # Update custom download directory
-            self.custom_download_dir = Path(selected_dir)
-
-            # Update label to show new path
-            self.download_path_label.setText(f"Download to: {self.custom_download_dir}")
-
-            # Show confirmation in status bar
-            self.statusBar().showMessage(f'Download path changed to: {self.custom_download_dir}', 3000)
 
 
 def main():

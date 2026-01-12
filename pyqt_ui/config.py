@@ -1,4 +1,5 @@
 """Application Configuration"""
+
 import os
 from pathlib import Path
 
@@ -16,24 +17,28 @@ DEFAULT_SOURCES = [
     "QQMusicClient",
     "NeteaseMusicClient",
     "KugouMusicClient",
-    "KuwoMusicClient"
+    "KuwoMusicClient",
 ]
 
 SOURCE_LABELS = {
     "QQMusicClient": "QQ Music",
     "NeteaseMusicClient": "Netease",
     "KugouMusicClient": "Kugou",
-    "KuwoMusicClient": "Kuwo"
+    "KuwoMusicClient": "Kuwo",
 }
 
 # UI Settings
-WINDOW_TITLE = "Music Downloader"
-WINDOW_MIN_WIDTH = 1000
+WINDOW_TITLE = "Music下载器"
+WINDOW_MIN_WIDTH = 1200
 WINDOW_MIN_HEIGHT = 700
 
 # Batch Download Configuration
 BATCH_MAX_SONGS = 200
 BATCH_MATCH_SIMILARITY_THRESHOLD = 0.6
+
+# 新增：批量搜索配置
+BATCH_SEARCH_ALL_SOURCES = True
+BATCH_MAX_CANDIDATES_PER_SOURCE = 5
 
 BATCH_STATUS_LABELS = {
     "found": "已找到",
@@ -41,5 +46,5 @@ BATCH_STATUS_LABELS = {
     "duplicate": "重复",
     "downloading": "下载中",
     "completed": "已完成",
-    "failed": "失败"
+    "failed": "失败",
 }

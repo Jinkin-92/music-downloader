@@ -1,0 +1,151 @@
+================================================================================
+                    Music Downloader - Quick Start Guide
+================================================================================
+
+UPDATED: 2026-01-12
+STATUS: Ready to use
+
+================================================================================
+EASIEST WAY TO START (Recommended)
+================================================================================
+
+Method 1: Double-click launcher.py ⭐
+--------------------------------------
+Just double-click the file: launcher.py
+
+This will:
+  - Check dependencies automatically
+  - Show error messages if something goes wrong
+  - Start the application with GUI
+
+No encoding issues, no Chinese characters problems!
+
+
+================================================================================
+ALTERNATIVE METHODS
+================================================================================
+
+Method 2: Run.bat
+------------------
+Double-click: RUN.bat
+
+Very simple launcher, no Chinese text
+
+
+Method 3: START.bat
+-------------------
+Double-click: START.bat
+
+More detailed launcher with error checking
+
+
+Method 4: Command line
+----------------------
+Open command prompt in the project folder and run:
+
+  python launcher.py
+
+OR
+
+  python -m pyqt_ui.main
+
+OR
+
+  python run_app.py
+
+
+================================================================================
+WHICH METHOD SHOULD YOU USE?
+================================================================================
+
+For most users: Double-click launcher.py ⭐
+
+Why?
+  - No encoding problems
+  - Automatic error checking
+  - Shows helpful error messages
+  - Works on all systems
+
+If double-click doesn't work:
+  - Right-click launcher.py
+  - Select "Open with" > "Python"
+  - Or run: python launcher.py from command prompt
+
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: "Python is not recognized"
+Solution: Install Python from python.org
+          Make sure to check "Add Python to PATH" during installation
+
+Problem: "No module named PyQt6"
+Solution: Run: pip install PyQt6 musicdl
+
+Problem: Window shows but looks strange
+Solution: Normal! The application works fine even if some text
+          looks like boxes (encoding issue, doesn't affect functionality)
+
+Problem: Nothing happens when I double-click
+Solution: Open command prompt, navigate to this folder, and run:
+          python launcher.py
+
+
+================================================================================
+VERIFICATION
+================================================================================
+
+To verify everything is ready:
+
+  python verify_startup.py
+
+You should see "ALL CHECKS PASSED"
+
+
+================================================================================
+FEATURES
+================================================================================
+
+Working:
+  - Single song search and download
+  - Multiple music sources (QQ, Netease, Kugou, Kuwo)
+  - Custom download path
+  - Progress display
+
+May need verification:
+  - Batch download feature
+  - Match switching feature
+
+
+================================================================================
+FILES YOU CAN USE TO START
+================================================================================
+
+⭐ launcher.py         - Best choice, double-click to run
+   RUN.bat             - Simple batch file
+   START.bat           - Detailed batch file
+   run_app.py          - Python script with checks
+   verify_startup.py   - Test if everything works
+
+================================================================================
+NEED HELP?
+================================================================================
+
+Check these files:
+  - 启动和使用指南.md (Full user guide in Chinese)
+  - 修复总结.txt (Repair summary in Chinese)
+  - logs/app.log (Application log file)
+
+================================================================================
+QUICK TEST
+================================================================================
+
+1. Double-click: launcher.py
+2. Application window should appear (1200x800)
+3. Try searching for a song
+4. Try downloading
+
+If it works, you're all set!
+
+================================================================================

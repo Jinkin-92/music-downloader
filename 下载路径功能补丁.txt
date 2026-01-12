@@ -1,0 +1,113 @@
+# 下载路径选择功能 - 完整补丁
+
+## 修改1：pyqt_ui/main.py - UI部分
+
+### 位置：第154-159行
+
+**当前代码**：
+```python
+        # Batch search button
+        self.batch_search_btn = QPushButton("Batch Search")
+        self.batch_search_btn.setMinimumHeight(40)
+        self.batch_search_btn.clicked.connect(self.on_batch_search_clicked)
+        batch_layout.addWidget(self.batch_search_btn)
+
+        # Add stretch to push content to top
+```
+
+**修改为**（在第159行之前添加）：
+```python
+        # Batch search button
+        self.batch_search_btn = QPushButton("Batch Search")
+        self.batch_search_btn.setMinimumHeight(40)
+        self.batch_search_btn.clicked.connect(self.on_batch_search_clicked)
+        batch_layout.addWidget(self.batch_search_btn)
+
+        # Download path selection
+        path_layout = QHBoxLayout()
+        self.download_path_label = QLabel(f"Download to: {config.DOWNLOAD_DIR}")
+        self.download_path_label.setWordWrap(True)
+        self.select_path_btn = QPushButton("Change Path")
+        self.select_path_btn.setMaximumWidth(120)
+        self.select_path_btn.clicked.connect(self.on_select_download_path)
+        path_layout.addWidget(self.download_path_label)
+        path_layout.addWidget(self.select_path_btn)
+        batch_layout.addLayout(path_layout)
+
+        # Store custom download path
+        self.custom_download_dir = None
+
+        # Add stretch to push content to top
+```
+
+---
+
+## 修改2：pyqt_ui/main.py - 方法实现
+
+### 位置：文件末尾（在最后一个方法之后添加）
+
+```python
+    def on_select_download_path(self):
+        """Handle download path selection button click"""
+        from PyQt6.QtWidgets import QFileDialog
+        from pathlib import Path
+
+        # Open directory selection dialog
+        selected_dir = QFileDialog.getExistingDirectory(
+            self,
+            "Select Download Directory",
+            str(self.custom_download_dir or config.DOWNLOAD_DIR)
+        )
+
+        if selected_dir:
+            # Update custom download directory
+            self.custom_download_dir = Path(selected_dir)
+
+            # Update label to show new path
+            self.download_path_label.setText(f"Download to: {self.custom_download_dir}")
+
+            # Show confirmation in status bar
+            self.statusBar().showMessage(f'Download path changed to: {self.custom_download_dir}', 3000)
+```
+
+---
+
+## 使用方法
+
+1. 打开 `D:\code\下载音乐软件\pyqt_ui\main.py`
+2. 按照上述两处修改进行编辑
+3. 保存文件
+4. 运行应用测试功能：
+   ```bash
+   python -m pyqt_ui.main
+   ```
+5. 切换到"批量下载"标签页
+6. 应该能看到"Download to: ..."标签和"Change Path"按钮
+7. 点击按钮选择新的下载目录
+
+---
+
+## 功能说明
+
+- **默认路径**：显示 `musicdl_outputs/` 目录
+- **Change Path按钮**：打开文件夹选择对话框
+- **实时更新**：选择后标签立即更新为新路径
+- **状态提示**：状态栏显示3秒确认消息
+
+---
+
+## 预期效果
+
+修改完成后，批量下载标签页应该显示：
+```
+┌─────────────────────────────────────────┐
+│ 批量下载                                │
+├─────────────────────────────────────────┤
+│ [输入框]                                │
+│ [Batch Search]                          │
+│ Download to: musicdl_outputs  [Change Path] │
+│                                         │
+│ [搜索结果表格]                          │
+│ [Download Selected]                      │
+└─────────────────────────────────────────┘
+```
