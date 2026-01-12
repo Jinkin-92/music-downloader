@@ -5,12 +5,15 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QTextEdit, QPushButton, QCheckBox, QGroupBox,
     QTableWidget, QTableWidgetItem, QProgressBar, QHeaderView,
-    QMenu, QMessageBox, QAbstractItemView, QTabWidget
+    QMenu, QMessageBox, QAbstractItemView, QTabWidget, QSlider
 )
+from PyQt6.QtGui import QFont, QAction
 from PyQt6.QtCore import Qt, pyqtSlot
 from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
-    SOURCE_LABELS, DEFAULT_SOURCES
+    SOURCE_LABELS, DEFAULT_SOURCES,
+    MatchMode, DEFAULT_MATCH_MODE, DEFAULT_MATCH_THRESHOLD,
+    MATCH_THRESHOLDS, MATCH_MODE_LABELS
 )
 from .workers import SearchWorker, DownloadWorker, BatchSearchWorker
 
@@ -36,6 +39,11 @@ class MainWindow(QMainWindow):
         self.search_worker = None
         self.download_worker = None
         self.current_results = {}  # Store search results
+
+        # Match mode settings (for batch download)
+        self.current_match_mode = DEFAULT_MATCH_MODE
+        self.current_threshold = DEFAULT_MATCH_THRESHOLD
+
         self.setup_ui()
 
     def setup_ui(self):
@@ -156,7 +164,11 @@ class MainWindow(QMainWindow):
         self.batch_search_btn.setMinimumHeight(40)
         self.batch_search_btn.clicked.connect(self.on_batch_search_clicked)
         batch_layout.addWidget(self.batch_search_btn)
-        
+
+        # Match settings group (collapsible)
+        match_settings_group = self.setup_batch_match_settings_ui()
+        batch_layout.addWidget(match_settings_group)
+
         # Add stretch to push content to top
         
         # Batch Results Table
@@ -888,6 +900,137 @@ class MainWindow(QMainWindow):
             f"Retry search for: {song_match.query['name']} - {song_match.query['singer']}\n\n"
             "This feature is not yet implemented. Use the batch search button to search again."
         )
+
+    def setup_batch_match_settings_ui(self):
+        """
+        Create match confidence settings UI (collapsible)
+
+        Returns:
+            QGroupBox: The settings group widget
+        """
+        # Main settings group
+        settings_group = QGroupBox("Match Settings")
+        settings_group.setMaximumHeight(250)
+
+        main_layout = QVBoxLayout()
+        settings_group.setLayout(main_layout)
+
+        # Preset mode buttons
+        modes_layout = QHBoxLayout()
+        modes_layout.setSpacing(10)
+
+        self.strict_btn = QPushButton(MATCH_MODE_LABELS[MatchMode.STRICT])
+        self.standard_btn = QPushButton(MATCH_MODE_LABELS[MatchMode.STANDARD])
+        self.loose_btn = QPushButton(MATCH_MODE_LABELS[MatchMode.LOOSE])
+
+        # Make buttons checkable and mutually exclusive
+        self.strict_btn.setCheckable(True)
+        self.standard_btn.setCheckable(True)
+        self.loose_btn.setCheckable(True)
+
+        # Set default checked
+        self.standard_btn.setChecked(True)
+
+        # Make buttons mutually exclusive
+        self.strict_btn.setAutoExclusive(True)
+        self.standard_btn.setAutoExclusive(True)
+        self.loose_btn.setAutoExclusive(True)
+
+        # Connect signals (placeholder methods, will be implemented in next stage)
+        self.strict_btn.clicked.connect(lambda: self.on_match_mode_button_clicked(MatchMode.STRICT))
+        self.standard_btn.clicked.connect(lambda: self.on_match_mode_button_clicked(MatchMode.STANDARD))
+        self.loose_btn.clicked.connect(lambda: self.on_match_mode_button_clicked(MatchMode.LOOSE))
+
+        modes_layout.addWidget(self.strict_btn)
+        modes_layout.addWidget(self.standard_btn)
+        modes_layout.addWidget(self.loose_btn)
+        modes_layout.addStretch()
+
+        main_layout.addLayout(modes_layout)
+
+        # Advanced options (initially hidden)
+        self.advanced_options_widget = QWidget(settings_group)  # Set parent
+        advanced_layout = QVBoxLayout()
+        self.advanced_options_widget.setLayout(advanced_layout)
+        self.advanced_options_widget.setVisible(False)
+
+        # Custom threshold slider
+        threshold_layout = QHBoxLayout()
+        threshold_layout.addWidget(QLabel("Custom Threshold:"))
+
+        self.threshold_slider = QSlider(Qt.Orientation.Horizontal)
+        self.threshold_slider.setRange(0, 100)
+        self.threshold_slider.setValue(int(self.current_threshold * 100))
+        self.threshold_slider.valueChanged.connect(self.on_custom_threshold_changed)
+
+        self.threshold_label = QLabel(f"{int(self.current_threshold * 100)}%")
+        self.threshold_label.setFixedWidth(40)
+
+        threshold_layout.addWidget(self.threshold_slider)
+        threshold_layout.addWidget(self.threshold_label)
+        threshold_layout.addStretch()
+
+        advanced_layout.addLayout(threshold_layout)
+
+        # Add note about custom threshold
+        note_label = QLabel("Note: Adjusting custom threshold switches to Custom mode")
+        note_label.setStyleSheet("color: gray; font-size: 10px;")
+        advanced_layout.addWidget(note_label)
+
+        main_layout.addWidget(self.advanced_options_widget)
+
+        # Advanced options toggle button
+        self.toggle_advanced_btn = QPushButton("Advanced Options ▼")
+        self.toggle_advanced_btn.setCheckable(True)
+        self.toggle_advanced_btn.clicked.connect(self.toggle_advanced_options)
+        main_layout.addWidget(self.toggle_advanced_btn)
+
+        return settings_group
+
+    def toggle_advanced_options(self):
+        """Toggle advanced options visibility"""
+        # Use isHidden() instead of isVisible() to get the actual widget state
+        # isVisible() returns False if parent is not visible
+        is_hidden = self.advanced_options_widget.isHidden()
+        new_visibility = is_hidden  # If hidden, make it visible
+        self.advanced_options_widget.setVisible(new_visibility)
+        self.toggle_advanced_btn.setText(
+            "Advanced Options ▲" if new_visibility else "Advanced Options ▼"
+        )
+
+        # Adjust group box height based on visibility
+        if new_visibility:
+            self.advanced_options_widget.parent().setMaximumHeight(350)
+        else:
+            self.advanced_options_widget.parent().setMaximumHeight(250)
+
+    def on_custom_threshold_changed(self, value: int):
+        """
+        Custom threshold slider value changed
+
+        Args:
+            value: Threshold percentage (0-100)
+        """
+        threshold = value / 100.0
+        self.current_threshold = threshold
+        self.threshold_label.setText(f"{value}%")
+
+        # Switch to custom mode
+        self.current_match_mode = MatchMode.CUSTOM
+
+        # Note: Table refresh will be implemented in stage 1.4
+        # For now, just log the change
+        logger.info(f"Custom threshold changed to {threshold:.2%} (Custom mode)")
+
+    def on_match_mode_button_clicked(self, mode: MatchMode):
+        """
+        Match mode button clicked (placeholder for stage 1.4)
+
+        Args:
+            mode: The selected match mode
+        """
+        # Just log for now - full implementation in stage 1.4
+        logger.info(f"Match mode button clicked: {mode.value}")
 
 
 def main():
