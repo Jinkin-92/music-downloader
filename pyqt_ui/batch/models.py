@@ -89,6 +89,63 @@ class BatchSongMatch:
         self.match_source_type = source_type
         self.has_match = True
 
+    def filter_by_threshold(self, min_similarity: float) -> List[MatchCandidate]:
+        """
+        返回相似度≥min_similarity的候选
+
+        Args:
+            min_similarity: 最小相似度阈值 (0-1)
+
+        Returns:
+            过滤后的候选列表
+        """
+        all_candidates = self.get_all_candidates()
+        return [c for c in all_candidates if c.similarity_score >= min_similarity]
+
+    def get_filtered_candidates(
+        self,
+        min_similarity: float = 0.0,
+        preserve_current: bool = True,
+    ) -> List[MatchCandidate]:
+        """
+        获取过滤后的候选，可选择保留当前选中
+
+        Args:
+            min_similarity: 最小相似度阈值
+            preserve_current: 是否保留当前选中（即使低于阈值）
+
+        Returns:
+            过滤后的候选列表
+        """
+        filtered = self.filter_by_threshold(min_similarity)
+
+        if preserve_current and self.current_match:
+            if self.current_match not in filtered:
+                filtered.insert(0, self.current_match)
+
+        return filtered
+
+    def auto_select_best_within_threshold(self, min_similarity: float) -> Optional[MatchCandidate]:
+        """
+        自动选择阈值内最佳候选
+
+        如果当前选中低于阈值，自动选择最高相似度的候选
+
+        Args:
+            min_similarity: 最小相似度阈值
+
+        Returns:
+            选中的候选，如果没有则返回None
+        """
+        if self.current_match and self.current_match.similarity_score >= min_similarity:
+            return self.current_match
+
+        filtered = self.filter_by_threshold(min_similarity)
+        if filtered:
+            return max(filtered, key=lambda x: x.similarity_score)
+
+        return None
+
 
 @dataclass
 class BatchSearchResult:
