@@ -8,7 +8,7 @@ from PyQt6.QtWidgets import (
     QMenu, QMessageBox, QAbstractItemView, QTabWidget, QSlider
 )
 from PyQt6.QtGui import QFont, QAction
-from PyQt6.QtCore import Qt, pyqtSlot
+from PyQt6.QtCore import Qt, pyqtSlot, QSettings
 from .config import (
     WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
     SOURCE_LABELS, DEFAULT_SOURCES,
@@ -40,11 +40,14 @@ class MainWindow(QMainWindow):
         self.download_worker = None
         self.current_results = {}  # Store search results
 
-        # Match mode settings (for batch download)
+        # Match mode settings (for batch download) - will be loaded from QSettings
         self.current_match_mode = DEFAULT_MATCH_MODE
         self.current_threshold = DEFAULT_MATCH_THRESHOLD
 
         self.setup_ui()
+
+        # Load user preferences after UI is set up
+        self.load_match_preferences()
 
     def setup_ui(self):
         """Setup basic UI"""
@@ -1066,6 +1069,9 @@ class MainWindow(QMainWindow):
 
         logger.info(f"Custom threshold changed to {threshold:.2%} (Custom mode)")
 
+        # Save user preferences
+        self.save_match_preferences()
+
     def on_match_mode_button_clicked(self, mode: MatchMode):
         """
         Match mode button clicked
@@ -1114,6 +1120,63 @@ class MainWindow(QMainWindow):
             )
 
         logger.info(f"Match mode changed to {mode.value} (threshold: {self.current_threshold:.2%})")
+
+        # Save user preferences
+        self.save_match_preferences()
+
+    def load_match_preferences(self):
+        """Load user match preferences from QSettings"""
+        try:
+            settings = QSettings("MusicDownloader", "BatchDownload")
+
+            # Load match mode
+            mode_str = settings.value("match_mode", DEFAULT_MATCH_MODE.value)
+            try:
+                self.current_match_mode = MatchMode(mode_str)
+            except ValueError:
+                self.current_match_mode = DEFAULT_MATCH_MODE
+
+            # Load custom threshold
+            custom_threshold = settings.value("custom_threshold", DEFAULT_MATCH_THRESHOLD)
+            self.current_threshold = float(custom_threshold)
+
+            # If custom mode, set threshold slider
+            if self.current_match_mode == MatchMode.CUSTOM:
+                self.threshold_slider.setValue(int(self.current_threshold * 100))
+                self.threshold_label.setText(f"{int(self.current_threshold * 100)}%")
+
+            # Update button states to match loaded mode
+            if self.current_match_mode == MatchMode.STRICT:
+                self.strict_btn.setChecked(True)
+            elif self.current_match_mode == MatchMode.STANDARD:
+                self.standard_btn.setChecked(True)
+            elif self.current_match_mode == MatchMode.LOOSE:
+                self.loose_btn.setChecked(True)
+            # CUSTOM: none checked
+
+            logger.info(f"Loaded match preferences: {self.current_match_mode.value} (threshold: {self.current_threshold:.2%})")
+
+        except Exception as e:
+            logger.error(f"Error loading match preferences: {e}")
+            # Use defaults if loading fails
+            self.current_match_mode = DEFAULT_MATCH_MODE
+            self.current_threshold = DEFAULT_MATCH_THRESHOLD
+
+    def save_match_preferences(self):
+        """Save user match preferences to QSettings"""
+        try:
+            settings = QSettings("MusicDownloader", "BatchDownload")
+
+            # Save match mode
+            settings.setValue("match_mode", self.current_match_mode.value)
+
+            # Save custom threshold (always save)
+            settings.setValue("custom_threshold", self.current_threshold)
+
+            logger.debug(f"Saved match preferences: {self.current_match_mode.value} (threshold: {self.current_threshold:.2%})")
+
+        except Exception as e:
+            logger.error(f"Error saving match preferences: {e}")
 
 
 def main():
