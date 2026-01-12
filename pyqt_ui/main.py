@@ -357,10 +357,17 @@ class MainWindow(QMainWindow):
                     checked_songs.append(song_dict)
         
         return checked_songs
-    def populate_batch_results_table(self, search_result):
-        """Populate batch results table with matched songs"""
+    def populate_batch_results_table(self, search_result, min_similarity: float = 0.0):
+        """
+        Populate batch results table with matched songs
+
+        Args:
+            search_result: BatchSearchResult object
+            min_similarity: Minimum similarity threshold (optional, for filtering)
+        """
         from PyQt6.QtWidgets import QTableWidgetItem
         from PyQt6.QtCore import Qt
+        from .batch.models import MatchSource
 
         # search_result is BatchSearchResult object
         total_songs = search_result.total_songs
@@ -381,6 +388,18 @@ class MainWindow(QMainWindow):
 
             # Get current match data
             if song_match.has_match and song_match.current_match:
+                # Apply threshold filtering
+                # If current match is below threshold, try to auto-select a better one
+                if song_match.current_match.similarity_score < min_similarity:
+                    best_candidate = song_match.auto_select_best_within_threshold(min_similarity)
+
+                    if best_candidate:
+                        # Switch to better candidate
+                        song_match.switch_to_candidate(best_candidate, MatchSource.AUTO_FILTERED)
+                    else:
+                        # No candidate meets threshold - keep current but mark it
+                        pass  # Current match is already set
+
                 song_dict = song_match.get_current_match_dict()
                 checkbox_item.setData(Qt.ItemDataRole.UserRole, song_dict)
                 checkbox_item.setData(Qt.ItemDataRole.UserRole + 1, song_dict)
@@ -404,23 +423,30 @@ class MainWindow(QMainWindow):
                 source = song_match.current_match.source.replace('MusicClient', '')
                 self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
 
-                # Similarity
-                similarity_item = QTableWidgetItem(
-                    f"{song_match.current_match.similarity_score:.2%}"
-                )
+                # Similarity with color coding
+                similarity_value = song_match.current_match.similarity_score
+                similarity_item = QTableWidgetItem(f"{similarity_value:.2%}")
                 similarity_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
-                if song_match.current_match.similarity_score >= 0.8:
+                # Color based on similarity
+                if similarity_value >= 0.8:
                     similarity_item.setForeground(Qt.GlobalColor.darkGreen)
-                elif song_match.current_match.similarity_score >= 0.6:
+                elif similarity_value >= 0.6:
                     similarity_item.setForeground(Qt.GlobalColor.darkYellow)
                 else:
                     similarity_item.setForeground(Qt.GlobalColor.red)
 
+                # Mark if below threshold
+                if similarity_value < min_similarity:
+                    # Italic or different background to indicate below threshold
+                    font = similarity_item.font()
+                    font.setItalic(True)
+                    similarity_item.setFont(font)
+
                 self.batch_results_table.setItem(row, 6, similarity_item)
 
                 # Action button (switch match)
-                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QStyle
+                from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton
 
                 switch_btn_widget = QWidget()
                 switch_layout = QHBoxLayout(switch_btn_widget)
@@ -1018,19 +1044,76 @@ class MainWindow(QMainWindow):
         # Switch to custom mode
         self.current_match_mode = MatchMode.CUSTOM
 
-        # Note: Table refresh will be implemented in stage 1.4
-        # For now, just log the change
+        # Uncheck preset buttons
+        self.strict_btn.setChecked(False)
+        self.standard_btn.setChecked(False)
+        self.loose_btn.setChecked(False)
+
+        # If search results exist, refresh table with new threshold
+        if hasattr(self, 'current_batch_search_result') and self.current_batch_search_result:
+            self.populate_batch_results_table(
+                self.current_batch_search_result,
+                min_similarity=self.current_threshold
+            )
+
+            # Update status bar
+            total_matched = self.current_batch_search_result.get_match_count()
+            self.statusBar().showMessage(
+                f"Applied custom threshold ({threshold:.0%}), "
+                f"{total_matched} songs have matches",
+                5000
+            )
+
         logger.info(f"Custom threshold changed to {threshold:.2%} (Custom mode)")
 
     def on_match_mode_button_clicked(self, mode: MatchMode):
         """
-        Match mode button clicked (placeholder for stage 1.4)
+        Match mode button clicked
 
         Args:
             mode: The selected match mode
         """
-        # Just log for now - full implementation in stage 1.4
-        logger.info(f"Match mode button clicked: {mode.value}")
+        self.set_match_mode(mode)
+
+    def set_match_mode(self, mode: MatchMode):
+        """
+        Set match mode and refresh table if results exist
+
+        Args:
+            mode: Match mode enum (STRICT/STANDARD/LOOSE/CUSTOM)
+        """
+        self.current_match_mode = mode
+
+        # Set threshold based on mode
+        self.current_threshold = MATCH_THRESHOLDS.get(mode, DEFAULT_MATCH_THRESHOLD)
+
+        # Update button states
+        self.strict_btn.setChecked(mode == MatchMode.STRICT)
+        self.standard_btn.setChecked(mode == MatchMode.STANDARD)
+        self.loose_btn.setChecked(mode == MatchMode.LOOSE)
+
+        # If search results exist, refresh table with filter
+        if hasattr(self, 'current_batch_search_result') and self.current_batch_search_result:
+            self.populate_batch_results_table(
+                self.current_batch_search_result,
+                min_similarity=self.current_threshold
+            )
+
+            # Update status bar
+            total_matched = self.current_batch_search_result.get_match_count()
+            self.statusBar().showMessage(
+                f"Applied {mode.value} mode (≥{self.current_threshold:.0%}), "
+                f"{total_matched} songs have matches",
+                5000
+            )
+        else:
+            # No results yet, just update status
+            self.statusBar().showMessage(
+                f"Match mode set to {mode.value} (≥{self.current_threshold:.0%})",
+                3000
+            )
+
+        logger.info(f"Match mode changed to {mode.value} (threshold: {self.current_threshold:.2%})")
 
 
 def main():
