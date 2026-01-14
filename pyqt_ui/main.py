@@ -15,7 +15,7 @@ from .config import (
     MatchMode, DEFAULT_MATCH_MODE, DEFAULT_MATCH_THRESHOLD,
     MATCH_THRESHOLDS, MATCH_MODE_LABELS
 )
-from .workers import SearchWorker, DownloadWorker, BatchSearchWorker
+from .workers import SearchWorker, DownloadWorker, BatchSearchWorker, ConcurrentSearchWorker
 
 # Setup logging
 logging.basicConfig(
@@ -290,8 +290,13 @@ class MainWindow(QMainWindow):
         self.status_label.setText("Preparing batch search...")
         self.batch_results_table.setVisible(False)
 
-        # Create and start batch search worker
-        self.batch_search_worker = BatchSearchWorker(batch_text, selected_sources)
+        # Create and start concurrent batch search worker
+        self.batch_search_worker = ConcurrentSearchWorker(
+            batch_text=batch_text,
+            sources=selected_sources,
+            search_all_sources=True,
+            max_candidates_per_source=5
+        )
         self.batch_search_worker.search_started.connect(self.on_batch_search_started)
         self.batch_search_worker.search_progress.connect(self.on_batch_search_progress)
         self.batch_search_worker.search_finished.connect(self.on_batch_search_finished)
@@ -302,10 +307,15 @@ class MainWindow(QMainWindow):
         """Handle batch search started"""
         self.statusBar().showMessage('Batch search in progress...')
 
-    @pyqtSlot(str)
-    def on_batch_search_progress(self, message):
+    @pyqtSlot(str, int, int)
+    def on_batch_search_progress(self, message, current, total):
         """Handle batch search progress update"""
         self.status_label.setText(message)
+        # Update progress bar if we have total count
+        if total > 0:
+            progress = int((current / total) * 100)
+            self.progress_bar.setRange(0, 100)
+            self.progress_bar.setValue(progress)
 
     @pyqtSlot(object)
     def on_batch_search_finished(self, search_result):
