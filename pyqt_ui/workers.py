@@ -1,11 +1,12 @@
 """Worker Threads for Async Operations"""
 
-from PyQt6.QtCore import QThread, pyqtSignal, QThreadPool
+from PyQt6.QtCore import QThread, pyqtSignal, QThreadPool, QMutex, QMutexLocker
 from .music_downloader import MusicDownloader
 from .batch.parser import BatchParser
 from .batch.matcher import SongMatcher
 from .concurrent.result_collector import ThreadSafeResultCollector
 from .concurrent.search_runnable import SingleSongSearchRunnable
+from .concurrent.download_runnable import SingleSongDownloadRunnable
 import logging
 import time
 
@@ -400,3 +401,120 @@ class ConcurrentSearchWorker(QThread):
             error_msg = f"并发搜索失败: {str(e)}"
             logger.error(f"[ConcurrentSearch] {error_msg}", exc_info=True)
             self.search_error.emit(error_msg)
+
+
+class ConcurrentDownloadWorker(QThread):
+    """并发批量下载Worker - 替代原有的DownloadWorker
+
+    使用QThreadPool并发下载多首歌，显著提升下载速度。
+    预期加速比：4倍（100首歌从1500秒→375秒）
+    """
+
+    download_started = pyqtSignal()
+    download_progress = pyqtSignal(str, int)  # message, progress%
+    download_finished = pyqtSignal(list)  # successful_songs
+    download_error = pyqtSignal(str)
+
+    def __init__(self, songs: list, download_dir: str = None, max_retries: int = 2):
+        """初始化并发下载Worker
+
+        Args:
+            songs: 要下载的歌曲列表（song_dict格式）
+            download_dir: 下载目录（None则使用默认目录）
+            max_retries: 失败重试次数（默认2次）
+        """
+        super().__init__()
+        self.songs = songs
+        self.download_dir = download_dir
+        self.max_retries = max_retries
+
+        # 固定并发数（可后续改为可配置）
+        self.download_concurrency = 4
+
+        logger.debug(f"ConcurrentDownloadWorker initialized with concurrency={self.download_concurrency}")
+
+    def run(self):
+        """执行并发下载"""
+        try:
+            self.download_started.emit()
+            logger.info(
+                f"[ConcurrentDownload] Started: {len(self.songs)} songs "
+                f"(concurrency={self.download_concurrency})"
+            )
+
+            # 创建线程池
+            thread_pool = QThreadPool(self)
+            thread_pool.setMaxThreadCount(self.download_concurrency)
+            logger.info(f"[ConcurrentDownload] Created QThreadPool with max_workers={self.download_concurrency}")
+
+            # 线程安全的结果收集
+            mutex = QMutex()
+            successful_songs = []
+            failed_songs = []
+
+            # 包装进度回调
+            def update_progress(msg):
+                with QMutexLocker(mutex):
+                    completed = len(successful_songs) + len(failed_songs)
+                    progress = int((completed / len(self.songs)) * 100)
+                    self.download_progress.emit(msg, progress)
+
+            # 提交下载任务
+            for i, song in enumerate(self.songs):
+                song_name = song.get("song_name", "未知")
+                logger.debug(f"[ConcurrentDownload] Launching download task {i+1}/{len(self.songs)}: {song_name}")
+
+                runnable = SingleSongDownloadRunnable(
+                    song_dict=song,
+                    download_dir=self.download_dir,
+                    max_retries=self.max_retries
+                )
+
+                # 连接信号
+                runnable.signals.success.connect(
+                    lambda name: (
+                        successful_songs.append(name),
+                        update_progress(f"✓ 已下载: {name}"),
+                        logger.info(f"[ConcurrentDownload] Success: {name}")
+                    )
+                )
+
+                runnable.signals.error.connect(
+                    lambda name, err: (
+                        failed_songs.append(name),
+                        update_progress(f"✗ 失败: {name}"),
+                        logger.warning(f"[ConcurrentDownload] Failed: {name} - {err}")
+                    )
+                )
+
+                runnable.signals.progress.connect(
+                    lambda msg: logger.debug(f"[ConcurrentDownload] Progress: {msg}")
+                )
+
+                thread_pool.start(runnable)
+
+            # 等待所有任务完成
+            thread_pool.waitForDone()
+
+            # 完成
+            self.download_progress.emit("下载完成！", 100)
+
+            # 计算性能指标
+            success_rate = len(successful_songs) / len(self.songs) if self.songs else 0
+
+            logger.info(
+                f"[ConcurrentDownload] Completed: {len(successful_songs)} successful, "
+                f"{len(failed_songs)} failed (success rate: {success_rate:.1%})"
+            )
+
+            # 记录失败的歌曲
+            if failed_songs:
+                logger.warning(f"[ConcurrentDownload] Failed songs: {', '.join(failed_songs)}")
+
+            self.download_finished.emit(successful_songs)
+
+        except Exception as e:
+            error_msg = f"并发下载失败: {str(e)}"
+            logger.error(f"[ConcurrentDownload] {error_msg}", exc_info=True)
+            self.download_error.emit(error_msg)
+

@@ -15,7 +15,7 @@ from .config import (
     MatchMode, DEFAULT_MATCH_MODE, DEFAULT_MATCH_THRESHOLD,
     MATCH_THRESHOLDS, MATCH_MODE_LABELS
 )
-from .workers import SearchWorker, DownloadWorker, BatchSearchWorker, ConcurrentSearchWorker
+from .workers import SearchWorker, DownloadWorker, BatchSearchWorker, ConcurrentSearchWorker, ConcurrentDownloadWorker
 
 # Setup logging
 logging.basicConfig(
@@ -781,7 +781,7 @@ class MainWindow(QMainWindow):
             self.start_download(songs)
 
     def start_download(self, songs):
-        """Start download with worker thread"""
+        """Start download with concurrent worker thread"""
         # Disable controls
         self.search_btn.setEnabled(False)
         self.search_input.setEnabled(False)
@@ -794,10 +794,14 @@ class MainWindow(QMainWindow):
         self.status_label.setVisible(True)
 
         song_name = songs[0].get('song_name', 'Unknown')
-        self.status_label.setText(f"Preparing to download: {song_name}...")
+        self.status_label.setText(f"准备下载: {song_name} 等 {len(songs)} 首歌曲...")
 
-        # Start worker
-        self.download_worker = DownloadWorker(songs)
+        # Start concurrent download worker
+        self.download_worker = ConcurrentDownloadWorker(
+            songs=songs,
+            download_dir=str(self.download_path),
+            max_retries=2
+        )
         self.download_worker.download_started.connect(self.on_download_started)
         self.download_worker.download_progress.connect(self.on_download_progress)
         self.download_worker.download_finished.connect(self.on_download_finished)
