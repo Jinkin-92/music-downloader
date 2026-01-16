@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QFont, QAction
 from PyQt6.QtCore import Qt, pyqtSlot, QSettings
 from .config import (
-    WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR,
+    WINDOW_TITLE, WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT, LOG_DIR, DOWNLOAD_DIR,
     SOURCE_LABELS, DEFAULT_SOURCES,
     MatchMode, DEFAULT_MATCH_MODE, DEFAULT_MATCH_THRESHOLD,
     MATCH_THRESHOLDS, MATCH_MODE_LABELS
@@ -184,8 +184,9 @@ class MainWindow(QMainWindow):
         # Batch Results Table
         self.batch_results_table = QTableWidget()
         self.batch_results_table.setColumnCount(7)  # Added similarity column
+        # ✅ 使用中文列标题
         self.batch_results_table.setHorizontalHeaderLabels([
-            '[checkbox]', '#', 'Song Name', 'Singer', 'Album', 'Source', 'Similarity'
+            '☐', '#', '歌曲名', '歌手', '专辑', '源', '相似度'
         ])
         self.batch_results_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.batch_results_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
@@ -194,8 +195,27 @@ class MainWindow(QMainWindow):
         self.batch_results_table.setColumnWidth(0, 40)
         self.batch_results_table.setColumnWidth(1, 50)
         self.batch_results_table.setVisible(False)
+
+        # ✅ 为相似度列添加工具提示（第6列）
+        # 注意：需要在表格显示后才能获取表头项，所以在populate_batch_results_table()中处理
         batch_layout.addWidget(self.batch_results_table)
-        
+
+        # 批量操作按钮组（全选、反选）
+        batch_actions_layout = QHBoxLayout()
+        self.select_all_btn = QPushButton("全选")
+        self.select_all_btn.setMinimumHeight(35)
+        self.select_all_btn.clicked.connect(self.on_batch_select_all)
+        self.select_all_btn.setEnabled(False)
+
+        self.invert_selection_btn = QPushButton("反选")
+        self.invert_selection_btn.setMinimumHeight(35)
+        self.invert_selection_btn.clicked.connect(self.on_batch_invert_selection)
+        self.invert_selection_btn.setEnabled(False)
+
+        batch_actions_layout.addWidget(self.select_all_btn)
+        batch_actions_layout.addWidget(self.invert_selection_btn)
+        batch_layout.addLayout(batch_actions_layout)
+
         # Batch download button
         self.batch_download_btn = QPushButton("Download Selected")
         self.batch_download_btn.setMinimumHeight(40)
@@ -329,11 +349,24 @@ class MainWindow(QMainWindow):
         # Store result for later use (e.g., match switching)
         self.current_batch_search_result = search_result
 
-        # Populate batch results table
-        self.populate_batch_results_table(search_result)
+        # Populate batch results table with current threshold setting
+        self.populate_batch_results_table(
+            search_result,
+            min_similarity=self.current_threshold
+        )
 
         total_matched = search_result.get_match_count()
-        self.statusBar().showMessage(f'Batch search completed: {total_matched} songs found', 5000)
+        total_songs = search_result.total_songs
+
+        # ✅ 添加使用提示
+        if total_songs > 0:
+            hint_msg = (
+                f"批量搜索完成: {total_matched}/{total_songs} 首歌曲匹配 | "
+                f"提示: 点击相似度列的 ▼ 按钮可切换到其他搜索结果"
+            )
+            self.statusBar().showMessage(hint_msg, 8000)
+        else:
+            self.statusBar().showMessage('批量搜索完成: 未找到匹配', 5000)
 
     @pyqtSlot(str)
     def on_batch_search_error(self, error_msg):
@@ -396,9 +429,30 @@ class MainWindow(QMainWindow):
         self.batch_results_table.setRowCount(total_songs)
         self.batch_results_table.setVisible(True)
 
+        # ✅ 为相似度列标题添加工具提示
+        similarity_header_item = self.batch_results_table.horizontalHeaderItem(6)
+        if similarity_header_item is None:
+            # 如果表头项不存在，先创建它们
+            self.batch_results_table.setHorizontalHeaderLabels([
+                '☐', '#', '歌曲名', '歌手', '专辑', '源', '相似度'
+            ])
+            similarity_header_item = self.batch_results_table.horizontalHeaderItem(6)
+
+        if similarity_header_item:
+            similarity_header_item.setToolTip(
+                "相似度说明\n\n"
+                "点击 ▼ 按钮切换到其他搜索结果\n\n"
+                "颜色含义：\n"
+                "• 绿色 (≥80%): 高度匹配\n"
+                "• 黄色 (60-79%): 中等匹配\n"
+                "• 红色 (<60%): 低匹配，建议手动确认"
+            )
+
         # Enable batch download button if there are results
         if search_result.get_match_count() > 0:
             self.batch_download_btn.setEnabled(True)
+            self.select_all_btn.setEnabled(True)
+            self.invert_selection_btn.setEnabled(True)
 
         for row, (original_line, song_match) in enumerate(matches.items()):
             # Checkbox column
@@ -547,8 +601,11 @@ class MainWindow(QMainWindow):
 
                     quick_switch_btn = QPushButton(btn_text)
                     quick_switch_btn.setMinimumSize(*btn_min_size)
+                    # ✅ 添加清晰的工具提示
                     quick_switch_btn.setToolTip(
-                        f"Current source ({song_match.current_source}) has {num_candidates} candidates"
+                        f"点击切换到其他搜索结果\n"
+                        f"当前源 ({song_match.current_source}) 有 {num_candidates} 个候选\n"
+                        f"右键点击查看所有源的候选"
                     )
 
                     # Apply button style
@@ -568,27 +625,94 @@ class MainWindow(QMainWindow):
                 self.batch_results_table.setCellWidget(row, 6, similarity_widget)
 
             else:
-                # No match found
+                # No match found (similarity < 0.6) but show best candidate if available
                 checkbox_item.setData(Qt.ItemDataRole.UserRole, original_line)
 
-                # Song name - show original query
-                self.batch_results_table.setItem(
-                    row, 2, QTableWidgetItem(song_match.query['name'])
-                )
+                # 检查是否有任何候选（即使相似度 < 0.6）
+                all_candidates = []
+                for candidates in song_match.all_matches.values():
+                    all_candidates.extend(candidates)
 
-                # Singer
-                self.batch_results_table.setItem(
-                    row, 3, QTableWidgetItem(song_match.query['singer'])
-                )
+                if all_candidates:
+                    # ✅ 直接显示最佳候选（即使低于阈值）
+                    best_candidate = max(all_candidates, key=lambda x: x.similarity_score)
 
-                # Album - show empty
-                self.batch_results_table.setItem(row, 4, QTableWidgetItem(""))
+                    # 设置为当前匹配（标记为用户可选）
+                    song_match.current_match = best_candidate
+                    song_match.current_source = best_candidate.source
+                    # 保持 has_match=False，表示未达到自动匹配标准
 
-                # Source - show "Not Found"
-                self.batch_results_table.setItem(row, 5, QTableWidgetItem("Not Found"))
+                    # 准备歌曲字典
+                    song_dict = best_candidate.to_dict()
+                    checkbox_item.setData(Qt.ItemDataRole.UserRole, song_dict)
+                    checkbox_item.setData(Qt.ItemDataRole.UserRole + 1, song_dict)
 
-                # Similarity - show "N/A"
-                self.batch_results_table.setItem(row, 6, QTableWidgetItem("N/A"))
+                    # 显示歌曲信息（与已匹配歌曲相同的显示方式）
+                    self.batch_results_table.setItem(
+                        row, 2, QTableWidgetItem(best_candidate.song_name)
+                    )
+
+                    self.batch_results_table.setItem(
+                        row, 3, QTableWidgetItem(best_candidate.singers)
+                    )
+
+                    self.batch_results_table.setItem(
+                        row, 4, QTableWidgetItem(best_candidate.album)
+                    )
+
+                    # Source
+                    source = best_candidate.source.replace('MusicClient', '')
+                    self.batch_results_table.setItem(row, 5, QTableWidgetItem(source))
+
+                    # Similarity column - 红色粗体标记低相似度
+                    from PyQt6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
+
+                    similarity_widget = QWidget()
+                    similarity_layout = QHBoxLayout(similarity_widget)
+                    similarity_layout.setContentsMargins(4, 2, 4, 2)
+
+                    similarity_value = best_candidate.similarity_score
+                    similarity_text = f"{similarity_value:.2%} (低匹配)"
+
+                    similarity_label = QLabel(similarity_text)
+                    similarity_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+                    # ✅ 红色粗体标记
+                    similarity_label.setStyleSheet("color: red; font-weight: bold;")
+
+                    similarity_layout.addWidget(similarity_label)
+
+                    # ✅ 正常显示快速切换按钮（让用户可以查看其他候选）
+                    current_source_candidates = song_match.get_all_candidates_from_current_source()
+                    if len(current_source_candidates) > 1:
+                        quick_switch_btn = QPushButton("▼")
+                        quick_switch_btn.setMaximumWidth(30)
+                        quick_switch_btn.setToolTip("点击切换到其他搜索结果")
+                        quick_switch_btn.clicked.connect(
+                            lambda _, line=original_line: self.show_quick_switch_menu(line, quick_switch_btn)
+                        )
+                        similarity_layout.addWidget(quick_switch_btn)
+
+                    similarity_layout.addStretch()
+
+                    # Set widget to table
+                    self.batch_results_table.setCellWidget(row, 6, similarity_widget)
+                else:
+                    # ❌ 完全没有搜索结果
+                    self.batch_results_table.setItem(
+                        row, 2, QTableWidgetItem(song_match.query['name'])
+                    )
+
+                    self.batch_results_table.setItem(
+                        row, 3, QTableWidgetItem(song_match.query['singer'])
+                    )
+
+                    self.batch_results_table.setItem(row, 4, QTableWidgetItem(""))
+
+                    # Source - show "Not Found"
+                    self.batch_results_table.setItem(row, 5, QTableWidgetItem("Not Found"))
+
+                    # Similarity - show "N/A"
+                    self.batch_results_table.setItem(row, 6, QTableWidgetItem("N/A"))
 
                 # Action button (retry search) - add to a new column if needed, or skip for now
                 # For now, we'll skip the retry button to focus on quick switch feature
@@ -799,7 +923,7 @@ class MainWindow(QMainWindow):
         # Start concurrent download worker
         self.download_worker = ConcurrentDownloadWorker(
             songs=songs,
-            download_dir=str(self.download_path),
+            download_dir=str(DOWNLOAD_DIR),
             max_retries=2
         )
         self.download_worker.download_started.connect(self.on_download_started)
@@ -1532,6 +1656,46 @@ class MainWindow(QMainWindow):
 
         except Exception as e:
             logger.error(f"Error saving match preferences: {e}")
+
+    @pyqtSlot()
+    def on_batch_select_all(self):
+        """全选：选中批量结果表格中的所有歌曲"""
+        for row in range(self.batch_results_table.rowCount()):
+            checkbox_item = self.batch_results_table.item(row, 0)
+            if checkbox_item:
+                checkbox_item.setCheckState(Qt.CheckState.Checked)
+
+        # 更新状态栏
+        total_rows = self.batch_results_table.rowCount()
+        self.statusBar().showMessage(f"已选中全部 {total_rows} 首歌曲", 3000)
+        logger.debug(f"Select All: Checked {total_rows} rows")
+
+    @pyqtSlot()
+    def on_batch_invert_selection(self):
+        """反选：切换批量结果表格中所有歌曲的选中状态"""
+        checked_count = 0
+        unchecked_count = 0
+
+        for row in range(self.batch_results_table.rowCount()):
+            checkbox_item = self.batch_results_table.item(row, 0)
+            if checkbox_item:
+                current_state = checkbox_item.checkState()
+                # 切换状态：选中→未选中，未选中→选中
+                new_state = (Qt.CheckState.Unchecked if current_state == Qt.CheckState.Checked
+                            else Qt.CheckState.Checked)
+                checkbox_item.setCheckState(new_state)
+
+                if new_state == Qt.CheckState.Checked:
+                    checked_count += 1
+                else:
+                    unchecked_count += 1
+
+        # 更新状态栏
+        self.statusBar().showMessage(
+            f"反选完成：已选中 {checked_count} 首，未选中 {unchecked_count} 首",
+            3000
+        )
+        logger.debug(f"Invert Selection: {checked_count} checked, {unchecked_count} unchecked")
 
 
 def main():

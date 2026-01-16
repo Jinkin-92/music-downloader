@@ -16,10 +16,16 @@ class SongMatcher:
 
     @staticmethod
     def _normalize_text(text: str) -> str:
-        """Normalize text for comparison"""
+        """Normalize text for comparison
+
+        Preserves Chinese characters, English letters, and numbers
+        Removes only punctuation, spaces, and special characters
+        """
         import re
         text = text.lower()
-        text = re.sub(r'[^\w]', '', text)
+        # ✅ 保留中文字符范围 (\u4e00-\u9fff)、英文字母、数字
+        # 只移除标点符号、空格和特殊字符
+        text = re.sub(r'[^\u4e00-\u9fff\w]', '', text)
         return text
     @staticmethod
     def is_match(name_query: str, singer_query: str,
