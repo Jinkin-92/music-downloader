@@ -1,0 +1,21 @@
+2026-02-24 12:34:41,127 - __main__ - INFO - 后端日志文件: D:\code\下载音乐软件\logs\backend.log
+2026-02-24 12:34:41,779 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-02-24 12:34:42,978 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully with 180s timeout
+2026-02-24 12:34:43,033 - __main__ - INFO - 后端日志文件: D:\code\下载音乐软件\logs\backend.log
+2026-02-24 12:34:43,046 - __main__ - INFO - 静态文件目录: D:\code\下载音乐软件\backend\static
+INFO:     Will watch for changes in these directories: ['D:\\code\\下载音乐软件']
+INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
+INFO:     Started reloader process [25500] using StatReload
+2026-02-24 12:34:43,525 - __mp_main__ - INFO - 后端日志文件: D:\code\下载音乐软件\logs\backend.log
+2026-02-24 12:34:44,165 - pyqt_ui.music_downloader - INFO - Initializing MusicClient...
+2026-02-24 12:34:45,554 - pyqt_ui.music_downloader - INFO - MusicClient initialized successfully with 180s timeout
+2026-02-24 12:34:45,611 - __mp_main__ - INFO - 后端日志文件: D:\code\下载音乐软件\logs\backend.log
+2026-02-24 12:34:45,618 - __mp_main__ - INFO - 静态文件目录: D:\code\下载音乐软件\backend\static
+2026-02-24 12:34:45,676 - backend.main - INFO - 后端日志文件: D:\code\下载音乐软件\logs\backend.log
+2026-02-24 12:34:45,676 - backend.main - INFO - 后端日志文件: D:\code\下载音乐软件\logs\backend.log
+2026-02-24 12:34:45,683 - backend.main - INFO - 静态文件目录: D:\code\下载音乐软件\backend\static
+INFO:     Started server process [38760]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'backend\workers\concurrent_search.py'. Reloading...
+ 

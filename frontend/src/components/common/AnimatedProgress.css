@@ -1,0 +1,250 @@
+/**
+ * 流体动画进度条样式
+ *
+ * 特性：
+ * - 渐变色背景
+ * - 流动光效动画
+ * - 平滑过渡
+ * - 多主题配色
+ */
+
+/* 基础容器 */
+.animated-progress-container {
+  position: relative;
+  width: 100%;
+}
+
+/* 进度条基础样式 */
+.animated-progress-bar {
+  transition: all 0.3s ease;
+}
+
+.animated-progress-bar .ant-progress-bg {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== 主题配色 ========== */
+
+/* 蓝色主题（默认） */
+.animated-progress-blue .ant-progress-bg {
+  background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%) !important;
+  box-shadow: 0 2px 8px rgba(24, 144, 255, 0.3);
+}
+
+.animated-progress-blue .ant-progress-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-blue 2s infinite;
+}
+
+/* 绿色主题 */
+.animated-progress-green .ant-progress-bg {
+  background: linear-gradient(90deg, #52c41a 0%, #73d13d 100%) !important;
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+}
+
+.animated-progress-green .ant-progress-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-green 2s infinite;
+}
+
+/* 紫色主题 */
+.animated-progress-purple .ant-progress-bg {
+  background: linear-gradient(90deg, #722ed1 0%, #9254de 100%) !important;
+  box-shadow: 0 2px 8px rgba(114, 46, 209, 0.3);
+}
+
+.animated-progress-purple .ant-progress-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-purple 2s infinite;
+}
+
+/* 橙色主题 */
+.animated-progress-orange .ant-progress-bg {
+  background: linear-gradient(90deg, #fa8c16 0%, #ffa940 100%) !important;
+  box-shadow: 0 2px 8px rgba(250, 140, 22, 0.3);
+}
+
+.animated-progress-orange .ant-progress-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-orange 2s infinite;
+}
+
+/* 粉色主题 */
+.animated-progress-pink .ant-progress-bg {
+  background: linear-gradient(90deg, #eb2f96 0%, #f759ab 100%) !important;
+  box-shadow: 0 2px 8px rgba(235, 47, 150, 0.3);
+}
+
+.animated-progress-pink .ant-progress-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer-pink 2s infinite;
+}
+
+/* ========== 流动光效动画 ========== */
+
+@keyframes shimmer-blue {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes shimmer-green {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes shimmer-purple {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes shimmer-orange {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+@keyframes shimmer-pink {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ========== 脉冲效果 ========== */
+
+.animated-progress-bar .ant-progress-bg::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scaleY(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* ========== 子内容区域 ========== */
+
+.animated-progress-children {
+  margin-top: 12px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== 响应式调整 ========== */
+
+@media (max-width: 768px) {
+  .animated-progress-bar .ant-progress-bg {
+    stroke-width: 8px !important;
+  }
+}

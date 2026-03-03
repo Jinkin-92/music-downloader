@@ -1,0 +1,8 @@
+.gitnexus
+gitnexus/
+
+# Dependencies
+node_modules/
+__pycache__/
+.venv/
+*.pyc

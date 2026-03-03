@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  music-downloader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pyqt6-music-downloader
+    ports:
+      - "5901:5901"  # VNC 端口
+    volumes:
+      # 持久化下载的音乐文件
+      - ./musicdl_outputs:/app/musicdl_outputs
+      # 持久化日志文件
+      - ./logs:/app/logs
+    environment:
+      - DISPLAY=:1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    # 可选：限制资源使用
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '2'
+    #       memory: 2G

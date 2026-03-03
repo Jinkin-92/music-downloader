@@ -1,0 +1,56 @@
+
+> music-downloader-frontend@2.0.0 dev
+> vite
+
+Port 5173 is in use, trying another one...
+Port 5174 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m415[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://100.110.114.24:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.200:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.48.1:[1m5175[22m/[39m
+[2m12:19:48[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/playlist/parse[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[2m12:19:48[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/logs/error[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[2m12:24:37[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/playlist/parse[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[2m12:24:37[22m [31m[1m[vite][22m[39m [31mhttp proxy error: /api/logs/error[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1134:18)
+    at afterConnectMultiple (node:net:1715:7)
+[2m12:25:50[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m12:25:50[22m [36m[1m[vite][22m[39m server restarted.
+[2m12:58:12[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m10:57:24[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.tsx, /src/pages/SingleSearchPage.tsx, /src/pages/PlaylistImportPage.tsx, /src/pages/BatchDownloadPage.tsx, /src/components/search/SourceSelector.tsx, /src/components/batch/MatchSettings.tsx[22m
+[2m10:57:36[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m10:58:09[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m10:58:46[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m10:59:23[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m10:59:40[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m11:01:16[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m11:05:40[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m11:05:51[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m11:06:15[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m11:06:29[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m11:06:48[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m14:22:32[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m14:14:44[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m14:14:59[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m14:15:25[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/PlaylistImportPage.tsx[22m
+[2m09:00:59[22m [36m[1m[vite][22m[39m [32mvite.config.ts changed, restarting server...[39m
+[2m09:01:00[22m [36m[1m[vite][22m[39m server restarted.
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://28.0.0.1:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://100.110.114.24:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.200:[1m5175[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.48.1:[1m5175[22m/[39m
