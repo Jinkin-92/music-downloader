@@ -24,6 +24,7 @@ DEFAULT_SOURCES = [
     "NeteaseMusicClient",
     "KugouMusicClient",
     "KuwoMusicClient",
+    "MiguMusicClient",  # 新增：咪咕音乐，提供更多版权歌曲
 ]
 
 # Source labels for display
@@ -32,6 +33,7 @@ SOURCE_LABELS = {
     "NeteaseMusicClient": "网易云",
     "KugouMusicClient": "酷狗",
     "KuwoMusicClient": "酷我",
+    "MiguMusicClient": "咪咕",
 }
 
 # Batch Download Configuration

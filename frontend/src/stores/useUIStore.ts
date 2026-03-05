@@ -13,6 +13,7 @@ const FALLBACK_SOURCES = [
   'NeteaseMusicClient',
   'KugouMusicClient',
   'KuwoMusicClient',
+  'MiguMusicClient',  // 新增：咪咕音乐
 ];
 
 // 音乐源标签映射
@@ -21,6 +22,7 @@ const SOURCE_LABELS: Record<string, string> = {
   'NeteaseMusicClient': '网易云',
   'KugouMusicClient': '酷狗',
   'KuwoMusicClient': '酷我',
+  'MiguMusicClient': '咪咕',
 };
 
 /**

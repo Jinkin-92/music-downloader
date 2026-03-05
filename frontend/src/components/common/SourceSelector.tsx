@@ -14,6 +14,7 @@ export const MUSIC_SOURCES = [
   { value: 'QQMusicClient', label: 'QQ音乐' },
   { value: 'KugouMusicClient', label: '酷狗' },
   { value: 'KuwoMusicClient', label: '酷我' },
+  { value: 'MiguMusicClient', label: '咪咕' },
 ] as const;
 
 interface SourceSelectorProps {
