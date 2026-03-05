@@ -251,6 +251,9 @@ class AsyncConcurrentSearcher:
             threshold=self.similarity_threshold
         )
 
+        # 记录搜索结果数量
+        logger.info(f"[匹配] 查询: {parsed_song.get('name')} - {parsed_song.get('singer')}, 搜索结果数: {len(all_results)}")
+
         if best_match:
             # 创建候选列表（所有结果按相似度排序）
             candidates = []
@@ -376,7 +379,24 @@ class AsyncConcurrentSearcher:
                 has_match=True
             )
         else:
-            # 无匹配结果
+            # 无匹配结果 - 记录详细原因
+            query_name = parsed_song.get('name', '')
+            query_singer = parsed_song.get('singer', '')
+            if all_results:
+                # 有搜索结果但相似度不足
+                logger.warning(f"[匹配失败] {query_name} - {query_singer}: 搜索到 {len(all_results)} 个结果但相似度不足阈值 {self.similarity_threshold}")
+                # 记录最高相似度
+                if all_results:
+                    best_score = 0
+                    for r in all_results:
+                        score = self._calculate_combined_similarity(parsed_song, r)
+                        if score > best_score:
+                            best_score = score
+                    logger.warning(f"[匹配失败] 最高相似度: {best_score:.2f}")
+            else:
+                # 无搜索结果
+                logger.warning(f"[匹配失败] {query_name} - {query_singer}: 无搜索结果")
+
             return BatchSongMatch(
                 query=parsed_song,
                 all_matches={},

@@ -527,6 +527,8 @@ function PlaylistImportPage() {
         download_url: match.download_url,
         ext: match.ext || 'mp3',
         duration_s: match.duration_s || 0,
+        // 关键：传递 song_id 用于从缓存获取 SongInfo 对象
+        song_id: match.song_id,
         // 传递相似度信息用于调试
         similarity: match.similarity,
       };

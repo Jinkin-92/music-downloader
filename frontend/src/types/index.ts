@@ -80,6 +80,7 @@ export interface MatchCandidate {
   download_url?: string;   // 直接下载URL
   duration_s?: number;      // 时长（秒），用于过滤
   ext?: string;             // 文件扩展名
+  song_id?: string;         // 缓存ID，用于获取SongInfo对象
   // 相似度分解字段
   name_similarity?: number;    // 歌名相似度
   singer_similarity?: number;  // 歌手相似度

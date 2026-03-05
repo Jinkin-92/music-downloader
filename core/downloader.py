@@ -220,33 +220,33 @@ class MusicDownloader:
                                             # Update the work_dir and save_path for custom directory
                                             if download_dir and hasattr(si, 'work_dir'):
                                                 si.work_dir = target_dir
-                                            if download_dir and hasattr(si, 'save_path'):
-                                                # Rebuild save_path with new directory
+                                            if download_dir:
+                                                # 设置 _save_path 私有字段（save_path 是只读 property）
                                                 ext = getattr(si, 'ext', 'mp3')
                                                 song_name_safe = song_name.replace('/', '-').replace('\\', '-')
                                                 singers = getattr(si, 'singers', '')
                                                 singers_safe = singers.replace('/', '-').replace('\\', '-') if singers else ''
                                                 filename = f"{song_name_safe} - {singers_safe}.{ext}" if singers else f"{song_name_safe}.{ext}"
-                                                si.save_path = os.path.join(target_dir, filename)
+                                                si._save_path = os.path.join(target_dir, filename)
                                             song_info_objects.append(si)
                                             logger.info(f"Found SongInfo: {si.song_name}, save_path: {getattr(si, 'save_path', 'N/A')}")
                                             break
                     else:
                         # It's a SongInfo object - update work_dir and save_path for custom directory
                         if download_dir:
+                            # 设置 work_dir 让 save_path property 自动生成正确路径
                             if hasattr(song_obj, 'work_dir'):
                                 song_obj.work_dir = target_dir
                                 logger.info(f"[CUSTOM PATH] Updated work_dir to: {target_dir}")
-                            if hasattr(song_obj, 'save_path'):
-                                # Rebuild save_path with new directory
-                                ext = getattr(song_obj, 'ext', 'mp3')
-                                song_name = getattr(song_obj, 'song_name', 'Unknown')
-                                song_name_safe = song_name.replace('/', '-').replace('\\', '-')
-                                singers = getattr(song_obj, 'singers', '')
-                                singers_safe = singers.replace('/', '-').replace('\\', '-') if singers else ''
-                                filename = f"{song_name_safe} - {singers_safe}.{ext}" if singers else f"{song_name_safe}.{ext}"
-                                song_obj.save_path = os.path.join(target_dir, filename)
-                                logger.info(f"[CUSTOM PATH] Updated save_path to: {song_obj.save_path}")
+                            # 设置 _save_path 私有字段（save_path 是只读 property）
+                            ext = getattr(song_obj, 'ext', 'mp3')
+                            song_name = getattr(song_obj, 'song_name', 'Unknown')
+                            song_name_safe = song_name.replace('/', '-').replace('\\', '-')
+                            singers = getattr(song_obj, 'singers', '')
+                            singers_safe = singers.replace('/', '-').replace('\\', '-') if singers else ''
+                            filename = f"{song_name_safe} - {singers_safe}.{ext}" if singers else f"{song_name_safe}.{ext}"
+                            song_obj._save_path = os.path.join(target_dir, filename)
+                            logger.info(f"[CUSTOM PATH] Updated _save_path to: {song_obj._save_path}")
                         song_info_objects.append(song_obj)
                 else:
                     logger.warning(f"No song_info_obj found in: {song_dict}")
