@@ -6,7 +6,6 @@
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout, Typography, Menu } from 'antd';
 import { useUIStore } from './stores/useUIStore';
-import SingleSearchPage from './pages/SingleSearchPage';
 import BatchDownloadPage from './pages/BatchDownloadPage';
 import PlaylistImportPage from './pages/PlaylistImportPage';
 import DownloadHistoryPage from './pages/DownloadHistoryPage';
@@ -18,10 +17,6 @@ function App() {
   const selectedSources = useUIStore((state) => state.selectedSources);
 
   const menuItems = [
-    {
-      key: '/search',
-      label: '单曲搜索',
-    },
     {
       key: '/batch',
       label: '批量下载',
@@ -69,7 +64,7 @@ function App() {
         >
           <Menu
             mode="inline"
-            defaultSelectedKeys={['/search']}
+            defaultSelectedKeys={['/batch']}
             style={{ borderRight: 0 }}
             items={menuItems}
             onClick={handleMenuClick}
@@ -78,11 +73,8 @@ function App() {
 
         <Layout.Content style={{ padding: '24px' }}>
           <Routes>
-            {/* 默认重定向到单曲搜索 */}
-            <Route path="/" element={<Navigate to="/search" replace />} />
-
-            {/* 单曲搜索页 */}
-            <Route path="/search" element={<SingleSearchPage />} />
+            {/* 默认重定向到批量下载 */}
+            <Route path="/" element={<Navigate to="/batch" replace />} />
 
             {/* 批量下载页 */}
             <Route path="/batch" element={<BatchDownloadPage />} />

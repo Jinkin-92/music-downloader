@@ -44,6 +44,7 @@ import type { BatchMatchInfoV2, MatchCandidate } from '../types';
 import { saveErrorLog } from '../utils/errorLogger';
 import { playlistApi } from '../services/api';
 import { useUIStore } from '../stores/useUIStore';
+import SourceSelector from '../components/common/SourceSelector';
 
 const { Title, Text } = Typography;
 
@@ -899,51 +900,7 @@ function PlaylistImportPage() {
                   borderRadius: 8,
                 }}
               >
-                <div>
-                  <Text strong>音乐源：</Text>
-                  <Checkbox.Group
-                    value={selectedSources}
-                    onChange={(sources) => {
-                      const store = useUIStore.getState();
-                      store.setSelectedSources(sources as string[]);
-                    }}
-                    style={{ marginLeft: 16 }}
-                  >
-                    <Checkbox value="NeteaseMusicClient">网易云</Checkbox>
-                    <Checkbox value="QQMusicClient">QQ音乐</Checkbox>
-                    <Checkbox value="KugouMusicClient">酷狗</Checkbox>
-                    <Checkbox value="KuwoMusicClient">酷我</Checkbox>
-                  </Checkbox.Group>
-                  <Text type="secondary" style={{ marginLeft: 16, fontSize: 12 }}>
-                    {/* 快速模式/完整模式切换 */}
-                    <Button
-                      type="link"
-                      size="small"
-                      onClick={() => {
-                        const store = useUIStore.getState();
-                        // 快速模式：只选网易云和QQ音乐
-                        store.setSelectedSources(['NeteaseMusicClient', 'QQMusicClient']);
-                        messageApi.info('已切换到快速模式（网易云+QQ音乐），搜索更快');
-                      }}
-                      style={{ padding: '0 4px', fontSize: 12 }}
-                    >
-                      快速
-                    </Button>
-                    <Button
-                      type="link"
-                      size="small"
-                      onClick={() => {
-                        const store = useUIStore.getState();
-                        // 完整模式：选择全部4个源
-                        store.setSelectedSources(['NeteaseMusicClient', 'QQMusicClient', 'KugouMusicClient', 'KuwoMusicClient']);
-                        messageApi.info('已切换到完整模式（4个源），匹配更全面但较慢');
-                      }}
-                      style={{ padding: '0 4px', fontSize: 12 }}
-                    >
-                      完整
-                    </Button>
-                  </Text>
-                </div>
+                <SourceSelector label="音乐源：" showQuickMode />
 
                 <Space>
                   {!searchCompleted ? (

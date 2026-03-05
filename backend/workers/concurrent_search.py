@@ -244,25 +244,35 @@ class AsyncConcurrentSearcher:
         Returns:
             BatchSongMatch对象
         """
-        # 使用SongMatcher找到最佳匹配（传入自定义阈值）
+        # 记录原始搜索结果数量
+        original_count = len(all_results)
+        logger.info(f"[匹配] 查询: {parsed_song.get('name')} - {parsed_song.get('singer')}, 原始搜索结果数: {original_count}")
+
+        # ⚠️ 关键修复：先过滤时长，再计算最佳匹配
+        # 过滤35秒以下的试听片段，避免最佳匹配是短时长歌曲
+        filtered_results = []
+        filtered_count = 0
+        for result in all_results:
+            if not self._filter_by_duration(result, min_seconds=35):
+                filtered_count += 1
+                logger.debug(f"[过滤试听源] {result.get('song_name')} - 时长 {result.get('duration')}")
+                continue
+            filtered_results.append(result)
+
+        if filtered_count > 0:
+            logger.info(f"[时长过滤] 过滤了 {filtered_count} 个短时长结果（< 35秒）")
+
+        # 使用过滤后的结果找最佳匹配
         best_match = SongMatcher.find_best_match(
             parsed_song,
-            all_results,
+            filtered_results,  # 使用过滤后的数据
             threshold=self.similarity_threshold
         )
 
-        # 记录搜索结果数量
-        logger.info(f"[匹配] 查询: {parsed_song.get('name')} - {parsed_song.get('singer')}, 搜索结果数: {len(all_results)}")
-
         if best_match:
-            # 创建候选列表（所有结果按相似度排序）
+            # 创建候选列表（使用已过滤的结果）
             candidates = []
-            for result in all_results:
-                # 时长过滤：排除35秒以下的试听片段
-                if not self._filter_by_duration(result, min_seconds=35):
-                    logger.debug(f"过滤短音频: {result.get('song_name')} - 时长 {result.get('duration')}")
-                    continue
-
+            for result in filtered_results:  # 直接使用已过滤的结果
                 # 计算相似度分解（包含各部分得分）
                 breakdown = self._calculate_similarity_breakdown(parsed_song, result)
 

@@ -182,7 +182,7 @@ async def get_downloaded_files():
     """
     获取已下载的文件列表
 
-    扫描下载目录，返回所有已下载的文件。
+    递归扫描下载目录的所有子目录，返回所有音频文件。
 
     Returns:
         文件列表
@@ -191,19 +191,27 @@ async def get_downloaded_files():
         # 确保下载目录存在
         os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-        # 扫描文件
-        files = []
-        for filename in os.listdir(DOWNLOAD_DIR):
-            filepath = os.path.join(DOWNLOAD_DIR, filename)
-            if os.path.isfile(filepath):
-                stat = os.stat(filepath)
-                files.append({
-                    'name': filename,
-                    'size': stat.st_size,
-                    'modified': stat.st_mtime
-                })
+        # 支持的音频文件扩展名
+        audio_extensions = ('.mp3', '.flac', '.wav', '.m4a', '.ogg', '.aac', '.wma')
 
-        logger.info(f"扫描下载目录: {len(files)} 个文件")
+        # 递归扫描所有子目录
+        files = []
+        for root, dirs, filenames in os.walk(DOWNLOAD_DIR):
+            for filename in filenames:
+                # 只返回音频文件
+                if filename.lower().endswith(audio_extensions):
+                    filepath = os.path.join(root, filename)
+                    stat = os.stat(filepath)
+                    # 计算相对路径，便于前端显示来源
+                    rel_path = os.path.relpath(filepath, DOWNLOAD_DIR)
+                    files.append({
+                        'name': filename,
+                        'path': rel_path,  # 相对路径，显示来源目录
+                        'size': stat.st_size,
+                        'modified': stat.st_mtime
+                    })
+
+        logger.info(f"扫描下载目录: {len(files)} 个音频文件")
 
         return FilesListResponse(
             success=True,
