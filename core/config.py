@@ -40,6 +40,12 @@ SOURCE_LABELS = {
 BATCH_MAX_SONGS = 200
 BATCH_MATCH_SIMILARITY_THRESHOLD = 0.6
 
+# Duration Filter Configuration - 过滤试听片段
+MIN_DURATION_SECONDS = 35  # 最小时长（秒），过滤35秒以下的试听片段
+
+# Download History Database Configuration
+HISTORY_DB_PATH = BASE_DIR / "data" / "download_history.db"
+
 # Batch Search Configuration
 BATCH_SEARCH_ALL_SOURCES = True
 BATCH_MAX_CANDIDATES_PER_SOURCE = 5

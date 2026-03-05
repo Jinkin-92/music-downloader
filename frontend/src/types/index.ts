@@ -189,12 +189,13 @@ export const DEFAULT_SOURCES = SOURCES.map(s => s.value);
 
 /**
  * 匹配模式选项
+ * v2: 更新为精确80%、标准60%、宽松40%
  */
 export const MATCH_MODES = {
   strict: {
-    label: '严格',
-    value: 0.7,
-    description: '只接受高相似度匹配（≥70%），减少误匹配但可能漏掉部分歌曲'
+    label: '精确',
+    value: 0.8,
+    description: '只接受高相似度匹配（≥80%），减少误匹配但可能漏掉部分歌曲'
   },
   standard: {
     label: '标准',
@@ -203,7 +204,7 @@ export const MATCH_MODES = {
   },
   loose: {
     label: '宽松',
-    value: 0.5,
-    description: '接受更多可能的匹配（≥50%），提高匹配成功率但可能包含不准确结果'
+    value: 0.4,
+    description: '接受更多可能的匹配（≥40%），提高匹配成功率但可能包含不准确结果'
   },
 };

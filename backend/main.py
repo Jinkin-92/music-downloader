@@ -134,6 +134,7 @@ from backend.api.search import router as search_router
 from backend.api.batch import router as batch_router
 from backend.api.download import router as download_router
 from backend.api.playlist import router as playlist_router
+from backend.api.history import router as history_router
 from backend.api.logs import router as logs_router
 
 # ==================== FastAPI应用 ====================
@@ -168,6 +169,7 @@ app.include_router(batch_router)
 app.include_router(download_router)
 app.include_router(playlist_router)
 app.include_router(logs_router)
+app.include_router(history_router)
 
 # 静态文件（前端）
 frontend_dir = os.path.join(BASE_DIR, 'backend', 'static')
