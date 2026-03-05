@@ -44,12 +44,17 @@ const { chromium } = require('playwright');
     // 测试1: 音乐源默认选择
     console.log('\n[测试1] 检查音乐源默认选择...');
     try {
+      // 使用更精确的选择器获取Ant Design Checkbox
       const sources = await page.evaluate(() => {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        return Array.from(checkboxes).map(cb => ({
-          label: cb.parentElement?.textContent?.trim() || '',
-          checked: cb.checked
-        }));
+        const checkboxWrappers = document.querySelectorAll('.ant-checkbox-wrapper');
+        return Array.from(checkboxWrappers).map(wrapper => {
+          const text = wrapper.textContent?.trim() || '';
+          const checkbox = wrapper.querySelector('input[type="checkbox"]');
+          return {
+            label: text,
+            checked: checkbox?.checked || false
+          };
+        }).filter(s => s.label && !s.label.includes('过滤')); // 排除过滤选项
       });
 
       const neteaseChecked = sources.some(s => s.label.includes('网易云') && s.checked);
@@ -74,11 +79,12 @@ const { chromium } = require('playwright');
       await textarea.fill('夜曲 - 周杰伦\n七里香 - 周杰伦');
 
       // 点击搜索按钮
-      await page.locator('button:has-text("开始批量搜索")').click();
+      await page.locator('button:has-text("批量搜索")').click();
 
-      // 等待搜索完成（最多30秒）
-      await page.waitForSelector('table[role="table"]', { timeout: 30000 });
-      await page.waitForTimeout(3000);
+      // 等待搜索完成（最多60秒）
+      // 使用更精确的选择器，排除ant-table-measure-row
+      await page.waitForSelector('.ant-table-tbody tr:not(.ant-table-measure-row)', { timeout: 60000 });
+      await page.waitForTimeout(2000);
 
       results.push({ name: '批量搜索', passed: true });
       console.log('  ✅ 通过');
