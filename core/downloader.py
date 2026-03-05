@@ -2,7 +2,105 @@
 MusicDL Wrapper Class - Singleton Pattern
 
 此模块提供 musicdl 的线程安全单例封装，可被后端和桌面端共同使用。
+
+IMPORTANT: 必须在任何 musicdl 导入之前禁用 rich 进度条
+因为 rich 库在同一时间只能有一个活动的进度条，多线程并发调用会冲突
 """
+
+import os
+
+# 方案1: 设置环境变量禁用 rich 进度条
+os.environ['TERM'] = 'dumb'
+os.environ['NO_COLOR'] = '1'
+
+# 方案2: Monkey patch rich.progress.Progress 类，使其成为空操作
+# 这必须在 musicdl 导入之前执行
+try:
+    from rich.progress import Progress as _OriginalProgress
+
+    class _DummyTask:
+        """Dummy Task object with all necessary attributes"""
+        def __init__(self, task_id, description='', total=None, completed=0):
+            self.id = task_id
+            self.description = description
+            self.total = total
+            self._completed = completed
+
+        @property
+        def completed(self):
+            return self._completed
+
+        @completed.setter
+        def completed(self, value):
+            self._completed = value
+
+        @property
+        def percentage(self):
+            if self.total and self.total > 0:
+                return (self._completed / self.total) * 100
+            return 0
+
+    class _DummyProgress:
+        """Dummy Progress class that does nothing, for thread safety.
+        Implements all methods/properties that musicdl might use.
+        """
+        def __init__(self, *args, **kwargs):
+            self._tasks = {}  # task_id -> _DummyTask
+            self._task_counter = 0
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def add_task(self, description, total=None, completed=0, **kwargs):
+            task_id = self._task_counter
+            self._task_counter += 1
+            self._tasks[task_id] = _DummyTask(task_id, description, total, completed)
+            return task_id
+
+        def update(self, task_id, total=None, completed=None, advance=None, **kwargs):
+            if task_id in self._tasks:
+                task = self._tasks[task_id]
+                if total is not None:
+                    task.total = total
+                if completed is not None:
+                    task._completed = completed
+                if advance is not None:
+                    task._completed += advance
+
+        def advance(self, task_id, amount=1):
+            self.update(task_id, advance=amount)
+
+        def remove_task(self, task_id):
+            self._tasks.pop(task_id, None)
+
+        @property
+        def tasks(self):
+            # Return list of _DummyTask objects
+            return list(self._tasks.values())
+
+        def stop_task(self, task_id):
+            pass
+
+        def start_task(self, task_id):
+            pass
+
+        def refresh(self):
+            pass
+
+        def stop(self):
+            pass
+
+        def start(self):
+            pass
+
+    # Replace rich.progress.Progress with our dummy
+    import rich.progress
+    rich.progress.Progress = _DummyProgress
+except ImportError:
+    pass  # rich not installed, no need to patch
 
 import threading
 from musicdl.musicdl import MusicClient
@@ -192,6 +290,7 @@ class MusicDownloader:
         client = self._client
 
         logger.info(f"Downloading {len(songs)} songs...")
+
         try:
             # Extract SongInfo objects from dicts and update their paths
             song_info_objects = []

@@ -4,9 +4,98 @@ FastAPI 后端服务主入口
 PyQt6 音乐下载器的 Web 版本后端
 提供RESTful API和SSE实时推送功能
 """
+# ==================== 关键：禁用 rich 进度条 ====================
+# 必须在任何 musicdl 导入之前执行，解决多线程并发冲突
+import os
+os.environ['TERM'] = 'dumb'
+os.environ['NO_COLOR'] = '1'
+
+try:
+    from rich.progress import Progress as _OriginalProgress
+
+    class _DummyTask:
+        """Dummy Task object with all necessary attributes"""
+        def __init__(self, task_id, description='', total=None, completed=0):
+            self.id = task_id
+            self.description = description
+            self.total = total
+            self._completed = completed
+
+        @property
+        def completed(self):
+            return self._completed
+
+        @completed.setter
+        def completed(self, value):
+            self._completed = value
+
+        @property
+        def percentage(self):
+            if self.total and self.total > 0:
+                return (self._completed / self.total) * 100
+            return 0
+
+    class _DummyProgress:
+        """Dummy Progress class that does nothing, for thread safety."""
+        def __init__(self, *args, **kwargs):
+            self._tasks = {}
+            self._task_counter = 0
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def add_task(self, description, total=None, completed=0, **kwargs):
+            task_id = self._task_counter
+            self._task_counter += 1
+            self._tasks[task_id] = _DummyTask(task_id, description, total, completed)
+            return task_id
+
+        def update(self, task_id, total=None, completed=None, advance=None, **kwargs):
+            if task_id in self._tasks:
+                task = self._tasks[task_id]
+                if total is not None:
+                    task.total = total
+                if completed is not None:
+                    task._completed = completed
+                if advance is not None:
+                    task._completed += advance
+
+        def advance(self, task_id, amount=1):
+            self.update(task_id, advance=amount)
+
+        def remove_task(self, task_id):
+            self._tasks.pop(task_id, None)
+
+        @property
+        def tasks(self):
+            return list(self._tasks.values())
+
+        def stop_task(self, task_id):
+            pass
+
+        def start_task(self, task_id):
+            pass
+
+        def refresh(self):
+            pass
+
+        def stop(self):
+            pass
+
+        def start(self):
+            pass
+
+    import rich.progress
+    rich.progress.Progress = _DummyProgress
+except ImportError:
+    pass
+
+# ==================== 正常配置 ====================
 # 设置UTF-8编码（解决Windows上的GBK编码问题）
 import sys
-import os
 os.environ['PYTHONIOENCODING'] = 'utf-8'
 os.environ['PYTHONUTF8MODE'] = '1'
 os.environ['LC_ALL'] = 'C.UTF-8'

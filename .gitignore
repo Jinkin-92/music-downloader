@@ -6,3 +6,28 @@ node_modules/
 __pycache__/
 .venv/
 *.pyc
+
+# Output files
+musicdl_outputs/
+
+# Logs
+logs/
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Test files
+test_*.py
+!tests/
+test_downloads/

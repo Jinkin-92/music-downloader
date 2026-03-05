@@ -673,7 +673,7 @@ node e2e_test_playlist.js
 <!-- gitnexus:start -->
 # GitNexus MCP
 
-This project is indexed by GitNexus as **music-downloader** (2095 symbols, 5122 relationships, 159 execution flows).
+This project is indexed by GitNexus as **music-downloader** (2102 symbols, 5193 relationships, 160 execution flows).
 
 ## Always Start Here
 
