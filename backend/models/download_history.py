@@ -186,6 +186,10 @@ class DownloadHistoryDB:
         """
         检查歌曲是否已下载
 
+        使用模糊匹配：
+        1. 精确匹配
+        2. 歌名相同 + 歌手互相包含
+
         Args:
             song_name: 歌曲名
             singers: 歌手
@@ -194,11 +198,46 @@ class DownloadHistoryDB:
             是否已下载
         """
         with self._get_connection() as conn:
+            # 先尝试精确匹配
             cursor = conn.execute('''
                 SELECT COUNT(*) FROM download_history
                 WHERE song_name = ? AND singers = ? AND file_exists = 1
             ''', (song_name, singers))
-            return cursor.fetchone()[0] > 0
+            if cursor.fetchone()[0] > 0:
+                return True
+
+            # 再尝试模糊匹配：歌名相同，歌手互相包含
+            cursor = conn.execute('''
+                SELECT song_name, singers FROM download_history
+                WHERE file_exists = 1
+            ''')
+
+            def normalize(text):
+                """归一化文本：转小写，移除特殊字符"""
+                import re
+                if not text:
+                    return ''
+                text = text.lower()
+                text = re.sub(r'[^\u4e00-\u9fff\w]', '', text)
+                return text
+
+            q_name = normalize(song_name)
+            q_singer = normalize(singers)
+
+            for row in cursor.fetchall():
+                r_name = normalize(row[0])
+                r_singer = normalize(row[1])
+
+                # 歌名必须完全匹配
+                if q_name != r_name:
+                    continue
+
+                # 歌手互相包含即可
+                if q_singer and r_singer:
+                    if q_singer in r_singer or r_singer in q_singer:
+                        return True
+
+            return False
 
     def get_existing_songs(self, songs: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """

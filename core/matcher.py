@@ -114,6 +114,48 @@ class SongMatcher:
         return 0.0
 
     @staticmethod
+    def _is_fully_matched(query_name: str, query_singer: str, query_album: str,
+                          result_name: str, result_singer: str, result_album: str) -> bool:
+        """
+        检查是否完全匹配（用于确定是否应该返回100%）
+
+        规则：
+        1. 歌名必须完全匹配（归一化后）
+        2. 歌手必须完全匹配或互相包含（归一化后）
+        3. 专辑：如果查询有专辑，则结果专辑必须匹配；如果查询无专辑，忽略专辑
+
+        Args:
+            query_name, query_singer, query_album: 查询信息
+            result_name, result_singer, result_album: 结果信息
+
+        Returns:
+            是否完全匹配
+        """
+        # 归一化
+        q_name = SongMatcher._normalize_text(query_name)
+        q_singer = SongMatcher._normalize_text(query_singer)
+        q_album = SongMatcher._normalize_text(query_album)
+        r_name = SongMatcher._normalize_text(result_name)
+        r_singer = SongMatcher._normalize_text(result_singer)
+        r_album = SongMatcher._normalize_text(result_album)
+
+        # 歌名必须完全匹配
+        if q_name != r_name:
+            return False
+
+        # 歌手必须完全匹配或互相包含
+        if q_singer != r_singer and q_singer not in r_singer and r_singer not in q_singer:
+            return False
+
+        # 专辑检查：如果查询有专辑信息，结果专辑也应该匹配
+        if q_album:
+            # 查询有专辑，结果专辑应该匹配
+            if r_album and q_album != r_album and q_album not in r_album and r_album not in q_album:
+                return False
+
+        return True
+
+    @staticmethod
     def is_match(name_query: str, singer_query: str,
                  name_result: str, singer_result: str) -> bool:
         """Check if query matches result"""
@@ -167,26 +209,33 @@ class SongMatcher:
                 result_singer = getattr(result, "singers", "")
                 result_album = getattr(result, "album", "")
 
-            # 计算各部分相似度
-            name_sim = SongMatcher.calculate_similarity(query_name, result_name)
-            singer_sim = SongMatcher.calculate_similarity(query_singer, result_singer)
-            album_sim = SongMatcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
+            # 检查是否完全匹配（优先级最高）
+            if SongMatcher._is_fully_matched(
+                query_name, query_singer, query_album,
+                result_name, result_singer, result_album
+            ):
+                combined_score = 1.0
+            else:
+                # 计算各部分相似度
+                name_sim = SongMatcher.calculate_similarity(query_name, result_name)
+                singer_sim = SongMatcher.calculate_similarity(query_singer, result_singer)
+                album_sim = SongMatcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
 
-            # 动态权重
-            weights = SongMatcher._calculate_dynamic_weights(query_album, result_album)
-            combined_score = (
-                name_sim * weights['name'] +
-                singer_sim * weights['singer'] +
-                album_sim * weights['album']
-            )
+                # 动态权重
+                weights = SongMatcher._calculate_dynamic_weights(query_album, result_album)
+                combined_score = (
+                    name_sim * weights['name'] +
+                    singer_sim * weights['singer'] +
+                    album_sim * weights['album']
+                )
 
-            # 完全匹配加分
-            name_bonus = SongMatcher._calculate_exact_match_bonus(query_name, result_name)
-            singer_bonus = SongMatcher._calculate_exact_match_bonus(query_singer, result_singer)
+                # 完全匹配加分
+                name_bonus = SongMatcher._calculate_exact_match_bonus(query_name, result_name)
+                singer_bonus = SongMatcher._calculate_exact_match_bonus(query_singer, result_singer)
 
-            # 总加分不超过一定限度
-            total_bonus = min(name_bonus + singer_bonus, 0.25)
-            combined_score = min(combined_score + total_bonus, 1.0)
+                # 总加分不超过一定限度
+                total_bonus = min(name_bonus + singer_bonus, 0.25)
+                combined_score = min(combined_score + total_bonus, 1.0)
 
             scored_results.append((combined_score, result))
 
@@ -230,24 +279,31 @@ class SongMatcher:
                 result_singer = getattr(result, "singers", "")
                 result_album = getattr(result, "album", "")
 
-            # 计算各部分相似度
-            name_sim = SongMatcher.calculate_similarity(query_name, result_name)
-            singer_sim = SongMatcher.calculate_similarity(query_singer, result_singer)
-            album_sim = SongMatcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
+            # 检查是否完全匹配（优先级最高）
+            if SongMatcher._is_fully_matched(
+                query_name, query_singer, query_album,
+                result_name, result_singer, result_album
+            ):
+                combined_score = 1.0
+            else:
+                # 计算各部分相似度
+                name_sim = SongMatcher.calculate_similarity(query_name, result_name)
+                singer_sim = SongMatcher.calculate_similarity(query_singer, result_singer)
+                album_sim = SongMatcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
 
-            # 动态权重
-            weights = SongMatcher._calculate_dynamic_weights(query_album, result_album)
-            combined_score = (
-                name_sim * weights['name'] +
-                singer_sim * weights['singer'] +
-                album_sim * weights['album']
-            )
+                # 动态权重
+                weights = SongMatcher._calculate_dynamic_weights(query_album, result_album)
+                combined_score = (
+                    name_sim * weights['name'] +
+                    singer_sim * weights['singer'] +
+                    album_sim * weights['album']
+                )
 
-            # 完全匹配加分
-            name_bonus = SongMatcher._calculate_exact_match_bonus(query_name, result_name)
-            singer_bonus = SongMatcher._calculate_exact_match_bonus(query_singer, result_singer)
-            total_bonus = min(name_bonus + singer_bonus, 0.25)
-            combined_score = min(combined_score + total_bonus, 1.0)
+                # 完全匹配加分
+                name_bonus = SongMatcher._calculate_exact_match_bonus(query_name, result_name)
+                singer_bonus = SongMatcher._calculate_exact_match_bonus(query_singer, result_singer)
+                total_bonus = min(name_bonus + singer_bonus, 0.25)
+                combined_score = min(combined_score + total_bonus, 1.0)
 
             scored_results.append((combined_score, result))
 
@@ -276,19 +332,27 @@ class SongMatcher:
         singer_sim = SongMatcher.calculate_similarity(query_singer, result_singer)
         album_sim = SongMatcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
 
-        # 使用动态权重计算
-        weights = SongMatcher._calculate_dynamic_weights(query_album, result_album)
-        combined = (
-            name_sim * weights['name'] +
-            singer_sim * weights['singer'] +
-            album_sim * weights['album']
-        )
+        # 检查是否完全匹配（优先级最高）
+        if SongMatcher._is_fully_matched(
+            query_name, query_singer, query_album,
+            result_name, result_singer, result_album
+        ):
+            combined = 1.0
+            total_bonus = 0.0
+        else:
+            # 使用动态权重计算
+            weights = SongMatcher._calculate_dynamic_weights(query_album, result_album)
+            combined = (
+                name_sim * weights['name'] +
+                singer_sim * weights['singer'] +
+                album_sim * weights['album']
+            )
 
-        # 完全匹配加分
-        name_bonus = SongMatcher._calculate_exact_match_bonus(query_name, result_name)
-        singer_bonus = SongMatcher._calculate_exact_match_bonus(query_singer, result_singer)
-        total_bonus = min(name_bonus + singer_bonus, 0.25)
-        combined = min(combined + total_bonus, 1.0)
+            # 完全匹配加分
+            name_bonus = SongMatcher._calculate_exact_match_bonus(query_name, result_name)
+            singer_bonus = SongMatcher._calculate_exact_match_bonus(query_singer, result_singer)
+            total_bonus = min(name_bonus + singer_bonus, 0.25)
+            combined = min(combined + total_bonus, 1.0)
 
         return {
             'name_similarity': name_sim,

@@ -212,7 +212,7 @@ function BatchDownloadPage() {
               filteredResults = filteredResults.filter(r => {
                 if (r.source === '-') return true; // 保留未匹配的
                 const duration = r.duration || '';
-                // 解析时长格式 (如 "03:45" 或 "00:03:45" 或 "225秒")
+                // 解析时长格式 (如 "03:45" 或 "00:03:45" 或 "00:00:11" 或 "225秒")
                 if (duration.includes(':')) {
                   const parts = duration.split(':');
                   let seconds = 0;
@@ -223,6 +223,7 @@ function BatchDownloadPage() {
                     // MM:SS 格式
                     seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
                   }
+                  // 过滤掉35秒以下的试听片段
                   return seconds >= 35;
                 }
                 return true;

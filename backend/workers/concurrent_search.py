@@ -176,9 +176,18 @@ class AsyncConcurrentSearcher:
             return True  # 无时长信息，保留
 
         try:
-            # 解析时长格式 "分:秒" 如 "3:45"
+            # 解析时长格式
+            # 支持格式："分:秒" 如 "3:45"、"时:分:秒" 如 "00:03:45"
             parts = duration_str.split(':')
-            if len(parts) == 2:
+            if len(parts) == 3:
+                # HH:MM:SS 格式
+                hours = int(parts[0])
+                minutes = int(parts[1])
+                seconds = int(parts[2])
+                total_seconds = hours * 3600 + minutes * 60 + seconds
+                return total_seconds >= min_seconds
+            elif len(parts) == 2:
+                # MM:SS 格式
                 minutes = int(parts[0])
                 seconds = int(parts[1])
                 total_seconds = minutes * 60 + seconds
