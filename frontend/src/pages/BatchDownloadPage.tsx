@@ -145,6 +145,9 @@ function BatchDownloadPage() {
     setHasSearched(false);
     setSelectedRows([]);
 
+    // 显示原始歌曲数量
+    const originalCount = allSongs.length;
+
     try {
       // 使用后台任务API（支持页面切换后继续执行）
       const response = await playlistApi.startBatchSearch({
@@ -169,6 +172,10 @@ function BatchDownloadPage() {
             setSearchProgress(status.progress?.percent || 0);
           } else if (status.status === 'completed') {
             clearInterval(pollInterval);
+
+            // 获取跳过的歌曲（已下载的重复歌曲）
+            const skippedSongs = status.result?.skipped_songs || [];
+            const skippedCount = skippedSongs.length;
 
             // 转换结果格式
             const matches = status.result?.matches || {};
@@ -228,10 +235,17 @@ function BatchDownloadPage() {
             setSearchLoading(false);
 
             const matchedCount = filteredResults.filter(r => r.source !== '-').length;
-            if (matchedCount > 0) {
-              message.success(`搜索完成，找到 ${matchedCount} 首匹配歌曲`);
-            } else {
-              message.warning('未找到匹配的歌曲');
+
+            // 构建完成消息，包含过滤信息
+            let completeMsg = `搜索完成，找到 ${matchedCount} 首匹配歌曲`;
+            if (skippedCount > 0) {
+              completeMsg += `，已过滤 ${skippedCount} 首已下载歌曲`;
+            }
+            message.success(completeMsg);
+
+            // 如果有跳过的歌曲，显示详情
+            if (skippedCount > 0) {
+              console.log('[下载历史过滤] 跳过的歌曲:', skippedSongs);
             }
           } else if (status.status === 'failed') {
             clearInterval(pollInterval);

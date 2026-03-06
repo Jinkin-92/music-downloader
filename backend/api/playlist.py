@@ -791,14 +791,19 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
                     for original_line, match in matches_dict.items()
                 }
 
+                # 获取跳过的歌曲列表
+                task = task_manager.get_task(task_id)
+                skipped_songs = task.params.get('skipped_songs', []) if task else []
+
                 # 标记任务完成
                 result = {
                     'total': len(songs_data),
                     'matched': matched_count,
-                    'matches': matches_serializable
+                    'matches': matches_serializable,
+                    'skipped_songs': skipped_songs
                 }
                 task_manager.complete_task(task_id, result)
-                logger.info(f"[后台搜索] 任务完成: {task_id}, 匹配 {matched_count}/{len(songs_data)}")
+                logger.info(f"[后台搜索] 任务完成: {task_id}, 匹配 {matched_count}/{len(songs_data)}, 跳过 {len(skipped_songs)} 首已下载")
 
             except Exception as e:
                 logger.error(f"[后台搜索] 任务失败: {task_id}, 错误: {e}")

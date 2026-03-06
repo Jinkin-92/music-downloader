@@ -1377,4 +1377,4 @@ INFO:     127.0.0.1:53946 - "GET /api/playlist/batch-search-status/e61980ae-5188
 2026-03-06 09:49:39,123 - backend.workers.concurrent_search - INFO - [匹配] 查询: 七里香 - 周杰伦, 原始搜索结果数: 16
 2026-03-06 09:49:39,125 - backend.api.task_manager - INFO - [TaskManager] 任务完成: e61980ae-5188-48de-bf58-6cfac7f36db0, 结果: 2965 字节
 2026-03-06 09:49:39,125 - backend.api.playlist - INFO - [后台搜索] 任务完成: e61980ae-5188-48de-bf58-6cfac7f36db0, 匹配 2/2
-INFO:     127.0.0.1:65224 - "GET /a
+INFO:     127.0.0.1:65224 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
