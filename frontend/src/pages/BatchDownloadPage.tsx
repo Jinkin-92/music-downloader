@@ -205,10 +205,17 @@ function BatchDownloadPage() {
               filteredResults = filteredResults.filter(r => {
                 if (r.source === '-') return true; // 保留未匹配的
                 const duration = r.duration || '';
-                // 解析时长格式 (如 "03:45" 或 "225秒")
+                // 解析时长格式 (如 "03:45" 或 "00:03:45" 或 "225秒")
                 if (duration.includes(':')) {
                   const parts = duration.split(':');
-                  const seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                  let seconds = 0;
+                  if (parts.length === 3) {
+                    // HH:MM:SS 格式
+                    seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+                  } else if (parts.length === 2) {
+                    // MM:SS 格式
+                    seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                  }
                   return seconds >= 35;
                 }
                 return true;

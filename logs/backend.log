@@ -162,4 +162,1219 @@ INFO:     127.0.0.1:49890 - "GET /api/playlist/batch-search-stream?songs_json=%5
 INFO:     127.0.0.1:62769 - "GET /api/history HTTP/1.1" 200 OK
 INFO:     127.0.0.1:62776 - "GET /api/history/stats HTTP/1.1" 200 OK
 INFO:     127.0.0.1:60981 - "GET /api/search/sources HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57824 - "GET /api/search/sources HTTP/1.1" 
+INFO:     127.0.0.1:57824 - "GET /api/search/sources HTTP/1.1" 200 OK
+2026-03-06 08:31:27,357 - backend.api.history - INFO - [History] Retrieved 0 records
+INFO:     127.0.0.1:64410 - "GET /api/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64411 - "GET /api/history/stats HTTP/1.1" 200 OK
+2026-03-06 08:31:47,714 - backend.api.playlist - INFO - [START] ½âÎö¸èµ¥:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171...
+2026-03-06 08:31:47,715 - pyqt_ui.playlist.factory - INFO - [FACTORY] parse_playlist called for:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:31:47,727 - pyqt_ui.playlist.factory - INFO - Registered parser class: NeteasePlaylistParser
+2026-03-06 08:31:47,733 - pyqt_ui.playlist.factory - INFO - Registered parser class: QQMusicPlaylistParser
+2026-03-06 08:31:47,734 - pyqt_ui.playlist.factory - INFO - Initialized 2 parser class(es)
+2026-03-06 08:31:47,734 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:31:47,734 - pyqt_ui.playlist.base - INFO - Initialized QQMusicPlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:31:47,735 - backend.api.playlist - ERROR - [ERROR] ¸èµ¥URL¸ñÊ½´íÎó: ²»Ö§³ÖµÄ¸èµ¥Á´½Ó»òURL¸ñÊ½´íÎó
+URL:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+Ö§³ÖµÄÆ½Ì¨: NeteasePlaylistParser, QQMusicPlaylistParser
+2026-03-06 08:31:47,741 - backend.api.playlist - ERROR - Traceback (most recent call last):
+  File "D:\code\music-downloader\backend\..\backend\api\playlist.py", line 178, in parse_playlist
+    songs = await loop.run_in_executor(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\code\music-downloader\backend\..\backend\api\playlist.py", line 180, in <lambda>
+    lambda: PlaylistParserFactory.parse_playlist(request.url)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\code\music-downloader\backend\..\pyqt_ui\playlist\factory.py", line 104, in parse_playlist
+    parser = cls.create_parser(url)
+  File "D:\code\music-downloader\backend\..\pyqt_ui\playlist\factory.py", line 83, in create_parser
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: ²»Ö§³ÖµÄ¸èµ¥Á´½Ó»òURL¸ñÊ½´íÎó
+URL:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+Ö§³ÖµÄÆ½Ì¨: NeteasePlaylistParser, QQMusicPlaylistParser
+
+INFO:     127.0.0.1:62720 - "POST /api/playlist/parse HTTP/1.1" 200 OK
+2026-03-06 08:31:52,383 - backend.api.playlist - INFO - [START] ½âÎö¸èµ¥: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171...
+2026-03-06 08:31:52,383 - pyqt_ui.playlist.factory - INFO - [FACTORY] parse_playlist called for: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:31:52,384 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:31:52,384 - pyqt_ui.playlist.factory - INFO - Selected parser: NeteasePlaylistParser for URL: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:31:52,384 - pyqt_ui.playlist.netease - INFO - [PARSE START] ¿ªÊ¼½âÎö¸èµ¥: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:31:52,384 - pyqt_ui.playlist.netease - INFO - Parsing Netease playlist: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:31:52,384 - pyqt_ui.playlist.netease - INFO - Extracted playlist ID: 6922195323
+2026-03-06 08:31:52,558 - pyqt_ui.playlist.netease - INFO - Extracted 20 track IDs
+2026-03-06 08:31:52,558 - pyqt_ui.playlist.netease - INFO - Found 20 songs in playlist
+2026-03-06 08:31:52,558 - pyqt_ui.playlist.netease - INFO - Fetching batch 1/7: 3 songs
+2026-03-06 08:31:52,626 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:31:52,626 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:31:52,626 - pyqt_ui.playlist.netease - INFO - Batch 1: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 0 Ê×
+2026-03-06 08:31:52,626 - pyqt_ui.playlist.netease - INFO - Fetching batch 2/7: 3 songs
+2026-03-06 08:31:52,745 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:31:52,745 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:31:52,745 - pyqt_ui.playlist.netease - INFO - Batch 2: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 3 Ê×
+2026-03-06 08:31:52,745 - pyqt_ui.playlist.netease - INFO - Fetching batch 3/7: 3 songs
+2026-03-06 08:31:52,862 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:31:52,862 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:31:52,862 - pyqt_ui.playlist.netease - INFO - Batch 3: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 6 Ê×
+2026-03-06 08:31:52,862 - pyqt_ui.playlist.netease - INFO - Fetching batch 4/7: 3 songs
+2026-03-06 08:31:52,954 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:31:52,954 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:31:52,954 - pyqt_ui.playlist.netease - INFO - Batch 4: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 9 Ê×
+2026-03-06 08:31:52,954 - pyqt_ui.playlist.netease - INFO - Fetching batch 5/7: 3 songs
+2026-03-06 08:31:53,040 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:31:53,040 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:31:53,040 - pyqt_ui.playlist.netease - INFO - Batch 5: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 12 Ê×
+2026-03-06 08:31:53,040 - pyqt_ui.playlist.netease - INFO - Fetching batch 6/7: 3 songs
+2026-03-06 08:31:53,125 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:31:53,125 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:31:53,125 - pyqt_ui.playlist.netease - INFO - Batch 6: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 15 Ê×
+2026-03-06 08:31:53,125 - pyqt_ui.playlist.netease - INFO - Fetching batch 7/7: 2 songs
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 2 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 2 Ê×
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 2 Ê×¸èÇú
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.netease - INFO - Batch 7: ·µ»Ø 2 Ê×¸èÇú£¬ÀÛ¼Æ 18 Ê×
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.netease - INFO - Successfully parsed 20 songs from Netease
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.netease - INFO - [PARSE END] ½âÎöÍê³É: ·µ»Ø 20 Ê×¸èÇú
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.factory - INFO - [FACTORY] parser returned 20 songs
+2026-03-06 08:31:53,217 - pyqt_ui.playlist.factory - INFO - Parsed 20 songs from ÍøÒ×ÔÆÒôÀÖ
+2026-03-06 08:31:53,218 - backend.api.playlist - INFO - [SUCCESS] ½âÎöµ½ 20 Ê×¸èÇú
+2026-03-06 08:31:53,218 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:31:53,218 - pyqt_ui.playlist.base - INFO - Initialized QQMusicPlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:31:53,218 - backend.api.playlist - INFO - [COMPLETE] ½âÎöÍê³É: 20 Ê×¸èÇú from ÍøÒ×ÔÆÒôÀÖ
+INFO:     127.0.0.1:62553 - "POST /api/playlist/parse HTTP/1.1" 200 OK
+2026-03-06 08:32:10,930 - backend.api.playlist - INFO - [START] ½âÎö¸èµ¥:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171...
+2026-03-06 08:32:10,930 - pyqt_ui.playlist.factory - INFO - [FACTORY] parse_playlist called for:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:32:10,930 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:32:10,930 - pyqt_ui.playlist.base - INFO - Initialized QQMusicPlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:32:10,931 - backend.api.playlist - ERROR - [ERROR] ¸èµ¥URL¸ñÊ½´íÎó: ²»Ö§³ÖµÄ¸èµ¥Á´½Ó»òURL¸ñÊ½´íÎó
+URL:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+Ö§³ÖµÄÆ½Ì¨: NeteasePlaylistParser, QQMusicPlaylistParser
+2026-03-06 08:32:10,932 - backend.api.playlist - ERROR - Traceback (most recent call last):
+  File "D:\code\music-downloader\backend\..\backend\api\playlist.py", line 178, in parse_playlist
+    songs = await loop.run_in_executor(
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+    )
+    ^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\code\music-downloader\backend\..\backend\api\playlist.py", line 180, in <lambda>
+    lambda: PlaylistParserFactory.parse_playlist(request.url)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\code\music-downloader\backend\..\pyqt_ui\playlist\factory.py", line 104, in parse_playlist
+    parser = cls.create_parser(url)
+  File "D:\code\music-downloader\backend\..\pyqt_ui\playlist\factory.py", line 83, in create_parser
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: ²»Ö§³ÖµÄ¸èµ¥Á´½Ó»òURL¸ñÊ½´íÎó
+URL:  https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+Ö§³ÖµÄÆ½Ì¨: NeteasePlaylistParser, QQMusicPlaylistParser
+
+INFO:     127.0.0.1:62559 - "POST /api/playlist/parse HTTP/1.1" 200 OK
+2026-03-06 08:32:14,405 - backend.api.playlist - INFO - [START] ½âÎö¸èµ¥: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171...
+2026-03-06 08:32:14,405 - pyqt_ui.playlist.factory - INFO - [FACTORY] parse_playlist called for: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:32:14,405 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:32:14,405 - pyqt_ui.playlist.factory - INFO - Selected parser: NeteasePlaylistParser for URL: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:32:14,405 - pyqt_ui.playlist.netease - INFO - [PARSE START] ¿ªÊ¼½âÎö¸èµ¥: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:32:14,405 - pyqt_ui.playlist.netease - INFO - Parsing Netease playlist: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 08:32:14,405 - pyqt_ui.playlist.netease - INFO - Extracted playlist ID: 6922195323
+2026-03-06 08:32:14,516 - pyqt_ui.playlist.netease - INFO - Extracted 20 track IDs
+2026-03-06 08:32:14,516 - pyqt_ui.playlist.netease - INFO - Found 20 songs in playlist
+2026-03-06 08:32:14,516 - pyqt_ui.playlist.netease - INFO - Fetching batch 1/7: 3 songs
+2026-03-06 08:32:14,578 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:32:14,578 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:32:14,578 - pyqt_ui.playlist.netease - INFO - Batch 1: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 0 Ê×
+2026-03-06 08:32:14,578 - pyqt_ui.playlist.netease - INFO - Fetching batch 2/7: 3 songs
+2026-03-06 08:32:14,620 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:32:14,620 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:32:14,620 - pyqt_ui.playlist.netease - INFO - Batch 2: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 3 Ê×
+2026-03-06 08:32:14,620 - pyqt_ui.playlist.netease - INFO - Fetching batch 3/7: 3 songs
+2026-03-06 08:32:14,677 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:32:14,677 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:32:14,677 - pyqt_ui.playlist.netease - INFO - Batch 3: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 6 Ê×
+2026-03-06 08:32:14,677 - pyqt_ui.playlist.netease - INFO - Fetching batch 4/7: 3 songs
+2026-03-06 08:32:14,751 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:32:14,751 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:32:14,751 - pyqt_ui.playlist.netease - INFO - Batch 4: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 9 Ê×
+2026-03-06 08:32:14,751 - pyqt_ui.playlist.netease - INFO - Fetching batch 5/7: 3 songs
+2026-03-06 08:32:14,794 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:32:14,795 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:32:14,795 - pyqt_ui.playlist.netease - INFO - Batch 5: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 12 Ê×
+2026-03-06 08:32:14,795 - pyqt_ui.playlist.netease - INFO - Fetching batch 6/7: 3 songs
+2026-03-06 08:32:14,841 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 08:32:14,841 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 08:32:14,841 - pyqt_ui.playlist.netease - INFO - Batch 6: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 15 Ê×
+2026-03-06 08:32:14,841 - pyqt_ui.playlist.netease - INFO - Fetching batch 7/7: 2 songs
+2026-03-06 08:32:14,880 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 2 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 2 Ê×
+2026-03-06 08:32:14,880 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 2 Ê×¸èÇú
+2026-03-06 08:32:14,881 - pyqt_ui.playlist.netease - INFO - Batch 7: ·µ»Ø 2 Ê×¸èÇú£¬ÀÛ¼Æ 18 Ê×
+2026-03-06 08:32:14,881 - pyqt_ui.playlist.netease - INFO - Successfully parsed 20 songs from Netease
+2026-03-06 08:32:14,881 - pyqt_ui.playlist.netease - INFO - [PARSE END] ½âÎöÍê³É: ·µ»Ø 20 Ê×¸èÇú
+2026-03-06 08:32:14,881 - pyqt_ui.playlist.factory - INFO - [FACTORY] parser returned 20 songs
+2026-03-06 08:32:14,881 - pyqt_ui.playlist.factory - INFO - Parsed 20 songs from ÍøÒ×ÔÆÒôÀÖ
+2026-03-06 08:32:14,882 - backend.api.playlist - INFO - [SUCCESS] ½âÎöµ½ 20 Ê×¸èÇú
+2026-03-06 08:32:14,882 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:32:14,882 - pyqt_ui.playlist.base - INFO - Initialized QQMusicPlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 08:32:14,882 - backend.api.playlist - INFO - [COMPLETE] ½âÎöÍê³É: 20 Ê×¸èÇú from ÍøÒ×ÔÆÒôÀÖ
+INFO:     127.0.0.1:60851 - "POST /api/playlist/parse HTTP/1.1" 200 OK
+2026-03-06 08:32:19,022 - backend.api.playlist - INFO - [ºóÌ¨ËÑË÷] Æô¶¯ÅúÁ¿ËÑË÷: 20 Ê×¸èÇú, Ô´: ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient', 'MiguMusicClient']
+2026-03-06 08:32:19,022 - backend.api.task_manager - INFO - [TaskManager] ´´½¨ÈÎÎñ: e538de68-92fc-4cae-9184-abe276540dbd, ÀàĞÍ: search, ×ÜÊı: 20
+2026-03-06 08:32:19,022 - backend.api.task_manager - INFO - [TaskManager] ÈÎÎñÒÑÆô¶¯: e538de68-92fc-4cae-9184-abe276540dbd
+INFO:     127.0.0.1:56958 - "POST /api/playlist/batch-search-start HTTP/1.1" 200 OK
+2026-03-06 08:32:19,023 - backend.api.task_manager - INFO - [TaskManager] ÈÎÎñ¿ªÊ¼: e538de68-92fc-4cae-9184-abe276540dbd (ÅúÁ¿ËÑË÷)
+2026-03-06 08:32:19,023 - backend.workers.concurrent_search - INFO - AsyncConcurrentSearcher initialized with concurrency=8, similarity_threshold=0.3
+2026-03-06 08:32:19,023 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 08:32:19,024 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 08:32:19,024 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 08:32:19,024 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 08:32:19,025 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+INFO:     127.0.0.1:56960 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:32:19,276 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:32:19,378 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:32:19,384 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:32:19,396 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+INFO:     127.0.0.1:49230 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:32:20,377 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+INFO:     127.0.0.1:49272 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57415 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57443 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:32:23,057 - core.downloader - INFO - Found 1 results from MiguMusicClient
+INFO:     127.0.0.1:52699 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52728 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:32:25,293 - core.downloader - INFO - Found 4 results from KugouMusicClient
+INFO:     127.0.0.1:57580 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:32:26,582 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:60716 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60753 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60770 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60784 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54558 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58206 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58216 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58886 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58899 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51641 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51652 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51663 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51672 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54405 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54414 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54425 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54489 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49678 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56901 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:32:46,220 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:56952 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50904 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65275 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65284 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65314 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57805 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57093 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60969 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60999 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64344 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56250 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63300 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63314 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:33:13,348 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 08:33:13,348 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Ó¦¸Ã - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 11
+2026-03-06 08:33:13,350 - core.song_cache - INFO - [SongInfoCache] ÇåÀí 94 ¸ö¹ıÆÚÌõÄ¿
+2026-03-06 08:33:13,351 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 08:33:13,351 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 08:33:13,351 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 08:33:13,351 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 08:33:13,351 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 08:33:13,653 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:33:13,716 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:33:13,728 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:33:13,762 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+INFO:     127.0.0.1:63340 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:33:14,692 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+INFO:     127.0.0.1:60030 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:33:17,667 - core.downloader - INFO - Found 1 results from MiguMusicClient
+INFO:     127.0.0.1:60096 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:33:19,490 - core.downloader - INFO - Found 4 results from KugouMusicClient
+INFO:     127.0.0.1:55917 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:33:20,948 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:53670 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53686 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61852 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61871 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61889 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55831 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59775 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59794 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57678 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:33:38,818 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+INFO:     127.0.0.1:57698 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56503 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56519 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65205 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:34:10,998 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 08:34:10,999 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ĞÇĞÇ¶ÑÂúÌì - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 08:34:11,000 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 08:34:11,000 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 08:34:11,000 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 08:34:11,000 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 08:34:11,000 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 08:34:11,347 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:34:11,356 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:34:11,360 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:34:11,397 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:34:12,388 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:34:15,107 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:34:17,451 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:34:18,365 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:34:41,734 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:59952 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:35:03,669 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 08:35:03,670 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Æ¯×Å - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 08:35:03,671 - core.downloader - INFO - Searching single source 'QQMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 08:35:03,671 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 08:35:03,671 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 08:35:03,671 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 08:35:03,671 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 08:35:03,959 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:35:04,006 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:35:04,023 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:35:04,036 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:35:05,048 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:35:08,158 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:35:10,609 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:35:12,031 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:35:34,736 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:57144 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:35:56,077 - core.downloader - INFO - Found 3 results from QQMusicClient
+2026-03-06 08:35:56,078 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: »¨Óë³æ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 08:35:56,079 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 08:35:56,079 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 08:35:56,079 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 08:35:56,079 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 08:35:56,079 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 08:35:56,396 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:35:56,400 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:35:56,410 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:35:56,420 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:35:57,327 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:36:00,476 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:36:03,342 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:36:04,586 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:36:21,928 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+INFO:     127.0.0.1:51295 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:36:52,038 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 08:36:52,039 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Fear - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 08:36:52,040 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 08:36:52,040 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 08:36:52,040 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 08:36:52,040 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 08:36:52,040 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 08:36:52,316 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:36:52,384 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:36:52,385 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:36:52,403 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:36:53,352 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:36:56,154 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:36:57,802 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:36:59,575 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:37:20,831 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:61396 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:37:44,083 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 08:37:44,083 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Somebody - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 11
+2026-03-06 08:37:44,085 - core.downloader - INFO - Searching single source 'QQMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 08:37:44,085 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 08:37:44,085 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 08:37:44,085 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 08:37:44,085 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 08:37:44,471 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:37:44,475 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:37:44,478 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:37:44,512 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:37:45,541 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:37:48,478 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:37:50,381 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:37:51,663 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:38:13,731 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 08:38:29,101 - core.downloader - INFO - Found 3 results from QQMusicClient
+2026-03-06 08:38:29,102 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ²»Òª¸æ±ğ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 08:38:29,103 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 08:38:29,103 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 08:38:29,103 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 08:38:29,103 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 08:38:29,103 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 08:38:29,407 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:38:29,467 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:38:29,511 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:38:29,527 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:38:30,551 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:38:33,381 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:38:35,546 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:38:37,228 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:64684 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:38:54,662 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 08:39:27,373 - core.downloader - INFO - Found 0 results from QQMusicClient
+2026-03-06 08:39:27,373 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÀëĞÄÁ¦ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 08:39:27,374 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 08:39:27,374 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 08:39:27,374 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 08:39:27,374 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 08:39:27,374 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 08:39:27,674 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:39:27,701 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:39:27,734 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:39:27,749 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:39:28,675 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:39:31,953 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:39:33,838 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:39:34,820 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:51684 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:39:53,170 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 08:40:18,481 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 08:40:18,481 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÎÒ¸øµÄ°® - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 08:40:18,482 - core.downloader - INFO - Searching single source 'QQMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 08:40:18,482 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 08:40:18,482 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 08:40:18,482 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 08:40:18,482 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 08:40:18,750 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:40:18,808 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:40:18,809 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:40:18,850 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:40:19,802 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:40:22,665 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:40:23,981 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:40:27,782 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:51209 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:40:44,377 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 08:41:07,987 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 08:41:07,987 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ×£ÎÒĞÒ¸£ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 08:41:07,989 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 08:41:07,989 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 08:41:07,989 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 08:41:07,989 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 08:41:07,989 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 08:41:08,332 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:41:08,340 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:41:08,359 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:41:08,370 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:41:09,310 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:41:11,821 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:41:14,446 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:41:17,482 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:41:36,028 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:59241 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:42:01,012 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 08:42:01,012 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Ö¤¾İ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 08:42:01,013 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 08:42:01,013 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 08:42:01,013 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 08:42:01,013 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 08:42:01,013 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 08:42:01,253 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:42:01,328 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:42:01,413 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:42:01,426 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:42:02,212 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:42:05,014 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:42:06,869 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:42:08,300 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:42:26,583 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+INFO:     127.0.0.1:58834 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:42:57,650 - core.downloader - INFO - Found 0 results from QQMusicClient
+2026-03-06 08:42:57,651 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Å®¾ô - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 11
+2026-03-06 08:42:57,652 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ'
+2026-03-06 08:42:57,652 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ'
+2026-03-06 08:42:57,652 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ'
+2026-03-06 08:42:57,652 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ'
+2026-03-06 08:42:57,652 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ'
+2026-03-06 08:42:57,895 - musicdl - INFO - Searching [93mÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:42:57,954 - musicdl - INFO - Searching [93mÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:42:57,984 - musicdl - INFO - Searching [93mÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:42:57,999 - musicdl - INFO - Searching [93mÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:42:59,044 - musicdl - INFO - Searching [93mÎÒÀë¿ªÎÒ×Ô¼º ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:43:01,766 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:43:04,233 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:43:06,859 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:43:23,684 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+INFO:     127.0.0.1:53088 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:43:48,134 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 08:43:48,135 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÎÒÀë¿ªÎÒ×Ô¼º - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 08:43:48,136 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Let It Rain ÑîÄËÎÄ'
+2026-03-06 08:43:48,136 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Let It Rain ÑîÄËÎÄ'
+2026-03-06 08:43:48,136 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Let It Rain ÑîÄËÎÄ'
+2026-03-06 08:43:48,136 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Let It Rain ÑîÄËÎÄ'
+2026-03-06 08:43:48,136 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Let It Rain ÑîÄËÎÄ'
+2026-03-06 08:43:48,361 - musicdl - INFO - Searching [93mLet It Rain ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:43:48,468 - musicdl - INFO - Searching [93mLet It Rain ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:43:48,495 - musicdl - INFO - Searching [93mLet It Rain ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:43:48,507 - musicdl - INFO - Searching [93mLet It Rain ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:43:49,493 - musicdl - INFO - Searching [93mLet It Rain ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:43:52,385 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:43:54,351 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:43:55,890 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:44:17,531 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 08:44:37,034 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 08:44:37,035 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Let It Rain - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 08:44:37,036 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ'
+2026-03-06 08:44:37,036 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ'
+2026-03-06 08:44:37,036 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ'
+2026-03-06 08:44:37,036 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ'
+2026-03-06 08:44:37,036 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ'
+2026-03-06 08:44:37,356 - musicdl - INFO - Searching [93mÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:44:37,379 - musicdl - INFO - Searching [93mÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:44:37,380 - musicdl - INFO - Searching [93mÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:44:37,408 - musicdl - INFO - Searching [93mÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:44:38,319 - musicdl - INFO - Searching [93mÔÚ°®ºÍÄãÖ®¼ä ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:44:41,188 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:44:42,939 - core.downloader - INFO - Found 4 results from KugouMusicClient
+INFO:     127.0.0.1:61004 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:44:44,361 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:45:03,271 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 08:45:28,633 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 08:45:28,633 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÔÚ°®ºÍÄãÖ®¼ä - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 08:45:28,635 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Î´½ÓÀ´µç ÑîÄËÎÄ'
+2026-03-06 08:45:28,635 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Î´½ÓÀ´µç ÑîÄËÎÄ'
+2026-03-06 08:45:28,635 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Î´½ÓÀ´µç ÑîÄËÎÄ'
+2026-03-06 08:45:28,635 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Î´½ÓÀ´µç ÑîÄËÎÄ'
+2026-03-06 08:45:28,635 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Î´½ÓÀ´µç ÑîÄËÎÄ'
+2026-03-06 08:45:28,959 - musicdl - INFO - Searching [93mÎ´½ÓÀ´µç ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:45:28,972 - musicdl - INFO - Searching [93mÎ´½ÓÀ´µç ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:45:28,986 - musicdl - INFO - Searching [93mÎ´½ÓÀ´µç ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:45:29,020 - musicdl - INFO - Searching [93mÎ´½ÓÀ´µç ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:45:30,007 - musicdl - INFO - Searching [93mÎ´½ÓÀ´µç ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:45:33,537 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:45:35,714 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:45:37,155 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:51175 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:45:54,467 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 08:46:15,120 - core.downloader - INFO - Found 3 results from QQMusicClient
+2026-03-06 08:46:15,120 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Î´½ÓÀ´µç - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 15
+2026-03-06 08:46:15,121 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Ö®Ç° ÑîÄËÎÄ'
+2026-03-06 08:46:15,121 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Ö®Ç° ÑîÄËÎÄ'
+2026-03-06 08:46:15,121 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Ö®Ç° ÑîÄËÎÄ'
+2026-03-06 08:46:15,121 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Ö®Ç° ÑîÄËÎÄ'
+2026-03-06 08:46:15,121 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Ö®Ç° ÑîÄËÎÄ'
+2026-03-06 08:46:15,380 - musicdl - INFO - Searching [93mÖ®Ç° ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:46:15,388 - musicdl - INFO - Searching [93mÖ®Ç° ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:46:15,447 - musicdl - INFO - Searching [93mÖ®Ç° ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:46:15,468 - musicdl - INFO - Searching [93mÖ®Ç° ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:46:16,378 - musicdl - INFO - Searching [93mÖ®Ç° ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:46:19,437 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:46:21,056 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:46:22,138 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:62896 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:46:45,249 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 08:47:00,081 - core.downloader - INFO - Found 4 results from QQMusicClient
+2026-03-06 08:47:00,081 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Ö®Ç° - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 08:47:00,083 - core.downloader - INFO - Searching single source 'QQMusicClient' for '²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ'
+2026-03-06 08:47:00,083 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ'
+2026-03-06 08:47:00,083 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ'
+2026-03-06 08:47:00,083 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ'
+2026-03-06 08:47:00,083 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ'
+2026-03-06 08:47:00,381 - musicdl - INFO - Searching [93m²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:47:00,413 - musicdl - INFO - Searching [93m²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:47:00,467 - musicdl - INFO - Searching [93m²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:47:00,477 - musicdl - INFO - Searching [93m²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:47:01,511 - musicdl - INFO - Searching [93m²»ÒªÀ´ÕÒÎÒ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:47:03,845 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:47:06,385 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:47:08,491 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:47:29,408 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:56691 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:47:58,645 - core.downloader - INFO - Found 0 results from QQMusicClient
+2026-03-06 08:47:58,645 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ²»ÒªÀ´ÕÒÎÒ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 10
+2026-03-06 08:47:58,646 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÈçÒ» ÑîÄËÎÄ'
+2026-03-06 08:47:58,646 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÈçÒ» ÑîÄËÎÄ'
+2026-03-06 08:47:58,646 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÈçÒ» ÑîÄËÎÄ'
+2026-03-06 08:47:58,646 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÈçÒ» ÑîÄËÎÄ'
+2026-03-06 08:47:58,646 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÈçÒ» ÑîÄËÎÄ'
+2026-03-06 08:47:58,921 - musicdl - INFO - Searching [93mÈçÒ» ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:47:58,970 - musicdl - INFO - Searching [93mÈçÒ» ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:47:59,011 - musicdl - INFO - Searching [93mÈçÒ» ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:47:59,019 - musicdl - INFO - Searching [93mÈçÒ» ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:48:00,122 - musicdl - INFO - Searching [93mÈçÒ» ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:48:02,967 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:48:05,215 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 08:48:09,424 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:48:29,778 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+INFO:     127.0.0.1:57699 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+2026-03-06 08:48:52,099 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 08:48:52,099 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÈçÒ» - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 08:48:52,101 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Â·³Õ ÑîÄËÎÄ'
+2026-03-06 08:48:52,101 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Â·³Õ ÑîÄËÎÄ'
+2026-03-06 08:48:52,101 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Â·³Õ ÑîÄËÎÄ'
+2026-03-06 08:48:52,101 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Â·³Õ ÑîÄËÎÄ'
+2026-03-06 08:48:52,101 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Â·³Õ ÑîÄËÎÄ'
+2026-03-06 08:48:52,352 - musicdl - INFO - Searching [93mÂ·³Õ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 08:48:52,367 - musicdl - INFO - Searching [93mÂ·³Õ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 08:48:52,421 - musicdl - INFO - Searching [93mÂ·³Õ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 08:48:52,427 - musicdl - INFO - Searching [93mÂ·³Õ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 08:48:53,338 - musicdl - INFO - Searching [93mÂ·³Õ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 08:48:56,326 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 08:48:57,552 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 08:49:02,442 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 08:49:20,822 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 08:49:38,746 - core.downloader - INFO - Found 4 results from QQMusicClient
+2026-03-06 08:49:38,746 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Â·³Õ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 08:49:38,749 - backend.api.task_manager - INFO - [TaskManager] ÈÎÎñÍê³É: e538de68-92fc-4cae-9184-abe276540dbd, ½á¹û: 29084 ×Ö½Ú
+2026-03-06 08:49:38,749 - backend.api.playlist - INFO - [ºóÌ¨ËÑË÷] ÈÎÎñÍê³É: e538de68-92fc-4cae-9184-abe276540dbd, Æ¥Åä 20/20
+INFO:     127.0.0.1:50546 - "GET /api/playlist/batch-search-status/e538de68-92fc-4cae-9184-abe276540dbd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55446 - "GET /api/download/stream?songs_json=%5B%7B%22song_name%22%3A%22%E5%BA%94%E8%AF%A5+%28%E7%8E%B0%E5%9C%BA%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22TIMEQUAKE+%E6%BC%94%E5%94%B1%E4%BC%9A%E7%8E%B0%E5%9C%BA%E5%AE%9E%E5%BD%95%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A06%3A22%22%2C%22source%22%3A%22KugouMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22dbb7fd455706%22%2C%22similarity%22%3A0.7333333333333334%7D%2C%7B%22song_name%22%3A%22%E6%98%9F%E6%98%9F%E5%A0%86%E6%BB%A1%E5%A4%A9+%28Live%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%BF%AB%E4%B9%90%E5%A4%A9%E5%A0%82+%E6%BB%9A%E7%9F%B330%E6%BC%94%E5%94%B1%E4%BC%9A%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A03%3A44%22%2C%22source%22%3A%22NeteaseMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22a7bff4c34a33%22%2C%22similarity%22%3A0.7571428571428571%7D%2C%7B%22song_name%22%3A%22%E6%BC%82%E7%9D%80%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%E7%AC%AC1%E5%BC%A0%E7%B2%BE%E9%80%89%E8%BE%91%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A10%22%2C%22source%22%3A%22KugouMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%228ea197f15474%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E8%8A%B1%E4%B8%8E%E8%99%AB+%28Live%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%E3%80%8ABACK+TO+LIVE%E3%80%8B%E6%BC%94%E5%94%B1%E4%BC%9A%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A53%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%2223be25c43103%22%2C%22similarity%22%3A0.7%7D%2C%7B%22song_name%22%3A%22Fear+%28Live%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%E3%80%8ABACK+TO+LIVE%E3%80%8B%E6%BC%94%E5%94%B1%E4%BC%9A%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A05%3A03%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%2279a12feac3c4%22%2C%22similarity%22%3A0.7333333333333334%7D%2C%7B%22song_name%22%3A%22Somebody%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Princess+From+East+%2701-%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A17%22%2C%22source%22%3A%22KugouMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22f55c65729c0a%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E4%B8%8D%E8%A6%81%E5%91%8A%E5%88%AB%28%E7%8E%B0%E5%9C%BA%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22NULL%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A37%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22e8e622dd7918%22%2C%22similarity%22%3A0.8%7D%2C%7B%22song_name%22%3A%22%E7%A6%BB%E5%BF%83%E5%8A%9B%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22NULL%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A30%22%2C%22source%22%3A%22KugouMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%227731a403de0c%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E6%88%91%E7%BB%99%E7%9A%84%E7%88%B1+%28Live%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%E3%80%8ABACK+TO+LIVE%E3%80%8B%E6%BC%94%E5%94%B1%E4%BC%9A%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A06%3A16%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%2206395f63bcab%22%2C%22similarity%22%3A0.7333333333333334%7D%2C%7B%22song_name%22%3A%22%E7%A5%9D%E6%88%91%E5%B9%B8%E7%A6%8F%28%E7%8E%B0%E5%9C%BA%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22NULL%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A13%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%223928dd923c0e%22%2C%22similarity%22%3A0.8%7D%2C%7B%22song_name%22%3A%22%E8%AF%81%E6%8D%AE%28%E7%8E%B0%E5%9C%BA%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22NULL%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A35%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%220a8d243350ff%22%2C%22similarity%22%3A0.7333333333333334%7D%2C%7B%22song_name%22%3A%22%E5%A5%B3%E7%88%B5+%28%E7%8E%B0%E5%9C%BA%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22TIMEQUAKE+%E6%BC%94%E5%94%B1%E4%BC%9A%E7%8E%B0%E5%9C%BA%E5%AE%9E%E5%BD%95%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A40%22%2C%22source%22%3A%22KugouMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%222b40c0b78849%22%2C%22similarity%22%3A0.7333333333333334%7D%2C%7B%22song_name%22%3A%22%E6%88%91%E7%A6%BB%E5%BC%80%E6%88%91%E8%87%AA%E5%B7%B1%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22NULL%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A30%22%2C%22source%22%3A%22KugouMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%2209d75b02e3d0%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22Let+it+rain%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22ONE%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A11%22%2C%22source%22%3A%22KuwoMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%226e8203a0e183%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E5%9C%A8%E7%88%B1%E5%92%8C%E4%BD%A0%E4%B9%8B%E9%97%B4%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E8%B6%8A%E7%BE%8E%E4%B8%BD%E8%B6%8A%E7%9C%8B%E4%B8%8D%E8%A7%81%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A11%22%2C%22source%22%3A%22KuwoMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%2245754768045f%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E6%9C%AA%E6%8E%A5%E6%9D%A5%E7%94%B5+%28%E7%94%B7%E7%89%88%29%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22NULL%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A04%3A53%22%2C%22source%22%3A%22QQMusicClient%22%2C%22ext%22%3A%22ogg%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22b247e6fe4251%22%2C%22similarity%22%3A0.8%7D%2C%7B%22song_name%22%3A%22%E4%B9%8B%E5%89%8D%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%A5%B3%E7%88%B5%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A11%22%2C%22source%22%3A%22KuwoMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%224f5cb97e60e5%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E4%B8%8D%E8%A6%81%E6%9D%A5%E6%89%BE%E6%88%91%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Silence%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A11%22%2C%22source%22%3A%22KuwoMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22836d9c0b8ebe%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E5%A6%82%E4%B8%80%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E7%A6%BB%E5%BF%83%E5%8A%9B%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A11%22%2C%22source%22%3A%22KuwoMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22f1fdc3b7bf77%22%2C%22similarity%22%3A0.9%7D%2C%7B%22song_name%22%3A%22%E8%B7%AF%E7%97%B4%22%2C%22singers%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E8%B6%8A%E7%BE%8E%E4%B8%BD%E8%B6%8A%E7%9C%8B%E4%B8%8D%E8%A7%81%22%2C%22size%22%3A%22%22%2C%22duration%22%3A%2200%3A00%3A11%22%2C%22source%22%3A%22KuwoMusicClient%22%2C%22ext%22%3A%22mp3%22%2C%22duration_s%22%3A0%2C%22song_id%22%3A%22741b9b916505%22%2C%22similarity%22%3A0.9%7D%5D&download_dir=C%3A%5CUsers%5CDELL%5CDesktop%5C%E6%9D%A8%E4%B9%83%E6%96%87 HTTP/1.1" 200 OK
+2026-03-06 09:07:06,940 - backend.api.download - INFO - [SSEÏÂÔØ] ¿ªÊ¼ÏÂÔØ 20 Ê×¸èÇú
+2026-03-06 09:07:06,940 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (1/20): Ó¦¸Ã (ÏÖ³¡) - ÑîÄËÎÄ
+2026-03-06 09:07:06,940 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=dbb7fd455706, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:06,940 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:06,941 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:06,941 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:06,941 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:06,941 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:06,941 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Ó¦¸Ã (ÏÖ³¡) - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:06,941 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:06,941 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Ó¦¸Ã (ÏÖ³¡) - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:07,732 - core.downloader - INFO - Downloaded via KugouMusicClient client
+2026-03-06 09:07:07,732 - core.downloader - INFO - Download completed
+2026-03-06 09:07:07,733 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 5% - Ó¦¸Ã (ÏÖ³¡)
+2026-03-06 09:07:07,733 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (2/20): ĞÇĞÇ¶ÑÂúÌì (Live) - ÑîÄËÎÄ
+2026-03-06 09:07:07,733 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=a7bff4c34a33, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:07,733 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:07,733 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:07,733 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:07,733 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:07,733 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:07,733 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\ĞÇĞÇ¶ÑÂúÌì (Live) - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:07,733 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:07,733 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\ĞÇĞÇ¶ÑÂúÌì (Live) - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:07,940 - core.downloader - INFO - Downloaded via NeteaseMusicClient client
+2026-03-06 09:07:07,940 - core.downloader - INFO - Download completed
+2026-03-06 09:07:07,940 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 10% - ĞÇĞÇ¶ÑÂúÌì (Live)
+2026-03-06 09:07:07,940 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (3/20): Æ¯×Å - ÑîÄËÎÄ
+2026-03-06 09:07:07,940 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=8ea197f15474, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:07,940 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:07,940 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:07,940 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:07,940 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:07,940 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:07,940 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Æ¯×Å - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:07,941 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:07,941 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Æ¯×Å - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:08,761 - core.downloader - INFO - Downloaded via KugouMusicClient client
+2026-03-06 09:07:08,761 - core.downloader - INFO - Download completed
+2026-03-06 09:07:08,761 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 15% - Æ¯×Å
+2026-03-06 09:07:08,761 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (4/20): »¨Óë³æ (Live) - ÑîÄËÎÄ
+2026-03-06 09:07:08,761 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=23be25c43103, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:08,761 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:08,762 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:08,762 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:08,762 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:08,762 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:08,762 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\»¨Óë³æ (Live) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:08,762 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:08,762 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\»¨Óë³æ (Live) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:11,040 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:11,041 - core.downloader - INFO - Download completed
+2026-03-06 09:07:11,041 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 20% - »¨Óë³æ (Live)
+2026-03-06 09:07:11,041 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (5/20): Fear (Live) - ÑîÄËÎÄ
+2026-03-06 09:07:11,041 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=79a12feac3c4, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:11,041 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:11,041 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:11,041 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:11,041 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:11,041 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:11,041 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Fear (Live) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:11,042 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:11,042 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Fear (Live) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:12,407 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:12,408 - core.downloader - INFO - Download completed
+2026-03-06 09:07:12,408 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 25% - Fear (Live)
+2026-03-06 09:07:12,408 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (6/20): Somebody - ÑîÄËÎÄ
+2026-03-06 09:07:12,408 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=f55c65729c0a, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:12,408 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:12,408 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:12,408 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:12,408 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:12,408 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:12,408 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Somebody - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:12,408 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:12,408 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Somebody - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:13,206 - core.downloader - INFO - Downloaded via KugouMusicClient client
+2026-03-06 09:07:13,207 - core.downloader - INFO - Download completed
+2026-03-06 09:07:13,207 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 30% - Somebody
+2026-03-06 09:07:13,207 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (7/20): ²»Òª¸æ±ğ(ÏÖ³¡) - ÑîÄËÎÄ
+2026-03-06 09:07:13,207 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=e8e622dd7918, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:13,207 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:13,207 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:13,207 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:13,207 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:13,207 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:13,207 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\²»Òª¸æ±ğ(ÏÖ³¡) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:13,207 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:13,207 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\²»Òª¸æ±ğ(ÏÖ³¡) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:15,922 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:15,922 - core.downloader - INFO - Download completed
+2026-03-06 09:07:15,922 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 35% - ²»Òª¸æ±ğ(ÏÖ³¡)
+2026-03-06 09:07:15,922 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (8/20): ÀëĞÄÁ¦ - ÑîÄËÎÄ
+2026-03-06 09:07:15,922 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=7731a403de0c, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:15,922 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:15,922 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:15,923 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:15,923 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:15,923 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:15,923 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÀëĞÄÁ¦ - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:15,923 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:15,923 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÀëĞÄÁ¦ - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:16,588 - core.downloader - INFO - Downloaded via KugouMusicClient client
+2026-03-06 09:07:16,588 - core.downloader - INFO - Download completed
+2026-03-06 09:07:16,588 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 40% - ÀëĞÄÁ¦
+2026-03-06 09:07:16,589 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (9/20): ÎÒ¸øµÄ°® (Live) - ÑîÄËÎÄ
+2026-03-06 09:07:16,589 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=06395f63bcab, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:16,589 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:16,589 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:16,589 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:16,589 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:16,589 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:16,589 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÎÒ¸øµÄ°® (Live) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:16,589 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:16,589 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÎÒ¸øµÄ°® (Live) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:18,465 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:18,465 - core.downloader - INFO - Download completed
+2026-03-06 09:07:18,465 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 45% - ÎÒ¸øµÄ°® (Live)
+2026-03-06 09:07:18,466 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (10/20): ×£ÎÒĞÒ¸£(ÏÖ³¡) - ÑîÄËÎÄ
+2026-03-06 09:07:18,466 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=3928dd923c0e, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:18,466 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:18,466 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:18,466 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:18,466 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:18,466 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:18,466 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\×£ÎÒĞÒ¸£(ÏÖ³¡) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:18,466 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:18,466 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\×£ÎÒĞÒ¸£(ÏÖ³¡) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:20,844 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:20,845 - core.downloader - INFO - Download completed
+2026-03-06 09:07:20,845 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 50% - ×£ÎÒĞÒ¸£(ÏÖ³¡)
+2026-03-06 09:07:20,845 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (11/20): Ö¤¾İ(ÏÖ³¡) - ÑîÄËÎÄ
+2026-03-06 09:07:20,845 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=0a8d243350ff, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:20,845 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:20,845 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:20,845 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:20,845 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:20,845 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:20,845 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Ö¤¾İ(ÏÖ³¡) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:20,845 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:20,845 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Ö¤¾İ(ÏÖ³¡) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:23,276 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:23,276 - core.downloader - INFO - Download completed
+2026-03-06 09:07:23,276 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 55% - Ö¤¾İ(ÏÖ³¡)
+2026-03-06 09:07:23,276 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (12/20): Å®¾ô (ÏÖ³¡) - ÑîÄËÎÄ
+2026-03-06 09:07:23,276 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=2b40c0b78849, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:23,276 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:23,276 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:23,276 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:23,276 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:23,276 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:23,276 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Å®¾ô (ÏÖ³¡) - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:23,276 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:23,276 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Å®¾ô (ÏÖ³¡) - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,036 - core.downloader - INFO - Downloaded via KugouMusicClient client
+2026-03-06 09:07:24,036 - core.downloader - INFO - Download completed
+2026-03-06 09:07:24,036 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 60% - Å®¾ô (ÏÖ³¡)
+2026-03-06 09:07:24,037 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (13/20): ÎÒÀë¿ªÎÒ×Ô¼º - ÑîÄËÎÄ
+2026-03-06 09:07:24,037 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=09d75b02e3d0, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:24,037 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,037 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:24,037 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:24,037 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:24,037 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,037 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÎÒÀë¿ªÎÒ×Ô¼º - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,037 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:24,037 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÎÒÀë¿ªÎÒ×Ô¼º - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,788 - core.downloader - INFO - Downloaded via KugouMusicClient client
+2026-03-06 09:07:24,788 - core.downloader - INFO - Download completed
+2026-03-06 09:07:24,788 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 65% - ÎÒÀë¿ªÎÒ×Ô¼º
+2026-03-06 09:07:24,789 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (14/20): Let it rain - ÑîÄËÎÄ
+2026-03-06 09:07:24,789 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=6e8203a0e183, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:24,789 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,789 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:24,789 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:24,789 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:24,789 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,789 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Let it rain - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,789 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:24,789 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Let it rain - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,815 - core.downloader - INFO - Downloaded via KuwoMusicClient client
+2026-03-06 09:07:24,815 - core.downloader - INFO - Download completed
+2026-03-06 09:07:24,815 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 70% - Let it rain
+2026-03-06 09:07:24,815 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (15/20): ÔÚ°®ºÍÄãÖ®¼ä - ÑîÄËÎÄ
+2026-03-06 09:07:24,815 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=45754768045f, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:24,815 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,815 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:24,815 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:24,816 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:24,816 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,816 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÔÚ°®ºÍÄãÖ®¼ä - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,816 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:24,816 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÔÚ°®ºÍÄãÖ®¼ä - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:24,842 - core.downloader - INFO - Downloaded via KuwoMusicClient client
+2026-03-06 09:07:24,842 - core.downloader - INFO - Download completed
+2026-03-06 09:07:24,842 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 75% - ÔÚ°®ºÍÄãÖ®¼ä
+2026-03-06 09:07:24,842 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (16/20): Î´½ÓÀ´µç (ÄĞ°æ) - ÑîÄËÎÄ
+2026-03-06 09:07:24,842 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=b247e6fe4251, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:24,842 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,843 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:24,843 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:24,843 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:24,843 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:24,843 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Î´½ÓÀ´µç (ÄĞ°æ) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:24,843 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:24,843 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Î´½ÓÀ´µç (ÄĞ°æ) - ÑîÄËÎÄ.ogg
+2026-03-06 09:07:26,625 - core.downloader - INFO - Downloaded via QQMusicClient client
+2026-03-06 09:07:26,625 - core.downloader - INFO - Download completed
+2026-03-06 09:07:26,625 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 80% - Î´½ÓÀ´µç (ÄĞ°æ)
+2026-03-06 09:07:26,625 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (17/20): Ö®Ç° - ÑîÄËÎÄ
+2026-03-06 09:07:26,625 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=4f5cb97e60e5, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:26,625 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,626 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:26,626 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:26,626 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:26,626 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,626 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Ö®Ç° - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,626 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:26,626 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Ö®Ç° - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,649 - core.downloader - INFO - Downloaded via KuwoMusicClient client
+2026-03-06 09:07:26,649 - core.downloader - INFO - Download completed
+2026-03-06 09:07:26,650 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 85% - Ö®Ç°
+2026-03-06 09:07:26,650 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (18/20): ²»ÒªÀ´ÕÒÎÒ - ÑîÄËÎÄ
+2026-03-06 09:07:26,650 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=836d9c0b8ebe, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:26,650 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,650 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:26,650 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:26,650 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:26,650 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,650 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\²»ÒªÀ´ÕÒÎÒ - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,650 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:26,650 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\²»ÒªÀ´ÕÒÎÒ - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,677 - core.downloader - INFO - Downloaded via KuwoMusicClient client
+2026-03-06 09:07:26,677 - core.downloader - INFO - Download completed
+2026-03-06 09:07:26,678 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 90% - ²»ÒªÀ´ÕÒÎÒ
+2026-03-06 09:07:26,678 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (19/20): ÈçÒ» - ÑîÄËÎÄ
+2026-03-06 09:07:26,678 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=f1fdc3b7bf77, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:26,678 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,678 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:26,678 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:26,678 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:26,678 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,678 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÈçÒ» - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,678 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:26,678 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\ÈçÒ» - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,702 - core.downloader - INFO - Downloaded via KuwoMusicClient client
+2026-03-06 09:07:26,702 - core.downloader - INFO - Download completed
+2026-03-06 09:07:26,702 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 95% - ÈçÒ»
+2026-03-06 09:07:26,702 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØ (20/20): Â·³Õ - ÑîÄËÎÄ
+2026-03-06 09:07:26,702 - backend.api.download - INFO - [»º´æÃüÖĞ] song_id=741b9b916505, Ö±½ÓÏÂÔØ
+2026-03-06 09:07:26,702 - core.downloader - INFO - [DOWNLOAD] Target directory: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,703 - core.downloader - INFO - Downloading 1 songs...
+2026-03-06 09:07:26,703 - core.downloader - INFO - Processing song_dict, keys=['song_info_obj']
+2026-03-06 09:07:26,703 - core.downloader - INFO - song_obj type: <class 'musicdl.modules.utils.data.SongInfo'>
+2026-03-06 09:07:26,703 - core.downloader - INFO - [CUSTOM PATH] Updated work_dir to: C:\Users\DELL\Desktop\ÑîÄËÎÄ
+2026-03-06 09:07:26,703 - core.downloader - INFO - [CUSTOM PATH] Updated _save_path to: C:\Users\DELL\Desktop\ÑîÄËÎÄ\Â·³Õ - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,703 - core.downloader - INFO - Total song_info_objects: 1
+2026-03-06 09:07:26,703 - core.downloader - INFO - Song 0: type=SongInfo, save_path=C:\Users\DELL\Desktop\ÑîÄËÎÄ\Â·³Õ - ÑîÄËÎÄ.mp3
+2026-03-06 09:07:26,727 - core.downloader - INFO - Downloaded via KuwoMusicClient client
+2026-03-06 09:07:26,727 - core.downloader - INFO - Download completed
+2026-03-06 09:07:26,727 - backend.api.download - INFO - [SSEÏÂÔØ] ½ø¶È: 100% - Â·³Õ
+2026-03-06 09:07:26,727 - backend.api.download - INFO - [SSEÏÂÔØ] ÏÂÔØÍê³É: 20/20 ³É¹¦, 0 Ê§°Ü
+2026-03-06 09:12:25,931 - backend.api.playlist - INFO - [START] ½âÎö¸èµ¥: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171...
+2026-03-06 09:12:25,931 - pyqt_ui.playlist.factory - INFO - [FACTORY] parse_playlist called for: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 09:12:25,931 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 09:12:25,932 - pyqt_ui.playlist.factory - INFO - Selected parser: NeteasePlaylistParser for URL: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 09:12:25,932 - pyqt_ui.playlist.netease - INFO - [PARSE START] ¿ªÊ¼½âÎö¸èµ¥: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 09:12:25,932 - pyqt_ui.playlist.netease - INFO - Parsing Netease playlist: https://music.163.com/m/playlist?id=6922195323&creatorId=610906171
+2026-03-06 09:12:25,932 - pyqt_ui.playlist.netease - INFO - Extracted playlist ID: 6922195323
+2026-03-06 09:12:26,040 - pyqt_ui.playlist.netease - INFO - Extracted 20 track IDs
+2026-03-06 09:12:26,040 - pyqt_ui.playlist.netease - INFO - Found 20 songs in playlist
+2026-03-06 09:12:26,040 - pyqt_ui.playlist.netease - INFO - Fetching batch 1/7: 3 songs
+2026-03-06 09:12:26,078 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 09:12:26,078 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 09:12:26,078 - pyqt_ui.playlist.netease - INFO - Batch 1: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 0 Ê×
+2026-03-06 09:12:26,078 - pyqt_ui.playlist.netease - INFO - Fetching batch 2/7: 3 songs
+2026-03-06 09:12:26,118 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 09:12:26,201 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 09:12:26,202 - pyqt_ui.playlist.netease - INFO - Batch 2: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 3 Ê×
+2026-03-06 09:12:26,202 - pyqt_ui.playlist.netease - INFO - Fetching batch 3/7: 3 songs
+2026-03-06 09:12:26,242 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 09:12:26,242 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 09:12:26,242 - pyqt_ui.playlist.netease - INFO - Batch 3: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 6 Ê×
+2026-03-06 09:12:26,242 - pyqt_ui.playlist.netease - INFO - Fetching batch 4/7: 3 songs
+2026-03-06 09:12:26,280 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 09:12:26,280 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 09:12:26,280 - pyqt_ui.playlist.netease - INFO - Batch 4: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 9 Ê×
+2026-03-06 09:12:26,280 - pyqt_ui.playlist.netease - INFO - Fetching batch 5/7: 3 songs
+2026-03-06 09:12:26,317 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 09:12:26,317 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 09:12:26,317 - pyqt_ui.playlist.netease - INFO - Batch 5: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 12 Ê×
+2026-03-06 09:12:26,317 - pyqt_ui.playlist.netease - INFO - Fetching batch 6/7: 3 songs
+2026-03-06 09:12:26,361 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 3 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 3 Ê×
+2026-03-06 09:12:26,361 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 3 Ê×¸èÇú
+2026-03-06 09:12:26,361 - pyqt_ui.playlist.netease - INFO - Batch 6: ·µ»Ø 3 Ê×¸èÇú£¬ÀÛ¼Æ 15 Ê×
+2026-03-06 09:12:26,361 - pyqt_ui.playlist.netease - INFO - Fetching batch 7/7: 2 songs
+2026-03-06 09:12:26,401 - pyqt_ui.playlist.netease - INFO - [DEBUG] API·µ»Ø 2 Ê×¸èÇúÏêÇé£¬ÇëÇóÁË 2 Ê×
+2026-03-06 09:12:26,402 - pyqt_ui.playlist.netease - INFO - [DEBUG] ³É¹¦½âÎö 2 Ê×¸èÇú
+2026-03-06 09:12:26,402 - pyqt_ui.playlist.netease - INFO - Batch 7: ·µ»Ø 2 Ê×¸èÇú£¬ÀÛ¼Æ 18 Ê×
+2026-03-06 09:12:26,402 - pyqt_ui.playlist.netease - INFO - Successfully parsed 20 songs from Netease
+2026-03-06 09:12:26,402 - pyqt_ui.playlist.netease - INFO - [PARSE END] ½âÎöÍê³É: ·µ»Ø 20 Ê×¸èÇú
+2026-03-06 09:12:26,402 - pyqt_ui.playlist.factory - INFO - [FACTORY] parser returned 20 songs
+2026-03-06 09:12:26,402 - pyqt_ui.playlist.factory - INFO - Parsed 20 songs from ÍøÒ×ÔÆÒôÀÖ
+2026-03-06 09:12:26,402 - backend.api.playlist - INFO - [SUCCESS] ½âÎöµ½ 20 Ê×¸èÇú
+2026-03-06 09:12:26,403 - pyqt_ui.playlist.base - INFO - Initialized NeteasePlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 09:12:26,403 - pyqt_ui.playlist.base - INFO - Initialized QQMusicPlaylistParser with certifi: C:\Users\DELL\AppData\Roaming\Python\Python313\site-packages\certifi\cacert.pem
+2026-03-06 09:12:26,403 - backend.api.playlist - INFO - [COMPLETE] ½âÎöÍê³É: 20 Ê×¸èÇú from ÍøÒ×ÔÆÒôÀÖ
+INFO:     127.0.0.1:56257 - "POST /api/playlist/parse HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62176 - "GET /api/playlist/batch-search-stream?songs_json=%5B%7B%22name%22%3A%22%E5%BA%94%E8%AF%A5%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%BA%94%E8%AF%A5%22%7D%2C%7B%22name%22%3A%22%E6%98%9F%E6%98%9F%E5%A0%86%E6%BB%A1%E5%A4%A9%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22One%22%7D%2C%7B%22name%22%3A%22%E6%BC%82%E7%9D%80%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%BA%94%E8%AF%A5%22%7D%2C%7B%22name%22%3A%22%E8%8A%B1%E4%B8%8E%E8%99%AB%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22One%22%7D%2C%7B%22name%22%3A%22Fear%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Silence%22%7D%2C%7B%22name%22%3A%22Somebody%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Silence%22%7D%2C%7B%22name%22%3A%22%E4%B8%8D%E8%A6%81%E5%91%8A%E5%88%AB%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Silence%22%7D%2C%7B%22name%22%3A%22%E7%A6%BB%E5%BF%83%E5%8A%9B%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E7%A6%BB%E5%BF%83%E5%8A%9B%22%7D%2C%7B%22name%22%3A%22%E6%88%91%E7%BB%99%E7%9A%84%E7%88%B1%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Silence%22%7D%2C%7B%22name%22%3A%22%E7%A5%9D%E6%88%91%E5%B9%B8%E7%A6%8F%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%BA%94%E8%AF%A5%22%7D%2C%7B%22name%22%3A%22%E8%AF%81%E6%8D%AE%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%BA%94%E8%AF%A5%22%7D%2C%7B%22name%22%3A%22%E5%A5%B3%E7%88%B5%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%A5%B3%E7%88%B5%22%7D%2C%7B%22name%22%3A%22%E6%88%91%E7%A6%BB%E5%BC%80%E6%88%91%E8%87%AA%E5%B7%B1%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%A5%B3%E7%88%B5%22%7D%2C%7B%22name%22%3A%22Let+It+Rain%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22One%22%7D%2C%7B%22name%22%3A%22%E5%9C%A8%E7%88%B1%E5%92%8C%E4%BD%A0%E4%B9%8B%E9%97%B4%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E8%B6%8A%E7%BE%8E%E4%B8%BD%E8%B6%8A%E7%9C%8B%E4%B8%8D%E8%A7%81%22%7D%2C%7B%22name%22%3A%22%E6%9C%AA%E6%8E%A5%E6%9D%A5%E7%94%B5%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22ZERO%22%7D%2C%7B%22name%22%3A%22%E4%B9%8B%E5%89%8D%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E5%A5%B3%E7%88%B5%22%7D%2C%7B%22name%22%3A%22%E4%B8%8D%E8%A6%81%E6%9D%A5%E6%89%BE%E6%88%91%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22Silence%22%7D%2C%7B%22name%22%3A%22%E5%A6%82%E4%B8%80%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E7%A6%BB%E5%BF%83%E5%8A%9B%22%7D%2C%7B%22name%22%3A%22%E8%B7%AF%E7%97%B4%22%2C%22artist%22%3A%22%E6%9D%A8%E4%B9%83%E6%96%87%22%2C%22album%22%3A%22%E8%B6%8A%E7%BE%8E%E4%B8%BD%E8%B6%8A%E7%9C%8B%E4%B8%8D%E8%A7%81%22%7D%5D&concurrency=5&sources=QQMusicClient%2CNeteaseMusicClient%2CKugouMusicClient%2CKuwoMusicClient%2CMiguMusicClient&similarity_threshold=0.4 HTTP/1.1" 200 OK
+2026-03-06 09:12:46,713 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ÅúÁ¿ËÑË÷ 20 Ê×¸èÇú
+2026-03-06 09:12:46,713 - backend.api.playlist - INFO - [SSE] Batch text preview: Ó¦¸Ã - ÑîÄËÎÄ
+ĞÇĞÇ¶ÑÂúÌì - ÑîÄËÎÄ
+Æ¯×Å - ÑîÄËÎÄ
+»¨Óë³æ - ÑîÄËÎÄ
+Fear - ÑîÄËÎÄ
+Somebody - ÑîÄËÎÄ
+²»Òª¸æ±ğ - ÑîÄËÎÄ
+ÀëĞÄÁ¦ - ÑîÄËÎÄ
+ÎÒ¸øµÄ°® - ÑîÄËÎÄ
+×£ÎÒĞÒ¸£ - ÑîÄËÎÄ
+Ö¤¾İ - ÑîÄËÎÄ
+Å®¾ô - ÑîÄËÎÄ
+ÎÒÀë¿ªÎÒ×Ô¼º - ÑîÄËÎÄ
+Let It Rain - ÑîÄËÎÄ
+ÔÚ°®ºÍÄãÖ®¼ä - ÑîÄËÎÄ
+Î´½ÓÀ´µç - ÑîÄËÎÄ
+Ö®Ç° - ÑîÄËÎÄ
+²»ÒªÀ´ÕÒÎÒ - Ñî...
+2026-03-06 09:12:46,713 - backend.workers.concurrent_search - INFO - AsyncConcurrentSearcher initialized with concurrency=5, similarity_threshold=0.4
+2026-03-06 09:12:46,713 - backend.api.playlist - INFO - [SSE] Created searcher with concurrency=5, similarity_threshold=0.4
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼²¢·¢ËÑË÷ 20 Ê×¸èÇú£¬Ê¹ÓÃÍâ²¿ĞÅºÅÁ¿¿ØÖÆ²¢·¢
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] Æô¶¯ÁË 5 ¸ö³õÊ¼ÈÎÎñ
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 1/20: Ó¦¸Ã
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 2/20: ĞÇĞÇ¶ÑÂúÌì
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 3/20: Æ¯×Å
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 4/20: »¨Óë³æ
+2026-03-06 09:12:46,714 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 5/20: Fear
+2026-03-06 09:12:46,715 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 09:12:46,718 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 09:12:46,720 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 09:12:46,723 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 09:12:46,731 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Ó¦¸Ã ÑîÄËÎÄ'
+2026-03-06 09:12:47,027 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:12:47,055 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:12:47,055 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:12:47,100 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:12:48,075 - musicdl - INFO - Searching [93mÓ¦¸Ã ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:12:50,674 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:12:50,674 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 09:12:51,761 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:12:53,198 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:12:53,199 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 09:12:53,291 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:12:55,155 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:12:55,156 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 09:12:55,251 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:13:01,080 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:13:01,080 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 09:13:01,172 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:13:10,278 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:13:10,278 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ'
+2026-03-06 09:13:10,376 - musicdl - INFO - Searching [93mĞÇĞÇ¶ÑÂúÌì ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:13:14,015 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:13:14,015 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 09:13:14,958 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:13:20,266 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 09:13:20,266 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 09:13:20,367 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:13:21,961 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 09:13:21,962 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 09:13:22,042 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:13:27,967 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 09:13:27,967 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 09:13:28,054 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:13:36,795 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:13:36,795 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Æ¯×Å ÑîÄËÎÄ'
+2026-03-06 09:13:36,929 - musicdl - INFO - Searching [93mÆ¯×Å ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:13:40,271 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:13:40,272 - core.downloader - INFO - Searching single source 'QQMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 09:13:41,250 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:13:52,105 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 09:13:52,106 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 09:13:52,199 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:13:53,349 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 09:13:53,349 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 09:13:53,350 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Ó¦¸Ã - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 11
+2026-03-06 09:13:53,351 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 1/20: Ó¦¸Ã
+2026-03-06 09:13:53,351 - backend.api.playlist - INFO - [SSE] Processing result 1: song={'name': 'Ó¦¸Ã', 'singer': 'ÑîÄËÎÄ', 'original_line': 'Ó¦¸Ã - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:13:53,351 - backend.api.playlist - INFO - [SSE] ½ø¶È: 5% - Ó¦¸Ã
+2026-03-06 09:13:53,352 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 6/20: Somebody
+2026-03-06 09:13:53,352 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 6/20: Somebody
+2026-03-06 09:13:53,448 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:13:56,578 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 09:13:56,578 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 09:13:56,578 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ĞÇĞÇ¶ÑÂúÌì - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 09:13:56,579 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 2/20: ĞÇĞÇ¶ÑÂúÌì
+2026-03-06 09:13:56,579 - backend.api.playlist - INFO - [SSE] Processing result 2: song={'name': 'ĞÇĞÇ¶ÑÂúÌì', 'singer': 'ÑîÄËÎÄ', 'original_line': 'ĞÇĞÇ¶ÑÂúÌì - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:13:56,579 - backend.api.playlist - INFO - [SSE] ½ø¶È: 10% - ĞÇĞÇ¶ÑÂúÌì
+2026-03-06 09:13:56,579 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 7/20: ²»Òª¸æ±ğ
+2026-03-06 09:13:56,579 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 7/20: ²»Òª¸æ±ğ
+2026-03-06 09:13:56,651 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:14:00,459 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 09:14:00,460 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '»¨Óë³æ ÑîÄËÎÄ'
+2026-03-06 09:14:00,529 - musicdl - INFO - Searching [93m»¨Óë³æ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:14:03,841 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:14:03,841 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 09:14:04,089 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:14:04,089 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 09:14:04,171 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:14:04,903 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:14:13,743 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 09:14:13,744 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 09:14:13,744 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Æ¯×Å - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 09:14:13,745 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 3/20: Æ¯×Å
+2026-03-06 09:14:13,745 - backend.api.playlist - INFO - [SSE] Processing result 3: song={'name': 'Æ¯×Å', 'singer': 'ÑîÄËÎÄ', 'original_line': 'Æ¯×Å - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:14:13,746 - backend.api.playlist - INFO - [SSE] ½ø¶È: 15% - Æ¯×Å
+2026-03-06 09:14:13,746 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 8/20: ÀëĞÄÁ¦
+2026-03-06 09:14:13,746 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 8/20: ÀëĞÄÁ¦
+2026-03-06 09:14:13,841 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:14:20,680 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 09:14:20,681 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 09:14:20,744 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:14:23,544 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 09:14:23,544 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Fear ÑîÄËÎÄ'
+2026-03-06 09:14:23,626 - musicdl - INFO - Searching [93mFear ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:14:27,290 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:14:27,291 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 09:14:28,247 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:14:29,278 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:14:29,278 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 09:14:29,345 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:14:30,801 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 09:14:30,801 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 09:14:30,874 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:14:36,382 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:14:36,383 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 09:14:36,451 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:14:37,463 - core.downloader - INFO - Found 3 results from QQMusicClient
+2026-03-06 09:14:37,464 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Somebody ÑîÄËÎÄ'
+2026-03-06 09:14:37,464 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: »¨Óë³æ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 09:14:37,466 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 4/20: »¨Óë³æ
+2026-03-06 09:14:37,466 - backend.api.playlist - INFO - [SSE] Processing result 4: song={'name': '»¨Óë³æ', 'singer': 'ÑîÄËÎÄ', 'original_line': '»¨Óë³æ - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:14:37,466 - backend.api.playlist - INFO - [SSE] ½ø¶È: 20% - »¨Óë³æ
+2026-03-06 09:14:37,466 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 9/20: ÎÒ¸øµÄ°®
+2026-03-06 09:14:37,466 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 9/20: ÎÒ¸øµÄ°®
+2026-03-06 09:14:37,546 - musicdl - INFO - Searching [93mSomebody ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:14:40,859 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:14:40,859 - core.downloader - INFO - Searching single source 'QQMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 09:14:41,815 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:14:42,018 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:14:42,018 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 09:14:42,103 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:14:59,793 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 09:14:59,793 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 09:14:59,858 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:15:05,627 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:15:05,627 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 09:15:05,721 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:15:07,927 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 09:15:07,927 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '²»Òª¸æ±ğ ÑîÄËÎÄ'
+2026-03-06 09:15:07,928 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Fear - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 09:15:07,929 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 5/20: Fear
+2026-03-06 09:15:07,929 - backend.api.playlist - INFO - [SSE] Processing result 5: song={'name': 'Fear', 'singer': 'ÑîÄËÎÄ', 'original_line': 'Fear - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:15:07,929 - backend.api.playlist - INFO - [SSE] ½ø¶È: 25% - Fear
+2026-03-06 09:15:07,929 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 10/20: ×£ÎÒĞÒ¸£
+2026-03-06 09:15:07,929 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 10/20: ×£ÎÒĞÒ¸£
+2026-03-06 09:15:08,001 - musicdl - INFO - Searching [93m²»Òª¸æ±ğ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:15:11,483 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:15:11,484 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 09:15:12,516 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:15:12,517 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 09:15:12,620 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:15:12,683 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:15:13,664 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 09:15:13,665 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 09:15:13,739 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:15:19,488 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 09:15:19,489 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 09:15:19,558 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:15:26,318 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:15:26,318 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÀëĞÄÁ¦ ÑîÄËÎÄ'
+2026-03-06 09:15:26,415 - musicdl - INFO - Searching [93mÀëĞÄÁ¦ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:15:27,529 - core.downloader - INFO - Found 1 results from QQMusicClient
+2026-03-06 09:15:27,529 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 09:15:27,530 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Somebody - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 11
+2026-03-06 09:15:27,531 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 6/20: Somebody
+2026-03-06 09:15:27,531 - backend.api.playlist - INFO - [SSE] Processing result 6: song={'name': 'Somebody', 'singer': 'ÑîÄËÎÄ', 'original_line': 'Somebody - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:15:27,531 - backend.api.playlist - INFO - [SSE] ½ø¶È: 30% - Somebody
+2026-03-06 09:15:27,531 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 11/20: Ö¤¾İ
+2026-03-06 09:15:27,532 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 11/20: Ö¤¾İ
+2026-03-06 09:15:28,542 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:15:30,131 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:15:30,131 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 09:15:30,213 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:15:31,666 - core.downloader - INFO - Found 3 results from QQMusicClient
+2026-03-06 09:15:31,666 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 09:15:31,667 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ²»Òª¸æ±ğ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 09:15:31,669 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 7/20: ²»Òª¸æ±ğ
+2026-03-06 09:15:31,669 - backend.api.playlist - INFO - [SSE] Processing result 7: song={'name': '²»Òª¸æ±ğ', 'singer': 'ÑîÄËÎÄ', 'original_line': '²»Òª¸æ±ğ - ÑîÄËÎÄ'}, batch_match type=<class 'core.models.BatchSongMatch'>
+2026-03-06 09:15:31,669 - backend.api.playlist - INFO - [SSE] ½ø¶È: 35% - ²»Òª¸æ±ğ
+2026-03-06 09:15:31,669 - backend.api.playlist - INFO - [SSE] Æô¶¯ÏÂÒ»¸öÈÎÎñ 12/20: Å®¾ô
+2026-03-06 09:15:31,670 - backend.api.playlist - INFO - [SSE] ¿ªÊ¼ËÑË÷¸èÇú 12/20: Å®¾ô
+2026-03-06 09:15:31,780 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:15:37,592 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 09:15:37,593 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 09:15:37,662 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:15:40,263 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 09:15:40,263 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÎÒ¸øµÄ°® ÑîÄËÎÄ'
+2026-03-06 09:15:40,336 - musicdl - INFO - Searching [93mÎÒ¸øµÄ°® ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:15:43,892 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:15:43,892 - core.downloader - INFO - Searching single source 'QQMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 09:15:44,879 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:15:44,879 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 09:15:44,979 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:15:44,980 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:15:46,525 - backend.api.history - INFO - [History] Retrieved 0 records
+INFO:     127.0.0.1:59925 - "GET /api/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59930 - "GET /api/history/stats HTTP/1.1" 200 OK
+2026-03-06 09:15:59,009 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 09:15:59,009 - core.downloader - INFO - Searching single source 'KugouMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 09:15:59,076 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:16:05,392 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:16:05,393 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 09:16:05,466 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:16:12,993 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 09:16:12,993 - core.downloader - INFO - Searching single source 'MiguMusicClient' for '×£ÎÒĞÒ¸£ ÑîÄËÎÄ'
+2026-03-06 09:16:13,072 - musicdl - INFO - Searching [93m×£ÎÒĞÒ¸£ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:16:13,397 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:16:13,397 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 09:16:14,350 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:16:16,457 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:16:16,457 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 09:16:16,527 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:16:18,485 - core.downloader - INFO - Found 0 results from QQMusicClient
+2026-03-06 09:16:18,486 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 09:16:18,486 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÀëĞÄÁ¦ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 09:16:18,487 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 8/20: ÀëĞÄÁ¦
+2026-03-06 09:16:18,563 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:16:23,786 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:16:23,786 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 09:16:23,865 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:16:25,982 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 09:16:25,983 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Ö¤¾İ ÑîÄËÎÄ'
+2026-03-06 09:16:25,983 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÎÒ¸øµÄ°® - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 14
+2026-03-06 09:16:25,985 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 9/20: ÎÒ¸øµÄ°®
+2026-03-06 09:16:26,051 - musicdl - INFO - Searching [93mÖ¤¾İ ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:16:29,251 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:16:29,252 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 09:16:30,303 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mQQMusicClient[0m
+2026-03-06 09:16:30,618 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:16:30,618 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 09:16:30,699 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:16:35,158 - backend.api.history - INFO - [History] Retrieved 0 records
+INFO:     127.0.0.1:53527 - "GET /api/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53528 - "GET /api/history/stats HTTP/1.1" 200 OK
+2026-03-06 09:16:40,844 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 09:16:40,844 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 09:16:40,844 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ×£ÎÒĞÒ¸£ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 13
+2026-03-06 09:16:40,846 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 10/20: ×£ÎÒĞÒ¸£
+2026-03-06 09:16:40,941 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mKugouMusicClient[0m
+2026-03-06 09:16:46,257 - core.downloader - INFO - Found 4 results from KugouMusicClient
+2026-03-06 09:16:46,258 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 09:16:46,343 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:16:47,331 - core.downloader - INFO - Found 0 results from NeteaseMusicClient
+2026-03-06 09:16:47,332 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Å®¾ô ÑîÄËÎÄ'
+2026-03-06 09:16:47,407 - musicdl - INFO - Searching [93mÅ®¾ô ÑîÄËÎÄ[0m From [93mMiguMusicClient[0m
+2026-03-06 09:16:50,709 - core.downloader - INFO - Found 1 results from MiguMusicClient
+2026-03-06 09:16:53,883 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+2026-03-06 09:16:57,219 - core.downloader - INFO - Found 1 results from NeteaseMusicClient
+2026-03-06 09:17:08,551 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 09:17:08,551 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Ö¤¾İ - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 12
+2026-03-06 09:17:08,552 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 11/20: Ö¤¾İ
+2026-03-06 09:17:26,205 - core.downloader - INFO - Found 0 results from QQMusicClient
+2026-03-06 09:17:26,205 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Å®¾ô - ÑîÄËÎÄ, Ô­Ê¼ËÑË÷½á¹ûÊı: 11
+2026-03-06 09:17:26,207 - backend.api.playlist - INFO - [SSE] Íê³ÉËÑË÷¸èÇú 12/20: Å®¾ô
+INFO:     127.0.0.1:51608 - "GET /api/history/stats HTTP/1.1" 200 OK
+2026-03-06 09:30:11,233 - backend.api.history - INFO - [History] Retrieved 0 records
+INFO:     127.0.0.1:51610 - "GET /api/history HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'backend\api\download.py'. Reloading...
+ 2026-03-06 09:42:38,616 - backend.api.history - INFO - [History] Retrieved 0 records
+INFO:     127.0.0.1:51231 - "GET /api/history HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51232 - "GET /api/history/stats HTTP/1.1" 200 OK
+2026-03-06 09:48:17,559 - backend.api.playlist - INFO - [ºóÌ¨ËÑË÷] Æô¶¯ÅúÁ¿ËÑË÷: 2 Ê×¸èÇú, Ô´: ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient', 'MiguMusicClient']
+2026-03-06 09:48:17,560 - backend.api.task_manager - INFO - [TaskManager] ´´½¨ÈÎÎñ: e61980ae-5188-48de-bf58-6cfac7f36db0, ÀàĞÍ: search, ×ÜÊı: 2
+2026-03-06 09:48:17,560 - backend.api.task_manager - INFO - [TaskManager] ÈÎÎñÒÑÆô¶¯: e61980ae-5188-48de-bf58-6cfac7f36db0
+INFO:     127.0.0.1:60418 - "POST /api/playlist/batch-search-start HTTP/1.1" 200 OK
+2026-03-06 09:48:17,562 - backend.api.task_manager - INFO - [TaskManager] ÈÎÎñ¿ªÊ¼: e61980ae-5188-48de-bf58-6cfac7f36db0 (ÅúÁ¿ËÑË÷)
+2026-03-06 09:48:17,562 - backend.workers.concurrent_search - INFO - AsyncConcurrentSearcher initialized with concurrency=5, similarity_threshold=0.3
+2026-03-06 09:48:17,565 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'Ò¹Çú ÖÜ½ÜÂ×'
+2026-03-06 09:48:17,566 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'Ò¹Çú ÖÜ½ÜÂ×'
+2026-03-06 09:48:17,566 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'Ò¹Çú ÖÜ½ÜÂ×'
+2026-03-06 09:48:17,567 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'Ò¹Çú ÖÜ½ÜÂ×'
+2026-03-06 09:48:17,567 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'Ò¹Çú ÖÜ½ÜÂ×'
+2026-03-06 09:48:17,966 - musicdl - INFO - Searching [93mÒ¹Çú ÖÜ½ÜÂ×[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:48:17,998 - musicdl - INFO - Searching [93mÒ¹Çú ÖÜ½ÜÂ×[0m From [93mKugouMusicClient[0m
+2026-03-06 09:48:18,024 - musicdl - INFO - Searching [93mÒ¹Çú ÖÜ½ÜÂ×[0m From [93mMiguMusicClient[0m
+2026-03-06 09:48:18,063 - musicdl - INFO - Searching [93mÒ¹Çú ÖÜ½ÜÂ×[0m From [93mNeteaseMusicClient[0m
+2026-03-06 09:48:19,031 - musicdl - INFO - Searching [93mÒ¹Çú ÖÜ½ÜÂ×[0m From [93mQQMusicClient[0m
+INFO:     127.0.0.1:60692 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60739 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:48:21,748 - core.downloader - INFO - Found 1 results from MiguMusicClient
+INFO:     127.0.0.1:62276 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:48:24,160 - core.downloader - INFO - Found 5 results from KugouMusicClient
+INFO:     127.0.0.1:58929 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50421 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:48:27,737 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:53965 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58003 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58039 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64422 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64453 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:48:38,761 - core.downloader - INFO - Found 2 results from NeteaseMusicClient
+INFO:     127.0.0.1:64475 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64491 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64509 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63224 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63242 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63270 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49172 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49190 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58174 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:48:56,600 - core.downloader - INFO - Found 3 results from QQMusicClient
+2026-03-06 09:48:56,600 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: Ò¹Çú - ÖÜ½ÜÂ×, Ô­Ê¼ËÑË÷½á¹ûÊı: 16
+2026-03-06 09:48:56,602 - core.downloader - INFO - Searching single source 'QQMusicClient' for 'ÆßÀïÏã ÖÜ½ÜÂ×'
+2026-03-06 09:48:56,602 - core.downloader - INFO - Searching single source 'NeteaseMusicClient' for 'ÆßÀïÏã ÖÜ½ÜÂ×'
+2026-03-06 09:48:56,602 - core.downloader - INFO - Searching single source 'KugouMusicClient' for 'ÆßÀïÏã ÖÜ½ÜÂ×'
+2026-03-06 09:48:56,602 - core.downloader - INFO - Searching single source 'MiguMusicClient' for 'ÆßÀïÏã ÖÜ½ÜÂ×'
+2026-03-06 09:48:56,602 - core.downloader - INFO - Searching single source 'KuwoMusicClient' for 'ÆßÀïÏã ÖÜ½ÜÂ×'
+2026-03-06 09:48:56,900 - musicdl - INFO - Searching [93mÆßÀïÏã ÖÜ½ÜÂ×[0m From [93mMiguMusicClient[0m
+2026-03-06 09:48:56,963 - musicdl - INFO - Searching [93mÆßÀïÏã ÖÜ½ÜÂ×[0m From [93mKugouMusicClient[0m
+2026-03-06 09:48:56,976 - musicdl - INFO - Searching [93mÆßÀïÏã ÖÜ½ÜÂ×[0m From [93mKuwoMusicClient[0m
+2026-03-06 09:48:56,978 - musicdl - INFO - Searching [93mÆßÀïÏã ÖÜ½ÜÂ×[0m From [93mNeteaseMusicClient[0m
+INFO:     127.0.0.1:58208 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:48:57,830 - musicdl - INFO - Searching [93mÆßÀïÏã ÖÜ½ÜÂ×[0m From [93mQQMusicClient[0m
+INFO:     127.0.0.1:58268 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:49:00,512 - core.downloader - INFO - Found 1 results from MiguMusicClient
+INFO:     127.0.0.1:55519 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55575 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:49:03,694 - core.downloader - INFO - Found 5 results from KugouMusicClient
+2026-03-06 09:49:04,611 - core.downloader - INFO - Found 5 results from KuwoMusicClient
+INFO:     127.0.0.1:55706 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56158 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58394 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58428 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:49:13,558 - core.downloader - INFO - Found 3 results from NeteaseMusicClient
+INFO:     127.0.0.1:61345 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61365 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53946 - "GET /api/playlist/batch-search-status/e61980ae-5188-48de-bf58-6cfac7f36db0 HTTP/1.1" 200 OK
+2026-03-06 09:49:39,122 - core.downloader - INFO - Found 2 results from QQMusicClient
+2026-03-06 09:49:39,123 - backend.workers.concurrent_search - INFO - [Æ¥Åä] ²éÑ¯: ÆßÀïÏã - ÖÜ½ÜÂ×, Ô­Ê¼ËÑË÷½á¹ûÊı: 16
+2026-03-06 09:49:39,125 - backend.api.task_manager - INFO - [TaskManager] ÈÎÎñÍê³É: e61980ae-5188-48de-bf58-6cfac7f36db0, ½á¹û: 2965 ×Ö½Ú
+2026-03-06 09:49:39,125 - backend.api.playlist - INFO - [ºóÌ¨ËÑË÷] ÈÎÎñÍê³É: e61980ae-5188-48de-bf58-6cfac7f36db0, Æ¥Åä 2/2
+INFO:     127.0.0.1:65224 - "GET /a
