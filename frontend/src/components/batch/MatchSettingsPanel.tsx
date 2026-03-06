@@ -34,6 +34,7 @@ const MUSIC_SOURCE_OPTIONS = [
   { value: 'QQMusicClient', label: 'QQ音乐' },
   { value: 'KugouMusicClient', label: '酷狗' },
   { value: 'KuwoMusicClient', label: '酷我' },
+  { value: 'MiguMusicClient', label: '咪咕' },
 ];
 
 // 快捷下载目录选项

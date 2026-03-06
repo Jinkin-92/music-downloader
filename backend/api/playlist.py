@@ -13,6 +13,7 @@ import asyncio
 
 from core import BatchSongMatch, DEFAULT_SOURCES, SOURCE_LABELS, PlaylistParserFactory
 from backend.workers.concurrent_search import AsyncConcurrentSearcher
+from backend.services.history_service import history_service
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +122,7 @@ class PlaylistBatchSearchRequest(BaseModel):
     songs: List[PlaylistSongForSearch] = Field(..., description='歌曲列表')
     sources: Optional[List[str]] = Field(default=None, description='音乐源列表')
     concurrency: int = Field(default=8, description='并发数')  # 优化为8，平衡性能与API限流
+    filter_duplicates: bool = Field(default=False, description='过滤已下载的歌曲')
 
 
 class MatchCandidate(BaseModel):
@@ -660,14 +662,36 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
         songs_data = [s.model_dump() for s in request.songs]
         source_list = _map_source_names(request.sources) if request.sources else DEFAULT_SOURCES
         concurrency = request.concurrency or 8
+        filter_duplicates = request.filter_duplicates
 
-        logger.info(f"[后台搜索] 启动批量搜索: {len(songs_data)} 首歌曲, 源: {source_list}")
+        logger.info(f"[后台搜索] 启动批量搜索: {len(songs_data)} 首歌曲, 源: {source_list}, 过滤重复: {filter_duplicates}")
+
+        # 过滤已下载的歌曲
+        skipped_songs = []
+        if filter_duplicates:
+            original_count = len(songs_data)
+            songs_to_search = []
+            for song in songs_data:
+                song_name = song.get('name', '')
+                singer = song.get('artist', '')
+                if history_service.check_duplicate(song_name, singer):
+                    skipped_songs.append({
+                        'name': song_name,
+                        'artist': singer,
+                        'reason': '已下载'
+                    })
+                    logger.info(f"[后台搜索] 跳过已下载: {song_name} - {singer}")
+                else:
+                    songs_to_search.append(song)
+            songs_data = songs_to_search
+            logger.info(f"[后台搜索] 过滤后剩余 {len(songs_data)} 首歌曲 (跳过 {len(skipped_songs)} 首)")
 
         # 创建任务
         task_id = task_manager.create_task('search', {
             'songs': songs_data,
             'sources': source_list,
-            'concurrency': concurrency
+            'concurrency': concurrency,
+            'skipped_songs': skipped_songs
         }, total=len(songs_data))
 
         # 启动后台任务

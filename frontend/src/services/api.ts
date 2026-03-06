@@ -207,6 +207,29 @@ export const playlistApi = {
   }) => api.post('/playlist/batch-search', request),
 
   /**
+   * 启动后台批量搜索任务
+   * 返回task_id，可轮询查询进度
+   */
+  startBatchSearch: (request: {
+    songs: { name: string; artist: string; album: string }[];
+    sources?: string[];
+    concurrency?: number;
+    filter_duplicates?: boolean;
+  }) => api.post('/playlist/batch-search-start', request),
+
+  /**
+   * 查询后台搜索任务状态
+   */
+  getBatchSearchStatus: (taskId: string) =>
+    api.get(`/playlist/batch-search-status/${taskId}`),
+
+  /**
+   * 取消后台搜索任务
+   */
+  cancelBatchSearch: (taskId: string) =>
+    api.delete(`/playlist/batch-search-status/${taskId}`),
+
+  /**
    * 批量搜索歌单歌曲（SSE流式 - GET请求）
    * @param songsJson JSON字符串格式的歌曲列表
    * @param sources 逗号分隔的音乐源

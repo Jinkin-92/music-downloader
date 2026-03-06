@@ -15,6 +15,7 @@ import requests
 
 from core import MusicDownloader, DOWNLOAD_DIR
 from core.song_cache import song_info_cache
+from backend.services.history_service import history_service
 # Celery tasks disabled for testing
 # from backend.workers.download import download_single_song_task, download_batch_songs_task
 
@@ -305,6 +306,25 @@ async def _execute_download_stream(request: DownloadRequest):
                                     [{'song_info_obj': song_info_obj}],
                                     download_dir=download_dir
                                 )
+
+                                # 记录下载历史
+                                try:
+                                    file_name = f"{song_name} - {singers}.mp3"
+                                    file_name = ''.join(c for c in file_name if c.isalnum() or c in (' ', '-', '_', '.'))
+                                    save_path = os.path.join(download_dir, file_name)
+                                    if os.path.exists(save_path):
+                                        file_size = os.path.getsize(save_path)
+                                        history_service.record_download(
+                                            song_name=song_name,
+                                            singers=singers,
+                                            file_path=save_path,
+                                            file_size=file_size,
+                                            source=song.get('source', ''),
+                                            similarity=0.0
+                                        )
+                                except Exception as hist_err:
+                                    logger.warning(f"记录下载历史失败: {hist_err}")
+
                                 completed_count += 1
                                 progress = {
                                     'completed': index + 1,
@@ -346,6 +366,20 @@ async def _execute_download_stream(request: DownloadRequest):
 
                             logger.info(f"[直接下载] 保存成功: {save_path}")
                             completed_count += 1
+
+                            # 记录下载历史
+                            try:
+                                file_size = os.path.getsize(save_path)
+                                history_service.record_download(
+                                    song_name=song_name,
+                                    singers=singers,
+                                    file_path=save_path,
+                                    file_size=file_size,
+                                    source=song.get('source', ''),
+                                    similarity=0.0
+                                )
+                            except Exception as hist_err:
+                                logger.warning(f"记录下载历史失败: {hist_err}")
 
                             # 发送进度更新
                             progress = {
@@ -403,6 +437,24 @@ async def _execute_download_stream(request: DownloadRequest):
                         raise Exception(f"未找到匹配的下载链接")
 
                     completed_count += 1
+
+                    # 记录下载历史
+                    try:
+                        file_name = f"{song_name} - {singers}.mp3"
+                        file_name = ''.join(c for c in file_name if c.isalnum() or c in (' ', '-', '_', '.'))
+                        save_path = os.path.join(download_dir, file_name)
+                        if os.path.exists(save_path):
+                            file_size = os.path.getsize(save_path)
+                            history_service.record_download(
+                                song_name=song_name,
+                                singers=singers,
+                                file_path=save_path,
+                                file_size=file_size,
+                                source=song.get('source', ''),
+                                similarity=0.0
+                            )
+                    except Exception as hist_err:
+                        logger.warning(f"记录下载历史失败: {hist_err}")
 
                     # 发送进度更新
                     progress = {

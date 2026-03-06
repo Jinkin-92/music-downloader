@@ -7,7 +7,6 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout, Typography, Menu } from 'antd';
 import { useUIStore } from './stores/useUIStore';
 import BatchDownloadPage from './pages/BatchDownloadPage';
-import PlaylistImportPage from './pages/PlaylistImportPage';
 import DownloadHistoryPage from './pages/DownloadHistoryPage';
 
 const { Title, Text } = Typography;
@@ -20,10 +19,6 @@ function App() {
     {
       key: '/batch',
       label: '批量下载',
-    },
-    {
-      key: '/playlist',
-      label: '歌单导入',
     },
     {
       key: '/history',
@@ -78,9 +73,6 @@ function App() {
 
             {/* 批量下载页 */}
             <Route path="/batch" element={<BatchDownloadPage />} />
-
-            {/* 歌单导入页 */}
-            <Route path="/playlist" element={<PlaylistImportPage />} />
 
             {/* 下载历史页 */}
             <Route path="/history" element={<DownloadHistoryPage />} />

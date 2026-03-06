@@ -146,136 +146,102 @@ function BatchDownloadPage() {
     setSelectedRows([]);
 
     try {
-      // 构建SSE URL
-      const songsJson = JSON.stringify(allSongs);
-      const sources = selectedSources.join(',');
-      const threshold = MATCH_MODES[matchMode].value;
-      const sseUrl = playlistApi.batchSearchStreamUrl(songsJson, sources, 5, threshold);
-
-      console.log('[SSE] 连接:', sseUrl);
-
-      // 创建SSE连接
-      const eventSource = new EventSource(sseUrl);
-      eventSourceRef.current = eventSource;
-
-      eventSource.addEventListener('start', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          console.log('[SSE] 开始:', data);
-        } catch (err) {
-          console.error('[SSE] 解析start事件失败:', err);
-        }
+      // 使用后台任务API（支持页面切换后继续执行）
+      const response = await playlistApi.startBatchSearch({
+        songs: allSongs,
+        sources: selectedSources,
+        concurrency: 5,
+        filter_duplicates: filterDuplicates,
       });
 
-      eventSource.addEventListener('progress', (e: MessageEvent) => {
+      const taskId = response.data.task_id;
+      console.log('[后台任务] 启动:', taskId);
+
+      // 轮询任务状态
+      const pollInterval = setInterval(async () => {
         try {
-          const data = JSON.parse(e.data);
-          console.log('[SSE] 进度:', data);
-          setSearchProgress(data.percent || 0);
-        } catch (err) {
-          console.error('[SSE] 解析progress事件失败:', err);
-        }
-      });
+          const statusResponse = await playlistApi.getBatchSearchStatus(taskId);
+          const status = statusResponse.data;
 
-      eventSource.addEventListener('complete', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          console.log('[SSE] 完成:', data);
+          console.log('[后台任务] 状态:', status);
 
-          // 转换结果格式
-          const matches = data.matches || {};
-          const results: BatchMatchInfo[] = Object.entries(matches).map(([key, match]: [string, any]) => {
-            const current = match.current_match;
-            const allMatches = match.all_matches || {};
+          if (status.status === 'running') {
+            setSearchProgress(status.progress?.percent || 0);
+          } else if (status.status === 'completed') {
+            clearInterval(pollInterval);
 
-            // 计算候选数量
-            const totalCandidates = Object.values(allMatches).reduce((sum: number, candidates: any) => {
-              return sum + (Array.isArray(candidates) ? candidates.length : 0);
-            }, 0);
+            // 转换结果格式
+            const matches = status.result?.matches || {};
+            const results: BatchMatchInfo[] = Object.entries(matches).map(([key, match]: [string, any]) => {
+              const current = match.current_match;
+              const allMatches = match.all_matches || {};
 
-            return {
-              query_name: match.query?.name || key,
-              query_singer: match.query?.singer || '',
-              song_name: current?.song_name || '未找到',
-              singers: current?.singers || '-',
-              album: current?.album || '-',
-              size: current?.file_size || current?.size || '-',
-              duration: current?.duration || '-',
-              source: current?.source || '-',
-              similarity: current?.similarity_score || current?.similarity || 0,
-              has_candidates: totalCandidates > 1,
-              all_candidates: allMatches,
-              _raw_match: match,
-            };
-          });
+              // 计算候选数量
+              const totalCandidates = Object.values(allMatches).reduce((sum: number, candidates: any) => {
+                return sum + (Array.isArray(candidates) ? candidates.length : 0);
+              }, 0);
 
-          // 过滤逻辑
-          let filteredResults = results;
-
-          // 过滤35秒以下试听片段
-          if (filterShortTracks) {
-            filteredResults = filteredResults.filter(r => {
-              if (r.source === '-') return true; // 保留未匹配的
-              const duration = r.duration || '';
-              // 解析时长格式 (如 "03:45" 或 "225秒")
-              if (duration.includes(':')) {
-                const parts = duration.split(':');
-                const seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-                return seconds >= 35;
-              }
-              return true;
+              return {
+                query_name: match.query?.name || key,
+                query_singer: match.query?.singer || '',
+                song_name: current?.song_name || '未找到',
+                singers: current?.singers || '-',
+                album: current?.album || '-',
+                size: current?.file_size || current?.size || '-',
+                duration: current?.duration || '-',
+                source: current?.source || '-',
+                similarity: current?.similarity_score || current?.similarity || 0,
+                has_candidates: totalCandidates > 1,
+                all_candidates: allMatches,
+                _raw_match: match,
+              };
             });
-          }
 
-          setSearchResults(filteredResults);
-          setSelectedRows(filteredResults.map((_, idx) => `${filteredResults[idx].query_name}-${idx}`));
-          setHasSearched(true);
-          setSearchLoading(false);
+            // 过滤逻辑
+            let filteredResults = results;
 
-          eventSource.close();
-          eventSourceRef.current = null;
+            // 过滤35秒以下试听片段
+            if (filterShortTracks) {
+              filteredResults = filteredResults.filter(r => {
+                if (r.source === '-') return true; // 保留未匹配的
+                const duration = r.duration || '';
+                // 解析时长格式 (如 "03:45" 或 "225秒")
+                if (duration.includes(':')) {
+                  const parts = duration.split(':');
+                  const seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                  return seconds >= 35;
+                }
+                return true;
+              });
+            }
 
-          const matchedCount = filteredResults.filter(r => r.source !== '-').length;
-          if (matchedCount > 0) {
-            message.success(`搜索完成，找到 ${matchedCount} 首匹配歌曲`);
-          } else {
-            message.warning('未找到匹配的歌曲');
+            setSearchResults(filteredResults);
+            setSelectedRows(filteredResults.map((_, idx) => `${filteredResults[idx].query_name}-${idx}`));
+            setHasSearched(true);
+            setSearchLoading(false);
+
+            const matchedCount = filteredResults.filter(r => r.source !== '-').length;
+            if (matchedCount > 0) {
+              message.success(`搜索完成，找到 ${matchedCount} 首匹配歌曲`);
+            } else {
+              message.warning('未找到匹配的歌曲');
+            }
+          } else if (status.status === 'failed') {
+            clearInterval(pollInterval);
+            message.error(status.error || '搜索失败');
+            setSearchLoading(false);
           }
         } catch (err) {
-          console.error('[SSE] 解析complete事件失败:', err);
-          message.error('解析搜索结果失败');
-          setSearchLoading(false);
+          console.error('[后台任务] 轮询错误:', err);
         }
-      });
-
-      eventSource.addEventListener('error', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          console.error('[SSE] 错误:', data);
-          message.error(data.error || '搜索连接失败');
-        } catch {
-          console.error('[SSE] 连接错误');
-          message.error('搜索连接失败');
-        }
-        setSearchLoading(false);
-        eventSource.close();
-        eventSourceRef.current = null;
-      });
-
-      eventSource.onerror = (err) => {
-        console.error('[SSE] EventSource错误:', err);
-        message.error('搜索连接中断');
-        setSearchLoading(false);
-        eventSource.close();
-        eventSourceRef.current = null;
-      };
+      }, 2000); // 每2秒轮询一次
 
     } catch (err: any) {
       console.error('[批量搜索] 错误:', err);
       message.error(err.message || '批量搜索失败');
       setSearchLoading(false);
     }
-  }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, message]);
+  }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, filterDuplicates, message]);
 
   // ========== 全选/反选/清除 ==========
   const handleSelectAll = useCallback(() => {
