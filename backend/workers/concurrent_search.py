@@ -99,7 +99,12 @@ class AsyncConcurrentSearcher:
 
     def _calculate_combined_similarity(self, parsed_song: Dict, result: Dict) -> float:
         """
-        计算完整的相似度分数（歌名50% + 歌手40% + 专辑10%）
+        计算完整的相似度分数
+
+        使用 SongMatcher 的完整算法，包括：
+        - 完全匹配检查（100%）
+        - 完全匹配加分
+        - 动态权重
 
         Args:
             parsed_song: 解析后的歌曲信息 {'name': '歌名', 'singer': '歌手', 'album': '专辑'}
@@ -116,19 +121,22 @@ class AsyncConcurrentSearcher:
         result_singer = result.get('singers', '')
         result_album = result.get('album', '')
 
-        # 计算各部分相似度
-        name_sim = self.matcher.calculate_similarity(query_name, result_name)
-        singer_sim = self.matcher.calculate_similarity(query_singer, result_singer)
-        album_sim = self.matcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
+        # 使用 SongMatcher 的完整匹配算法
+        breakdown = SongMatcher.calculate_similarity_breakdown(
+            query_name, query_singer, query_album,
+            result_name, result_singer, result_album
+        )
 
-        # 组合相似度：歌名50% + 歌手40% + 专辑10%
-        combined_score = (name_sim * 0.5) + (singer_sim * 0.4) + (album_sim * 0.1)
-
-        return combined_score
+        return breakdown['combined']
 
     def _calculate_similarity_breakdown(self, parsed_song: Dict, result: Dict) -> Dict:
         """
         计算相似度分解（用于前端展示详细分解）
+
+        使用 SongMatcher.calculate_similarity_breakdown() 方法，确保：
+        - 完全匹配返回100%
+        - 完全匹配加分
+        - 动态权重（专辑为空时重新分配）
 
         Args:
             parsed_song: 解析后的歌曲信息
@@ -145,19 +153,17 @@ class AsyncConcurrentSearcher:
         result_singer = result.get('singers', '')
         result_album = result.get('album', '')
 
-        # 计算各部分相似度
-        name_sim = self.matcher.calculate_similarity(query_name, result_name)
-        singer_sim = self.matcher.calculate_similarity(query_singer, result_singer)
-        album_sim = self.matcher.calculate_similarity(query_album, result_album) if query_album and result_album else 0.0
-
-        # 组合相似度：歌名50% + 歌手40% + 专辑10%
-        combined_score = (name_sim * 0.5) + (singer_sim * 0.4) + (album_sim * 0.1)
+        # 使用 SongMatcher 的完整匹配算法
+        breakdown = SongMatcher.calculate_similarity_breakdown(
+            query_name, query_singer, query_album,
+            result_name, result_singer, result_album
+        )
 
         return {
-            'name_sim': name_sim,
-            'singer_sim': singer_sim,
-            'album_sim': album_sim,
-            'combined': combined_score
+            'name_sim': breakdown['name_similarity'],
+            'singer_sim': breakdown['singer_similarity'],
+            'album_sim': breakdown['album_similarity'],
+            'combined': breakdown['combined']
         }
 
     def _filter_by_duration(self, result: Dict, min_seconds: int = 35) -> bool:

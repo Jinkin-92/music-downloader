@@ -55,6 +55,27 @@ class SongMatcher:
         return text
 
     @staticmethod
+    def _is_live_version(song_name: str) -> bool:
+        """检测是否为现场版本
+
+        检测歌名中是否包含现场版本标记，如"（现场）"、"(live)"等
+
+        Args:
+            song_name: 歌曲名称
+
+        Returns:
+            是否为现场版本
+        """
+        live_markers = [
+            '（现场）', '(现场)', '[现场]',
+            '(live)', '(Live)', '[live]', '[Live]',
+            '- live', '- Live', '- LIVE',
+            'live version', 'live edit'
+        ]
+        name_lower = song_name.lower()
+        return any(marker.lower() in name_lower for marker in live_markers)
+
+    @staticmethod
     def _calculate_dynamic_weights(query_album: str, result_album: str) -> Dict[str, float]:
         """
         计算动态权重
@@ -354,10 +375,17 @@ class SongMatcher:
             total_bonus = min(name_bonus + singer_bonus, 0.25)
             combined = min(combined + total_bonus, 1.0)
 
+        # 现场版本降低 20% 匹配度
+        live_penalty = 1.0
+        if SongMatcher._is_live_version(result_name):
+            live_penalty = 0.8  # 降低 20%
+            combined = combined * live_penalty
+
         return {
             'name_similarity': name_sim,
             'singer_similarity': singer_sim,
             'album_similarity': album_sim,
             'combined': combined,
-            'exact_match_bonus': total_bonus
+            'exact_match_bonus': total_bonus,
+            'live_penalty': live_penalty  # 新增字段，用于调试
         }
