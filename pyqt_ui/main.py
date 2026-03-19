@@ -19,6 +19,8 @@ from .config import (
 )
 from .workers import SearchWorker, DownloadWorker, BatchSearchWorker, ConcurrentSearchWorker, ConcurrentDownloadWorker
 from .playlist.workers import PlaylistParseWorker
+from .history_dialog import DownloadHistoryDialog
+from backend.models.download_history import DownloadHistoryDB
 
 # Setup logging
 logging.basicConfig(
@@ -51,6 +53,9 @@ class MainWindow(QMainWindow):
         self.switch_history = []  # [(original_line, old_candidate, new_candidate), ...]
         self.max_history_size = 50
 
+        # Download history database
+        self.history_db = DownloadHistoryDB()
+
         self.setup_ui()
 
         # Setup keyboard shortcuts
@@ -65,9 +70,42 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(WINDOW_MIN_WIDTH, WINDOW_MIN_HEIGHT)
         self.resize(1200, 800)
 
+        # Setup menu bar
+        self.setup_menu()
+
         # Create central widget
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
+
+        # Main layout
+        main_layout = QVBoxLayout(central_widget)
+        main_layout.setSpacing(10)
+        main_layout.setContentsMargins(20, 20, 20, 20)
+
+        # Tab widget for mode switching
+        self.mode_tab_widget = QTabWidget()
+        main_layout.addWidget(self.mode_tab_widget)
+
+    def setup_menu(self):
+        """Setup menu bar"""
+        menubar = self.menuBar()
+
+        # 文件菜单
+        file_menu = menubar.addMenu("文件 (&F)")
+
+        # 下载历史
+        history_action = QAction("下载历史 (&H)", self)
+        history_action.setShortcut(QKeySequence("Ctrl+H"))
+        history_action.triggered.connect(self.on_history_action)
+        file_menu.addAction(history_action)
+
+        file_menu.addSeparator()
+
+        # 退出
+        exit_action = QAction("退出 (&X)", self)
+        exit_action.setShortcut(QKeySequence("Ctrl+Q"))
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
 
         # Main layout
         main_layout = QVBoxLayout(central_widget)
@@ -1812,6 +1850,20 @@ class MainWindow(QMainWindow):
 
         # Note: Ctrl+K for quick switch could be added here
         # but requires tracking which row is currently selected
+
+    @pyqtSlot()
+    def on_history_action(self):
+        """Open download history dialog"""
+        try:
+            dialog = DownloadHistoryDialog(self.history_db, self)
+            dialog.exec()
+        except Exception as e:
+            logger.error(f"打开下载历史失败：{e}")
+            QMessageBox.critical(
+                self,
+                "错误",
+                f"打开下载历史失败:\n{e}"
+            )
 
     def on_retry_search(self, original_line: str):
         """Retry searching for a specific song"""
