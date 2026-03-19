@@ -106,38 +106,6 @@ class MainWindow(QMainWindow):
         exit_action.setShortcut(QKeySequence("Ctrl+Q"))
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
-
-        # Main layout
-        main_layout = QVBoxLayout(central_widget)
-        main_layout.setSpacing(10)
-        main_layout.setContentsMargins(20, 20, 20, 20)
-
-        # Tab widget for mode switching
-        self.mode_tab_widget = QTabWidget()
-        main_layout.addWidget(self.mode_tab_widget)
-
-        # Music Source Selection (shared between modes)
-        # 1. Source Selection Group
-        self.source_group = QGroupBox("Music Sources")
-        source_layout = QHBoxLayout()
-
-        self.select_all_cb = QCheckBox("Select All")
-        self.select_all_cb.setChecked(True)
-        self.select_all_cb.stateChanged.connect(self.on_select_all_toggled)
-        source_layout.addWidget(self.select_all_cb)
-
-        for source in DEFAULT_SOURCES:
-            cb = QCheckBox(SOURCE_LABELS[source])
-            cb.setChecked(True)
-            self.source_checkboxes[source] = cb
-            source_layout.addWidget(cb)
-
-        self.source_group.setLayout(source_layout)
-        main_layout.addWidget(self.source_group)
-        
-        # Create single mode tab
-        single_tab = QWidget()
-        single_layout = QVBoxLayout(single_tab)
         
 
 
