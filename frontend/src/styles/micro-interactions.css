@@ -6,6 +6,11 @@
  * - 卡片悬停效果
  * - 点击波纹效果
  * - 平滑过渡动画
+ *
+ * 兼容性：
+ * - 测试Ant Design版本: 5.x
+ * - 升级Ant Design时请验证以下选择器是否仍然有效
+ * - 覆盖的类名: .ant-btn-primary, .ant-btn-default, .ant-card, .ant-input等
  */
 
 /* ========== 按钮增强效果 ========== */

@@ -81,11 +81,8 @@ function BatchDownloadPage() {
   // SSE连接引用
   const eventSourceRef = useRef<EventSource | null>(null);
   const downloadEventSourceRef = useRef<EventSource | null>(null);
-  // 使用ref存储处理函数，避免useEffect依赖循环
-  const handleBatchSearchRef = useRef<(() => void) | null>(null);
-  const handleBatchDownloadRef = useRef<(() => void) | null>(null);
 
-  // 计算总歌曲数（文本 + 歌单）- 必须在useEffect之前定义
+  // 计算总歌曲数（文本 + 歌单）
   const totalSongCount = useMemo(() => {
     return parsedCount + playlistSongs.length;
   }, [parsedCount, playlistSongs.length]);
@@ -103,32 +100,6 @@ function BatchDownloadPage() {
       }
     };
   }, []);
-
-  // Ctrl+Enter 执行搜索, Ctrl+D 开始下载
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl+Enter: 执行搜索 (当搜索未在加载且有歌曲时)
-      if (e.ctrlKey && e.key === 'Enter') {
-        e.preventDefault();
-        if (!searchLoading && totalSongCount > 0 && selectedSources.length > 0) {
-          handleBatchSearchRef.current?.();
-        }
-        return;
-      }
-
-      // Ctrl+D: 开始下载 (当下载未在加载且有选中行时)
-      if (e.ctrlKey && e.key === 'd') {
-        e.preventDefault();
-        if (!downloadLoading && selectedRows.length > 0) {
-          handleBatchDownloadRef.current?.();
-        }
-        return;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [searchLoading, downloadLoading, totalSongCount, selectedSources.length, selectedRows.length]);
 
   // ========== 歌单解析回调 ==========
   const handlePlaylistParsed = useCallback((songs: PlaylistSong[]) => {
@@ -293,9 +264,6 @@ function BatchDownloadPage() {
       setSearchLoading(false);
     }
   }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, filterDuplicates, message]);
-
-  // 更新ref以便useEffect可以访问
-  handleBatchSearchRef.current = handleBatchSearch;
 
   // ========== 全选/反选/清除 ==========
   const handleSelectAll = useCallback(() => {
@@ -479,9 +447,6 @@ function BatchDownloadPage() {
       setShowDownloadProgress(false);
     }
   }, [selectedRows, searchResults, downloadDir, message]);
-
-  // 更新ref以便useEffect可以访问
-  handleBatchDownloadRef.current = handleBatchDownload;
 
   return (
     <div className="page">

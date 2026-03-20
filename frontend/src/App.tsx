@@ -3,9 +3,8 @@
  *
  * 定义路由和布局
  */
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout, Typography, Menu } from 'antd';
-import { useEffect } from 'react';
 import { useUIStore } from './stores/useUIStore';
 import BatchDownloadPage from './pages/BatchDownloadPage';
 import DownloadHistoryPage from './pages/DownloadHistoryPage';
@@ -14,21 +13,7 @@ const { Title, Text } = Typography;
 
 function App() {
   const navigate = useNavigate();
-  const location = useLocation();
   const selectedSources = useUIStore((state) => state.selectedSources);
-
-  // Ctrl+H 打开下载历史
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'h' && location.pathname !== '/history') {
-        e.preventDefault();
-        navigate('/history');
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigate, location.pathname]);
 
   const menuItems = [
     {
