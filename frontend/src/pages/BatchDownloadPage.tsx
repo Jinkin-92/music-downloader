@@ -81,6 +81,9 @@ function BatchDownloadPage() {
   // SSE连接引用
   const eventSourceRef = useRef<EventSource | null>(null);
   const downloadEventSourceRef = useRef<EventSource | null>(null);
+  // 使用ref存储处理函数，避免useEffect依赖循环
+  const handleBatchSearchRef = useRef<(() => void) | null>(null);
+  const handleBatchDownloadRef = useRef<(() => void) | null>(null);
 
   // 计算总歌曲数（文本 + 歌单）- 必须在useEffect之前定义
   const totalSongCount = useMemo(() => {
@@ -108,7 +111,7 @@ function BatchDownloadPage() {
       if (e.ctrlKey && e.key === 'Enter') {
         e.preventDefault();
         if (!searchLoading && totalSongCount > 0 && selectedSources.length > 0) {
-          handleBatchSearch();
+          handleBatchSearchRef.current?.();
         }
         return;
       }
@@ -117,7 +120,7 @@ function BatchDownloadPage() {
       if (e.ctrlKey && e.key === 'd') {
         e.preventDefault();
         if (!downloadLoading && selectedRows.length > 0) {
-          handleBatchDownload();
+          handleBatchDownloadRef.current?.();
         }
         return;
       }
@@ -125,7 +128,7 @@ function BatchDownloadPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [searchLoading, downloadLoading, totalSongCount, selectedSources.length, selectedRows.length, handleBatchSearch, handleBatchDownload]);
+  }, [searchLoading, downloadLoading, totalSongCount, selectedSources.length, selectedRows.length]);
 
   // ========== 歌单解析回调 ==========
   const handlePlaylistParsed = useCallback((songs: PlaylistSong[]) => {
@@ -290,6 +293,9 @@ function BatchDownloadPage() {
       setSearchLoading(false);
     }
   }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, filterDuplicates, message]);
+
+  // 更新ref以便useEffect可以访问
+  handleBatchSearchRef.current = handleBatchSearch;
 
   // ========== 全选/反选/清除 ==========
   const handleSelectAll = useCallback(() => {
@@ -473,6 +479,9 @@ function BatchDownloadPage() {
       setShowDownloadProgress(false);
     }
   }, [selectedRows, searchResults, downloadDir, message]);
+
+  // 更新ref以便useEffect可以访问
+  handleBatchDownloadRef.current = handleBatchDownload;
 
   return (
     <div className="page">
