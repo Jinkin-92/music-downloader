@@ -17,7 +17,6 @@ import {
   Typography,
   message,
   Tag,
-  Empty,
   Tooltip,
   Modal,
   Alert,
@@ -41,6 +40,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { downloadApi } from '../services/api';
+import EmptyState from '../components/common/EmptyState';
 
 const { Title, Text } = Typography;
 const { Search } = Input;
@@ -430,14 +430,10 @@ function DownloadHistoryPage() {
             rowClassName={(record) => !record.file_exists ? 'missing-record' : ''}
             locale={{
               emptyText: (
-                <Empty
-                  description="暂无下载历史"
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                >
-                  <Text type="secondary">
-                    下载的歌曲会自动记录在这里
-                  </Text>
-                </Empty>
+                <EmptyState
+                  type="history"
+                  onAction={() => window.location.href = '/'}
+                />
               ),
             }}
           />

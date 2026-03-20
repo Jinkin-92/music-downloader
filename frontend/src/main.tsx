@@ -12,6 +12,9 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { antDesignTheme } from './styles/theme';
 import './styles/global.css';
+import './styles/micro-interactions.css';
+import './styles/visual-hierarchy.css';
+import './styles/emotional-colors.css';
 
 /**
  * React Query客户端

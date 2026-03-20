@@ -96,6 +96,32 @@ function BatchDownloadPage() {
     };
   }, []);
 
+  // Ctrl+Enter 执行搜索, Ctrl+D 开始下载
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+Enter: 执行搜索 (当搜索未在加载且有歌曲时)
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        if (!searchLoading && totalSongCount > 0 && selectedSources.length > 0) {
+          handleBatchSearch();
+        }
+        return;
+      }
+
+      // Ctrl+D: 开始下载 (当下载未在加载且有选中行时)
+      if (e.ctrlKey && e.key === 'd') {
+        e.preventDefault();
+        if (!downloadLoading && selectedRows.length > 0) {
+          handleBatchDownload();
+        }
+        return;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [searchLoading, downloadLoading, totalSongCount, selectedSources.length, selectedRows.length, handleBatchSearch, handleBatchDownload]);
+
   // 计算总歌曲数（文本 + 歌单）
   const totalSongCount = useMemo(() => {
     return parsedCount + playlistSongs.length;
