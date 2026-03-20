@@ -11,9 +11,9 @@
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QTableWidget, QTableWidgetItem,
     QPushButton, QLabel, QProgressBar, QMessageBox, QHeaderView,
-    QAbstractItemView, QDialogButtonBox, QMenu
+    QAbstractItemView, QDialogButtonBox, QMenu, QWidget
 )
-from PyQt6.QtCore import Qt, pyqtSlot, QThread, pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSlot, QThread, pyqtSignal, QPropertyAnimation, QEasingCurve, QTimer
 from PyQt6.QtGui import QAction
 
 from pathlib import Path
@@ -49,6 +49,14 @@ class DownloadHistoryDialog(QDialog):
         self.db = db
         self.verify_worker = None
         self.current_records = []
+
+        # 动画相关
+        self._progress_anim = None
+        self._status_anim = None
+        self._ellipsis_timer = None
+        self._ellipsis_count = 0
+        self._status_text = ""
+
         self.setup_ui()
         self.load_history()
 
@@ -149,6 +157,63 @@ class DownloadHistoryDialog(QDialog):
         self.statusBar_label.setStyleSheet("color: gray; padding: 5px;")
         layout.addWidget(self.statusBar_label)
 
+        # 初始化动画
+        self._setup_animations()
+
+    def _setup_animations(self):
+        """设置加载动画"""
+        # 进度条淡入动画
+        self._progress_anim = QPropertyAnimation(self.progress_bar, b"maximumWidth")
+        self._progress_anim.setDuration(300)
+        self._progress_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
+
+        # 状态标签淡入动画（使用透明度效果）
+        self._status_anim = QPropertyAnimation(self.status_label, b"maximumHeight")
+        self._status_anim.setDuration(300)
+        self._status_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
+
+        # 动画省略号计时器
+        self._ellipsis_timer = QTimer(self)
+        self._ellipsis_timer.timeout.connect(self._update_ellipsis)
+
+    def _update_ellipsis(self):
+        """更新省略号动画"""
+        self._ellipsis_count = (self._ellipsis_count + 1) % 4
+        dots = "." * self._ellipsis_count
+        self.status_label.setText(f"{self._status_text}{dots}")
+
+    def _start_loading_animation(self, text: str):
+        """开始加载动画"""
+        self._status_text = text
+        self._ellipsis_count = 0
+        self._ellipsis_timer.start(500)  # 每500ms更新一次
+
+        # 淡入效果
+        self._fade_in_widget(self.progress_bar)
+        self._fade_in_widget(self.status_label)
+
+    def _stop_loading_animation(self):
+        """停止加载动画"""
+        self._ellipsis_timer.stop()
+
+        # 淡出效果
+        self._fade_out_widget(self.progress_bar)
+        self._fade_out_widget(self.status_label)
+
+    def _fade_in_widget(self, widget: QWidget):
+        """淡入显示控件"""
+        widget.setVisible(True)
+        # 使用样式表动画效果
+        widget.setStyleSheet("""
+            QProgressBar, QLabel {
+                animation: fadeIn 300ms ease-out;
+            }
+        """)
+
+    def _fade_out_widget(self, widget: QWidget):
+        """淡出隐藏控件"""
+        widget.setVisible(False)
+
     @pyqtSlot()
     def load_history(self):
         """加载下载历史"""
@@ -163,6 +228,11 @@ class DownloadHistoryDialog(QDialog):
     def populate_table(self):
         """填充表格"""
         self.history_table.setRowCount(0)
+
+        # 空状态提示
+        if len(self.current_records) == 0:
+            self.statusBar_label.setText("💡 暂无下载记录，下载歌曲后将自动记录")
+            return
 
         for row, record in enumerate(self.current_records):
             self.history_table.insertRow(row)
@@ -224,7 +294,11 @@ class DownloadHistoryDialog(QDialog):
 
         self.stats_label.setText(f"总计：{total} | 有效：{valid} | 缺失：{missing}")
 
-        if missing > 0:
+        # 根据缺失率设置颜色
+        missing_rate = missing / total if total > 0 else 0
+        if missing_rate > 0.1:
+            self.stats_label.setStyleSheet("color: red;")
+        elif missing > 0:
             self.stats_label.setStyleSheet("color: orange;")
         else:
             self.stats_label.setStyleSheet("color: green;")
@@ -233,10 +307,12 @@ class DownloadHistoryDialog(QDialog):
     def on_verify_clicked(self):
         """验证文件状态"""
         self.verify_btn.setEnabled(False)
-        self.progress_bar.setVisible(True)
+        self.clean_btn.setEnabled(False)
+        self.refresh_btn.setEnabled(False)
         self.progress_bar.setRange(0, 0)  # 不确定进度
-        self.status_label.setVisible(True)
-        self.status_label.setText("正在验证文件是否存在...")
+
+        # 使用动画显示加载状态
+        self._start_loading_animation("正在验证文件是否存在")
 
         self.verify_worker = VerifyWorker(self.db)
         self.verify_worker.finished.connect(self.on_verify_finished)
@@ -247,8 +323,11 @@ class DownloadHistoryDialog(QDialog):
     def on_verify_finished(self, stats):
         """验证完成"""
         self.verify_btn.setEnabled(True)
-        self.progress_bar.setVisible(False)
-        self.status_label.setVisible(False)
+        self.clean_btn.setEnabled(True)
+        self.refresh_btn.setEnabled(True)
+
+        # 停止动画
+        self._stop_loading_animation()
 
         self.statusBar_label.setText(
             f"✅ 验证完成：共 {stats['total']} 条记录，有效 {stats['valid']} 条，缺失 {stats['missing']} 条"
@@ -269,8 +348,12 @@ class DownloadHistoryDialog(QDialog):
     def on_verify_error(self, error_msg):
         """验证错误"""
         self.verify_btn.setEnabled(True)
-        self.progress_bar.setVisible(False)
-        self.status_label.setVisible(False)
+        self.clean_btn.setEnabled(True)
+        self.refresh_btn.setEnabled(True)
+
+        # 停止动画
+        self._stop_loading_animation()
+
         QMessageBox.critical(self, "验证失败", f"文件验证失败:\n{error_msg}")
 
     @pyqtSlot()

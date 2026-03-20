@@ -1,8 +1,8 @@
 """单首歌搜索任务"""
 from PyQt6.QtCore import QRunnable, QObject, pyqtSignal
 from ..music_downloader import MusicDownloader
-from ..batch.matcher import SongMatcher
-from ..batch.models import BatchSongMatch, MatchCandidate
+from core.matcher import SongMatcher
+from core.models import BatchSongMatch, MatchCandidate
 import logging
 
 logger = logging.getLogger(__name__)
