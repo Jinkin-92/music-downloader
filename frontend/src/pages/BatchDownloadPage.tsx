@@ -82,6 +82,11 @@ function BatchDownloadPage() {
   const eventSourceRef = useRef<EventSource | null>(null);
   const downloadEventSourceRef = useRef<EventSource | null>(null);
 
+  // 计算总歌曲数（文本 + 歌单）- 必须在useEffect之前定义
+  const totalSongCount = useMemo(() => {
+    return parsedCount + playlistSongs.length;
+  }, [parsedCount, playlistSongs.length]);
+
   // 组件卸载时清理SSE连接
   useEffect(() => {
     return () => {
@@ -121,11 +126,6 @@ function BatchDownloadPage() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [searchLoading, downloadLoading, totalSongCount, selectedSources.length, selectedRows.length, handleBatchSearch, handleBatchDownload]);
-
-  // 计算总歌曲数（文本 + 歌单）
-  const totalSongCount = useMemo(() => {
-    return parsedCount + playlistSongs.length;
-  }, [parsedCount, playlistSongs.length]);
 
   // ========== 歌单解析回调 ==========
   const handlePlaylistParsed = useCallback((songs: PlaylistSong[]) => {
