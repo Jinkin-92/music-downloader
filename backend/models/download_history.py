@@ -361,7 +361,7 @@ class DownloadHistoryDB:
             file_size=row['file_size'],
             source=row['source'],
             similarity=row['similarity'],
-            download_time=datetime.fromisoformat(row['download_time']) if row['download_time'] else None,
+            download_time=datetime.fromisoformat(row['download_time']) if isinstance(row['download_time'], str) else row['download_time'] if row['download_time'] else None,
             file_exists=bool(row['file_exists'])
         )
 
