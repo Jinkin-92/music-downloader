@@ -194,6 +194,7 @@ function MatchSettingsPanel({
               value={null}
               onChange={handleDirSelect}
               style={{ width: 120 }}
+              popupMatchSelectWidth={false}
               options={[
                 ...QUICK_DOWNLOAD_DIRS,
                 { label: '历史目录', value: '__history__' },
