@@ -24,7 +24,8 @@ DEFAULT_SOURCES = [
     "NeteaseMusicClient",
     "KugouMusicClient",
     "KuwoMusicClient",
-    "MiguMusicClient",  # 新增：咪咕音乐，提供更多版权歌曲
+    "MiguMusicClient",
+    "SpotifyClient",  # 新增：Spotify（需要API密钥）
 ]
 
 # Source labels for display
@@ -34,6 +35,7 @@ SOURCE_LABELS = {
     "KugouMusicClient": "酷狗",
     "KuwoMusicClient": "酷我",
     "MiguMusicClient": "咪咕",
+    "SpotifyClient": "Spotify",
 }
 
 # Batch Download Configuration

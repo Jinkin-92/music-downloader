@@ -82,6 +82,12 @@ class BatchSearchRequest(BaseModel):
         le=10,
         description='并发搜索数量'
     )
+    similarity_threshold: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description='相似度阈值（None=使用默认值0.6）'
+    )
 
 
 class BatchMatchInfo(BaseModel):
@@ -214,8 +220,8 @@ async def batch_search(request: BatchSearchRequest):
             f"sources={sources}, concurrency={request.concurrency}"
         )
 
-        # 创建异步搜索器，添加默认相似度阈值0.3（30%）提高匹配率
-        similarity_threshold = 0.3  # 默认30%相似度阈值
+        # 创建异步搜索器，使用请求的相似度阈值
+        similarity_threshold = request.similarity_threshold if request.similarity_threshold is not None else 0.6
         searcher = AsyncConcurrentSearcher(
             concurrency=request.concurrency,
             similarity_threshold=similarity_threshold

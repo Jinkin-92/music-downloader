@@ -27,6 +27,9 @@ class SongMatcher:
     # 完全匹配加分
     EXACT_MATCH_BONUS = 0.15  # 完全匹配额外加分15%
 
+    # 后缀修饰词惩罚：当结果包含查询但有额外修饰后缀时降低相似度
+    SUFFIX_MODIFIER_PENALTY = 0.20  # 降低20%
+
     @staticmethod
     def calculate_similarity(query: str, result: str) -> float:
         """Calculate similarity between query and result"""
@@ -74,6 +77,66 @@ class SongMatcher:
         ]
         name_lower = song_name.lower()
         return any(marker.lower() in name_lower for marker in live_markers)
+
+    @staticmethod
+    def _has_suffix_modifier(result_name: str, query_name: str) -> bool:
+        """
+        检查结果是否包含查询词但有额外修饰后缀
+
+        当用户搜索"大风吹"时，"大风吹（DJ慢摇版）"虽然有包含关系，
+        但应该被视为带有修饰后缀的版本，降低其匹配置信度。
+
+        判断规则：
+        1. 结果以查询词开头
+        2. 结果比查询词长（有额外内容）
+        3. 额外内容包含常见的版本修饰词（如DJ、Live、Remix等）
+
+        示例：
+        - query="大风吹", result="大风吹（DJ慢摇版）" → True (有后缀)
+        - query="大风吹", result="大风吹" → False (完全匹配)
+        - query="大风吹DJ版", result="大风吹（DJ慢摇版）" → False (查询本身包含版本信息)
+        - query="大风吹", result="不是大风吹" → False (结果不以查询开头)
+
+        Args:
+            result_name: 结果歌曲名
+            query_name: 查询歌曲名
+
+        Returns:
+            是否包含修饰后缀
+        """
+        query_norm = SongMatcher._normalize_text(query_name)
+        result_norm = SongMatcher._normalize_text(result_name)
+
+        # 如果查询完全等于结果，无后缀
+        if query_norm == result_norm:
+            return False
+
+        # 如果结果不以查询开头，说明不是简单的后缀关系
+        if not result_norm.startswith(query_norm):
+            return False
+
+        # 提取后缀部分
+        suffix = result_norm[len(query_norm):]
+
+        # 如果后缀为空，无修饰
+        if not suffix:
+            return False
+
+        # 检查后缀是否包含常见修饰词标记
+        modifier_markers = [
+            # 版本类型
+            'dj', 'remix', 'mix', '版', 'version', 'edit',
+            # 现场/演出
+            'live', '现场', '演唱会', 'concert',
+            # 伴奏/翻唱
+            '伴奏', 'karaoke', 'cover', '翻唱',
+            # 音质/格式
+            'hq', 'hq', '无损', 'flac', 'mp3',
+            # 其他常见修饰
+            '完整', '剪辑', '片段', 'short', 'full',
+        ]
+
+        return any(marker in suffix for marker in modifier_markers)
 
     @staticmethod
     def _calculate_dynamic_weights(query_album: str, result_album: str) -> Dict[str, float]:
@@ -258,6 +321,14 @@ class SongMatcher:
                 total_bonus = min(name_bonus + singer_bonus, 0.25)
                 combined_score = min(combined_score + total_bonus, 1.0)
 
+                # 现场版本惩罚
+                if SongMatcher._is_live_version(result_name):
+                    combined_score *= 0.8
+
+                # 后缀修饰词惩罚
+                if SongMatcher._has_suffix_modifier(result_name, query_name):
+                    combined_score *= (1.0 - SongMatcher.SUFFIX_MODIFIER_PENALTY)
+
             scored_results.append((combined_score, result))
 
         # 按相似度降序排序
@@ -326,6 +397,14 @@ class SongMatcher:
                 total_bonus = min(name_bonus + singer_bonus, 0.25)
                 combined_score = min(combined_score + total_bonus, 1.0)
 
+                # 现场版本惩罚
+                if SongMatcher._is_live_version(result_name):
+                    combined_score *= 0.8
+
+                # 后缀修饰词惩罚
+                if SongMatcher._has_suffix_modifier(result_name, query_name):
+                    combined_score *= (1.0 - SongMatcher.SUFFIX_MODIFIER_PENALTY)
+
             scored_results.append((combined_score, result))
 
         # 按相似度降序排序
@@ -381,11 +460,19 @@ class SongMatcher:
             live_penalty = 0.8  # 降低 20%
             combined = combined * live_penalty
 
+        # 后缀修饰词惩罚：当结果包含查询但有额外修饰后缀时降低相似度
+        # 例如：搜索"大风吹"时，"大风吹（DJ慢摇版）"应该比纯"大风吹"得分低
+        suffix_modifier_penalty = 1.0
+        if SongMatcher._has_suffix_modifier(result_name, query_name):
+            suffix_modifier_penalty = 1.0 - SongMatcher.SUFFIX_MODIFIER_PENALTY  # 降低 20%
+            combined = combined * suffix_modifier_penalty
+
         return {
             'name_similarity': name_sim,
             'singer_similarity': singer_sim,
             'album_similarity': album_sim,
             'combined': combined,
             'exact_match_bonus': total_bonus,
-            'live_penalty': live_penalty  # 新增字段，用于调试
+            'live_penalty': live_penalty,
+            'suffix_modifier_penalty': suffix_modifier_penalty,
         }
