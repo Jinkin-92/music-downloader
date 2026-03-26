@@ -25,7 +25,7 @@ DEFAULT_SOURCES = [
     "KugouMusicClient",
     "KuwoMusicClient",
     "MiguMusicClient",
-    "SpotifyClient",  # 新增：Spotify（需要API密钥）
+    "Pjmp3Client",    # 新增：pjmp3.com 备用源
 ]
 
 # Source labels for display
@@ -35,7 +35,7 @@ SOURCE_LABELS = {
     "KugouMusicClient": "酷狗",
     "KuwoMusicClient": "酷我",
     "MiguMusicClient": "咪咕",
-    "SpotifyClient": "Spotify",
+    "Pjmp3Client": "pjmp3",
 }
 
 # Batch Download Configuration

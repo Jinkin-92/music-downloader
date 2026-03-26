@@ -31,6 +31,15 @@ router = APIRouter(
 music_downloader = MusicDownloader()
 
 
+def _get_pjmp3_download_headers() -> dict:
+    """Headers required by pjmp3 direct media links."""
+    return {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Referer": "https://pjmp3.com/",
+        "Accept": "*/*",
+    }
+
+
 # ==================== Pydantic模型 ====================
 
 class DownloadSong(BaseModel):
@@ -293,6 +302,7 @@ async def _execute_download_stream(request: DownloadRequest):
                     song_id = song.get('song_id')
                     download_url = song.get('download_url')
                     ext = song.get('ext', 'mp3')
+                    source = song.get('source', '')
                     logger.info(f"[SSE下载] 下载 ({index+1}/{total_songs}): {song_name} - {singers}")
 
                     # 优先级1: 使用 song_id 从缓存获取 SongInfo 对象
@@ -303,7 +313,10 @@ async def _execute_download_stream(request: DownloadRequest):
                             logger.info(f"[缓存命中] song_id={song_id}, 直接下载")
                             try:
                                 music_downloader.download(
-                                    [{'song_info_obj': song_info_obj}],
+                                    [{
+                                        'song_info_obj': song_info_obj,
+                                        'source': source or getattr(song_info_obj, 'source', '')
+                                    }],
                                     download_dir=download_dir
                                 )
 
@@ -345,8 +358,14 @@ async def _execute_download_stream(request: DownloadRequest):
                     if download_url:
                         logger.info(f"[直接下载] 使用 download_url: {download_url[:50]}...")
                         try:
+                            request_headers = _get_pjmp3_download_headers() if source == 'Pjmp3Client' else None
                             # 使用 requests 直接下载
-                            response = requests.get(download_url, stream=True, timeout=60)
+                            response = requests.get(
+                                download_url,
+                                headers=request_headers,
+                                stream=True,
+                                timeout=60
+                            )
                             response.raise_for_status()
 
                             # 生成文件名

@@ -21,7 +21,7 @@ REM ==================== 步骤1: 清理旧进程 ====================
 echo [1/5] 清理旧进程...
 echo.
 
-REM 使用 WMIC 清理 uvicorn (端口8002)
+REM 使用 WMIC 清理 uvicorn (端口8003)
 echo 清理后端 uvicorn 进程...
 wmic process where "CommandLine like '%%uvicorn%%' and CommandLine like '%%main:app%%'" delete 2>nul
 timeout /t 2 /nobreak >nul
@@ -33,12 +33,12 @@ timeout /t 2 /nobreak >nul
 
 REM 验证端口已清空
 echo 验证端口状态...
-netstat -ano | findstr ":8002.*LISTENING" >nul
+netstat -ano | findstr ":8003.*LISTENING" >nul
 if errorlevel 1 (
-    echo [OK] 端口8002已清空
+    echo [OK] 端口8003已清空
 ) else (
-    echo [WARN] 端口8002仍被占用，强制清理...
-    for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8002.*LISTENING"') do (
+    echo [WARN] 端口8003仍被占用，强制清理...
+    for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8003.*LISTENING"') do (
         taskkill /PID %%a /F 2>nul
     )
 )
@@ -75,14 +75,14 @@ echo ========================================
 echo.
 
 REM ==================== 步骤2: 启动后端 ====================
-echo [2/5] 启动后端服务 (端口8002)...
-start "音乐下载器-后端" cmd /k "cd /d "%PROJECT_DIR%\backend" && chcp 65001 && echo. && echo ======================================== && echo 后端服务启动中... && echo 包含以下修复: && echo - download_url 字段 && echo - 直接下载功能 && echo - 35秒时长过滤 && echo - 相似度分解 && echo ======================================== && echo. && python -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload"
+echo [2/5] 启动后端服务 (端口8003)...
+start "音乐下载器-后端" cmd /k "cd /d "%PROJECT_DIR%\backend" && chcp 65001 && echo. && echo ======================================== && echo 后端服务启动中... && echo 包含以下修复: && echo - download_url 字段 && echo - 直接下载功能 && echo - 35秒时长过滤 && echo - 相似度分解 && echo ======================================== && echo. && python -m uvicorn main:app --host 0.0.0.0 --port 8003 --reload"
 
 echo 等待后端启动...
 timeout /t 10 /nobreak >nul
 
 REM 验证后端启动
-curl -s http://localhost:8002/health >nul 2>&1
+curl -s http://localhost:8003/health >nul 2>&1
 if errorlevel 1 (
     echo [WARN] 后端可能未完全启动，请检查 "音乐下载器-后端" 窗口
 ) else (
@@ -112,9 +112,9 @@ echo   所有修复已加载！
 echo ========================================
 echo.
 echo 服务地址:
-echo   后端: http://localhost:8002
+echo   后端: http://localhost:8003
 echo   前端: http://localhost:5173
-echo   API文档: http://localhost:8002/docs
+echo   API文档: http://localhost:8003/docs
 echo.
 echo 修复内容:
 echo   [后端]

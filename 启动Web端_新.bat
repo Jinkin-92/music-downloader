@@ -13,14 +13,14 @@ cd /d "%PROJECT_DIR%"
 
 echo [1/5] 强制清理所有旧进程...
 echo 使用 WMIC 清理所有 uvicorn 进程...
-wmic process where "CommandLine like '%%uvicorn%%' and CommandLine like '%%8002%%'" delete 2>nul
+wmic process where "CommandLine like '%%uvicorn%%' and CommandLine like '%%8003%%'" delete 2>nul
 timeout /t 3 /nobreak >nul
 
 echo.
-echo [2/5] 确认8002端口已清空...
-netstat -ano | findstr ":8002.*LISTENING"
+echo [2/5] 确认8003端口已清空...
+netstat -ano | findstr ":8003.*LISTENING"
 if errorlevel 1 (
-    echo 端口8002已清空，可以继续
+    echo 端口8003已清空，可以继续
 ) else (
     echo 端口仍被占用，强制清理所有Python进程...
     taskkill /IM python.exe /F 2>nul
@@ -28,9 +28,9 @@ if errorlevel 1 (
 )
 
 echo.
-echo [3/5] 启动后端服务 (端口8002)...
+echo [3/5] 启动后端服务 (端口8003)...
 echo 使用 uvicorn 启动，支持热重载
-start "音乐下载器-后端" cmd /k "cd /d "%PROJECT_DIR%\backend" && chcp 65001 && echo ======================================== && echo 后端启动中... (使用 uvicorn) && echo ======================================== && python -m uvicorn main:app --host 0.0.0.0 --port 8002"
+start "音乐下载器-后端" cmd /k "cd /d "%PROJECT_DIR%\backend" && chcp 65001 && echo ======================================== && echo 后端启动中... (使用 uvicorn) && echo ======================================== && python -m uvicorn main:app --host 0.0.0.0 --port 8003"
 echo 等待后端启动...
 timeout /t 8 /nobreak >nul
 
@@ -48,9 +48,9 @@ echo.
 echo ========================================
 echo 启动完成！
 echo ========================================
-echo 后端地址: http://localhost:8002
+echo 后端地址: http://localhost:8003
 echo 前端地址: http://localhost:5173
-echo API文档: http://localhost:8002/docs
+echo API文档: http://localhost:8003/docs
 echo ========================================
 echo.
 echo 查看后端日志请检查 "音乐下载器-后端" 窗口

@@ -149,12 +149,21 @@ function BatchDownloadPage() {
     const originalCount = allSongs.length;
 
     try {
+      // 将 matchMode 转换为阈值
+      const thresholdMap: Record<string, number> = {
+        'strict': 0.8,
+        'standard': 0.6,
+        'loose': 0.4,
+      };
+      const similarityThreshold = thresholdMap[matchMode] || 0.6;
+
       // 使用后台任务API（支持页面切换后继续执行）
       const response = await playlistApi.startBatchSearch({
         songs: allSongs,
         sources: selectedSources,
         concurrency: 5,
         filter_duplicates: filterDuplicates,
+        similarity_threshold: similarityThreshold,
       });
 
       const taskId = response.data.task_id;

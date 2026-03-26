@@ -123,6 +123,7 @@ class PlaylistBatchSearchRequest(BaseModel):
     sources: Optional[List[str]] = Field(default=None, description='音乐源列表')
     concurrency: int = Field(default=8, description='并发数')  # 优化为8，平衡性能与API限流
     filter_duplicates: bool = Field(default=False, description='过滤已下载的歌曲')
+    similarity_threshold: Optional[float] = Field(default=None, description='相似度阈值 (0.0-1.0)，默认0.6')
 
 
 class MatchCandidate(BaseModel):
@@ -288,8 +289,8 @@ async def batch_search_playlist(request: PlaylistBatchSearchRequest):
         batch_text = '\n'.join([f"{s.name} - {get_artist(s)}" for s in request.songs])
         logger.info(f"[DEBUG V2] Batch text: {batch_text[:100]}...")
 
-        # 2. 复用AsyncConcurrentSearcher，添加默认相似度阈值0.3（30%）提高匹配率
-        similarity_threshold = 0.3  # 默认30%相似度阈值
+        # 2. 复用AsyncConcurrentSearcher，使用请求的相似度阈值
+        similarity_threshold = request.similarity_threshold if request.similarity_threshold is not None else 0.6
         searcher = AsyncConcurrentSearcher(
             concurrency=request.concurrency,
             similarity_threshold=similarity_threshold
@@ -663,8 +664,12 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
         source_list = _map_source_names(request.sources) if request.sources else DEFAULT_SOURCES
         concurrency = request.concurrency or 8
         filter_duplicates = request.filter_duplicates
+        similarity_threshold = request.similarity_threshold if request.similarity_threshold is not None else 0.6
 
-        logger.info(f"[后台搜索] 启动批量搜索: {len(songs_data)} 首歌曲, 源: {source_list}, 过滤重复: {filter_duplicates}")
+        logger.info(f"[DEBUG] Received similarity_threshold from request: {request.similarity_threshold}")
+        logger.info(f"[DEBUG] Using similarity_threshold: {similarity_threshold}")
+
+        logger.info(f"[后台搜索] 启动批量搜索: {len(songs_data)} 首歌曲, 源: {source_list}, 阈值: {similarity_threshold}, 过滤重复: {filter_duplicates}")
 
         # 过滤已下载的歌曲
         skipped_songs = []
@@ -707,7 +712,7 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
                 # 创建搜索器
                 searcher = AsyncConcurrentSearcher(
                     concurrency=concurrency,
-                    similarity_threshold=0.3
+                    similarity_threshold=similarity_threshold
                 )
 
                 matches_dict = {}

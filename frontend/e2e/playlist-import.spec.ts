@@ -270,7 +270,7 @@ test.describe('歌单导入 - 后端API验证', () => {
 
   test('直接测试后端歌单解析API', async ({ request }) => {
     // 调用后端API
-    const response = await request.post('http://localhost:8000/api/playlist/parse', {
+    const response = await request.post('http://localhost:8003/api/playlist/parse', {
       data: {
         url: playlistUrl
       }

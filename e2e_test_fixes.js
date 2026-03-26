@@ -32,7 +32,7 @@ const { chromium } = require('playwright');
     try {
       // 多次请求后端健康检查，验证reload=False生效
       for (let i = 0; i < 5; i++) {
-        const response = await page.request.get('http://localhost:8002/api/health');
+        const response = await page.request.get('http://localhost:8003/api/health');
         const data = await response.json();
         if (data.status !== 'healthy') {
           throw new Error(`第${i+1}次请求失败`);
@@ -135,11 +135,11 @@ const { chromium } = require('playwright');
     console.log('\n[测试4] API端点方法检查...');
     try {
       // 测试GET请求（应该工作）
-      const getResponse = await page.request.get('http://localhost:8002/api/download/stream?songs_json=[]');
+      const getResponse = await page.request.get('http://localhost:8003/api/download/stream?songs_json=[]');
       const getStatus = getResponse.status();
 
       // 测试POST请求（应该返回405）
-      const postResponse = await page.request.post('http://localhost:8002/api/download/stream', {
+      const postResponse = await page.request.post('http://localhost:8003/api/download/stream', {
         data: { songs: [] }
       });
       const postStatus = postResponse.status();
@@ -175,7 +175,7 @@ const { chromium } = require('playwright');
 
         // 检查后端是否健康
         try {
-          const response = await page.request.get('http://localhost:8002/api/health', { timeout: 5000 });
+          const response = await page.request.get('http://localhost:8003/api/health', { timeout: 5000 });
           const data = await response.json();
           if (data.status !== 'healthy') {
             backendHealthy = false;

@@ -105,7 +105,7 @@ except ImportError:
 import threading
 from musicdl.musicdl import MusicClient
 from .config import DOWNLOAD_DIR, DEFAULT_SOURCES
-from .pjmp3_client import Pjmp3Client, get_pjmp3_client
+from .pjmp3_client import Pjmp3Client, Pjmp3SongInfo, get_pjmp3_client
 import logging
 
 logger = logging.getLogger(__name__)
@@ -319,6 +319,53 @@ class MusicDownloader:
             'preview_url': getattr(song_info, 'preview_url', None),
         }
 
+    def _resolve_song_source(self, song_dict):
+        """Resolve source from song dict, falling back to the embedded song object."""
+        source = song_dict.get('source', '')
+        if source:
+            return source
+
+        song_obj = song_dict.get('song_info_obj')
+        return getattr(song_obj, 'source', '') if song_obj else ''
+
+    def _prepare_pjmp3_song(self, song_dict):
+        """
+        Ensure a pjmp3 song has a detail object with download_url before download.
+
+        Search results from pjmp3 only contain summary data plus song_id. The actual
+        download URL lives on the detail page, so we must hydrate it before writing.
+        """
+        song_obj = song_dict.get('song_info_obj')
+        if song_obj is None:
+            return None
+
+        if not isinstance(song_obj, Pjmp3SongInfo):
+            return song_obj
+
+        if getattr(song_obj, 'download_url', None):
+            return song_obj
+
+        song_id = getattr(song_obj, 'song_id', '') or song_dict.get('song_id', '')
+        if not song_id or self._pjmp3_client is None:
+            return song_obj
+
+        detail = self._pjmp3_client.get_song_detail(song_id)
+        if detail is None:
+            logger.warning(f"Failed to fetch pjmp3 detail for song_id={song_id}")
+            return song_obj
+
+        # Keep summary metadata when the detail page omits fields.
+        detail.song_name = detail.song_name or song_obj.song_name
+        detail.singers = detail.singers or song_obj.singers
+        detail.album = detail.album or song_obj.album
+        detail.ext = detail.ext or song_obj.ext
+        detail.cover_url = detail.cover_url or song_obj.cover_url
+        detail.source = "Pjmp3Client"
+
+        song_dict['song_info_obj'] = detail
+        song_dict['download_url'] = detail.download_url
+        return detail
+
     def download(self, songs, download_dir=None):
         """
         Download songs
@@ -353,7 +400,7 @@ class MusicDownloader:
             other_songs = []
 
             for song_dict in songs:
-                source = song_dict.get('source', '')
+                source = self._resolve_song_source(song_dict)
                 if source == 'Pjmp3Client':
                     pjmp3_songs.append(song_dict)
                 else:
@@ -363,7 +410,7 @@ class MusicDownloader:
             if pjmp3_songs and self._pjmp3_client and self._pjmp3_client.enabled:
                 logger.info(f"Downloading {len(pjmp3_songs)} Pjmp3 songs...")
                 for song_dict in pjmp3_songs:
-                    song_obj = song_dict.get('song_info_obj')
+                    song_obj = self._prepare_pjmp3_song(song_dict)
                     if song_obj:
                         download_url = getattr(song_obj, 'download_url', None)
                         if download_url:

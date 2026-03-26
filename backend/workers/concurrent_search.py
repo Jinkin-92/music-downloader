@@ -47,6 +47,11 @@ class AsyncConcurrentSearcher:
         self.thread_pool = ThreadPoolExecutor(max_workers=concurrency)
         self.similarity_threshold = similarity_threshold
 
+        # ⚠️ DEBUG: Print to stdout for debugging
+        print(f"[DEBUG AsyncConcurrentSearcher] concurrency={concurrency}, similarity_threshold={similarity_threshold}")
+        import traceback
+        traceback.print_stack()
+
         logger.info(f"AsyncConcurrentSearcher initialized with concurrency={concurrency}, similarity_threshold={similarity_threshold}")
 
     async def search_single_song(
@@ -285,11 +290,15 @@ class AsyncConcurrentSearcher:
         )
 
         if best_match:
-            # 创建候选列表（使用已过滤的结果）
+            # 创建候选列表（只包含满足相似度阈值的结果）
             candidates = []
-            for result in filtered_results:  # 直接使用已过滤的结果
+            for result in filtered_results:
                 # 计算相似度分解（包含各部分得分）
                 breakdown = self._calculate_similarity_breakdown(parsed_song, result)
+
+                # 跳过不满足阈值的结果
+                if breakdown['combined'] < self.similarity_threshold:
+                    continue
 
                 # 将 SongInfo 对象存入缓存，生成 song_id
                 song_info_obj = result.get('song_info_obj')

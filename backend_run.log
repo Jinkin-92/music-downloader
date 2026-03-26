@@ -1,14 +1,13 @@
-2026-03-20 17:51:49,276 - main - INFO - 后端日志文件: D:\code\music-downloader\logs\backend.log
-2026-03-20 17:51:51,150 - core.downloader - INFO - Initializing MusicClient...
-2026-03-20 17:51:52,185 - core.downloader - INFO - MusicClient initialized successfully with 180s timeout
-2026-03-20 17:51:52,412 - main - INFO - 静态文件目录: D:\code\music-downloader\backend\static
-INFO:     Started server process [75628]
+2026-03-25 17:35:07,351 - __main__ - INFO - 后端日志文件: D:\code\music-downloader\logs\backend.log
+2026-03-25 17:35:08,044 - core.downloader - INFO - Initializing MusicClient...
+2026-03-25 17:35:08,063 - core.downloader - INFO - [DEBUG] MusicClient will use sources: ['QQMusicClient', 'NeteaseMusicClient', 'KugouMusicClient', 'KuwoMusicClient', 'MiguMusicClient']
+2026-03-25 17:35:09,553 - core.downloader - INFO - MusicClient initialized successfully with 180s timeout
+2026-03-25 17:35:09,686 - __main__ - INFO - 静态文件目录: D:\code\music-downloader\backend\static
+2026-03-25 17:35:09,769 - backend.main - INFO - 后端日志文件: D:\code\music-downloader\logs\backend.log
+2026-03-25 17:35:09,784 - backend.main - INFO - 静态文件目录: D:\code\music-downloader\backend\static
+INFO:     Started server process [83904]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8002 (Press CTRL+C to quit)
-INFO:     127.0.0.1:65187 - "GET /health HTTP/1.1" 404 Not Found
-2026-03-20 17:52:12,471 - backend.api.history - INFO - [History] Retrieved 8 records
-INFO:     127.0.0.1:61617 - "GET /api/history HTTP/1.1" 200 OK
-2026-03-20 17:52:26,888 - backend.api.history - INFO - [History] Retrieved 8 records
-INFO:     127.0.0.1:59172 - "GET /api/history HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59173 - "GET /api/history/stats HTTP/1.1" 200 OK
+ERROR:    [Errno 10048] error while attempting to bind on address ('0.0.0.0', 8003): [winerror 10048] 通常每个套接字地址(协议/网络地址/端口)只允许使用一次。
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.

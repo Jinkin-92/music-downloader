@@ -186,18 +186,18 @@ python -m backend.main
 
 ### 2. 测试API
 
-访问 http://localhost:8000/docs 查看API文档。
+访问 http://localhost:8003/docs 查看API文档。
 
 测试端点：
-- GET http://localhost:8000/api/sources
-- POST http://localhost:8000/api/search
-- POST http://localhost:8000/api/batch/parse
+- GET http://localhost:8003/api/sources
+- POST http://localhost:8003/api/search
+- POST http://localhost:8003/api/batch/parse
 
 ### 3. 前端访问
 
 访问 http://localhost:5173
 
-前端会自动代理 `/api` 请求到后端 `http://localhost:8000/api`。
+前端会自动代理 `/api` 请求到后端 `http://localhost:8003/api`。
 
 ---
 
@@ -237,7 +237,7 @@ npm install
 
 ### Q: 前端无法连接后端API？
 A: 检查：
-1. 后端是否启动（http://localhost:8000）
+1. 后端是否启动（http://localhost:8003）
 2. Vite proxy配置是否正确
 3. 浏览器控制台是否有CORS错误
 

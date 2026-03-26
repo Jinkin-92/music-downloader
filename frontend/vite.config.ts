@@ -10,7 +10,7 @@ export default defineConfig({
     proxy: {
       // 代理所有API请求到后端（简单可靠）
       '/api': {
-        target: 'http://localhost:8002',
+        target: 'http://localhost:8003',
         changeOrigin: true,
         ws: true,
         configure: (proxy, options) => {

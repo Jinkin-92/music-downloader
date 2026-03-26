@@ -215,6 +215,7 @@ export const playlistApi = {
     sources?: string[];
     concurrency?: number;
     filter_duplicates?: boolean;
+    similarity_threshold?: number;
   }) => api.post('/playlist/batch-search-start', request),
 
   /**

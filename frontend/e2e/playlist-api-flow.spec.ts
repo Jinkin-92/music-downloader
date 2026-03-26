@@ -277,7 +277,7 @@ test.describe('歌单导入 - API闭环测试', () => {
    */
   test('后端API直接测试', async ({ request }) => {
     // 直接调用后端API
-    const response = await request.post('http://localhost:8002/api/playlist/parse', {
+    const response = await request.post('http://localhost:8003/api/playlist/parse', {
       data: {
         url: TEST_PLAYLIST_URL
       }
