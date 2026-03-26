@@ -74,8 +74,14 @@ function App() {
             {/* 批量下载页 */}
             <Route path="/batch" element={<BatchDownloadPage />} />
 
+            {/* 兼容旧的歌单导入入口，当前功能已合并到批量下载页 */}
+            <Route path="/playlist" element={<Navigate to="/batch" replace />} />
+
             {/* 下载历史页 */}
             <Route path="/history" element={<DownloadHistoryPage />} />
+
+            {/* 未匹配路径统一回到主入口，避免内容区白屏 */}
+            <Route path="*" element={<Navigate to="/batch" replace />} />
           </Routes>
         </Layout.Content>
       </Layout>
