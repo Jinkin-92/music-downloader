@@ -200,7 +200,7 @@ function MatchSettingsPanel({
                 ...QUICK_DOWNLOAD_DIRS,
                 { label: '历史目录', value: '__history__' },
               ]}
-              dropdownRender={(menu) => (
+              popupRender={(menu) => (
                 <div>
                   {menu}
                   {historyDirs.length > 0 && (
