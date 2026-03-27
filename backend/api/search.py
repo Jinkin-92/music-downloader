@@ -82,6 +82,12 @@ class BatchSearchRequest(BaseModel):
         le=10,
         description='并发搜索数量'
     )
+    similarity_threshold: Optional[float] = Field(
+        default=None,
+        ge=0.0,
+        le=1.0,
+        description='相似度阈值（None=使用默认值0.6）'
+    )
 
 
 class BatchMatchInfo(BaseModel):
@@ -103,7 +109,7 @@ class BatchMatchInfo(BaseModel):
     name_similarity: Optional[float] = Field(None, description='歌名相似度')
     singer_similarity: Optional[float] = Field(None, description='歌手相似度')
     album_similarity: Optional[float] = Field(None, description='专辑相似度')
-    all_candidates: Optional[dict] = Field(None, description='所有候选结果')
+    all_candidates: Optional[List[dict]] = Field(None, description='所有候选结果（全局排序）')
 
 
 class BatchSearchResponse(BaseModel):
@@ -214,8 +220,8 @@ async def batch_search(request: BatchSearchRequest):
             f"sources={sources}, concurrency={request.concurrency}"
         )
 
-        # 创建异步搜索器，添加默认相似度阈值0.3（30%）提高匹配率
-        similarity_threshold = 0.3  # 默认30%相似度阈值
+        # 创建异步搜索器，使用请求的相似度阈值
+        similarity_threshold = request.similarity_threshold if request.similarity_threshold is not None else 0.6
         searcher = AsyncConcurrentSearcher(
             concurrency=request.concurrency,
             similarity_threshold=similarity_threshold
@@ -233,27 +239,27 @@ async def batch_search(request: BatchSearchRequest):
         for original_line, batch_match in result['matches'].items():
             if batch_match.current_match:
                 match_dict = batch_match.current_match
-                # 构建候选结果字典（用于前端切换）
-                all_candidates_dict = {}
-                for source, candidates in batch_match.all_matches.items():
-                    all_candidates_dict[source] = [
-                        {
-                            'song_name': c.song_name,
-                            'singers': c.singers,
-                            'album': c.album,
-                            'file_size': c.file_size,
-                            'duration': c.duration,
-                            'source': c.source,
-                            'ext': c.ext,
-                            'similarity': c.similarity_score,
-                            'download_url': getattr(c, 'download_url', None),
-                            'duration_s': getattr(c, 'duration_s', None),
-                            'name_similarity': c.name_similarity,
-                            'singer_similarity': c.singer_similarity,
-                            'album_similarity': c.album_similarity,
-                        }
-                        for c in candidates
-                    ]
+                # 获取全局排序的所有候选
+                all_candidates = batch_match.get_all_candidates()
+                # 构建全局排序的候选列表
+                all_candidates_list = [
+                    {
+                        'song_name': c.song_name,
+                        'singers': c.singers,
+                        'album': c.album,
+                        'file_size': c.file_size,
+                        'duration': c.duration,
+                        'source': c.source,
+                        'ext': c.ext,
+                        'similarity': c.similarity_score,
+                        'download_url': getattr(c, 'download_url', None),
+                        'duration_s': getattr(c, 'duration_s', None),
+                        'name_similarity': c.name_similarity,
+                        'singer_similarity': c.singer_similarity,
+                        'album_similarity': c.album_similarity,
+                    }
+                    for c in all_candidates
+                ]
 
                 matches_list.append(BatchMatchInfo(
                     query_name=batch_match.query.get('name', ''),
@@ -265,7 +271,7 @@ async def batch_search(request: BatchSearchRequest):
                     duration=match_dict.duration,
                     source=match_dict.source,
                     similarity=match_dict.similarity_score,
-                    has_candidates=len(batch_match.all_matches) > 1,
+                    has_candidates=len(all_candidates_list) > 1,
                     # 新增字段
                     download_url=getattr(match_dict, 'download_url', None),
                     duration_s=getattr(match_dict, 'duration_s', None),
@@ -273,7 +279,7 @@ async def batch_search(request: BatchSearchRequest):
                     name_similarity=match_dict.name_similarity,
                     singer_similarity=match_dict.singer_similarity,
                     album_similarity=match_dict.album_similarity,
-                    all_candidates=all_candidates_dict if batch_match.all_matches else None
+                    all_candidates=all_candidates_list if all_candidates_list else None
                 ))
             else:
                 # 无匹配结果

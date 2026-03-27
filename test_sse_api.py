@@ -17,7 +17,7 @@ async def test():
     print(f"URL encoded: {songs_json_encoded}")
 
     # Build URL with properly encoded parameter
-    base_url = 'http://localhost:8002/api/playlist/batch-search-stream'
+    base_url = 'http://localhost:8003/api/playlist/batch-search-stream'
     url = f"{base_url}?songs_json={songs_json_encoded}&sources=KuwoMusicClient&concurrency=2"
 
     print(f"Full URL: {url}")

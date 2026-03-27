@@ -42,7 +42,7 @@ echo ==========================================
 echo.
 echo Access URLs:
 echo   - Web UI:  http://localhost
-echo   - API Docs: http://localhost:8000/docs
+echo   - API Docs: http://localhost:8003/docs
 echo.
 echo Press any key to open browser...
 pause >nul

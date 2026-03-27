@@ -26,14 +26,14 @@ echo ✅ Node.js环境正常
 REM 检查后端服务
 echo.
 echo [2/5] 检查后端服务...
-curl -s http://localhost:8002/docs >nul 2>&1
+curl -s http://localhost:8003/docs >nul 2>&1
 if errorlevel 1 (
     echo ❌ 错误: 后端服务未运行
-    echo 请先启动后端: cd backend ^&^& python -m uvicorn main:app --port 8002
+    echo 请先启动后端: cd backend ^&^& python -m uvicorn main:app --port 8003
     pause
     exit /b 1
 )
-echo ✅ 后端服务运行中 (http://localhost:8002)
+echo ✅ 后端服务运行中 (http://localhost:8003)
 
 REM 检查前端服务
 echo.

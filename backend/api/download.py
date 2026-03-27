@@ -15,6 +15,7 @@ import requests
 
 from core import MusicDownloader, DOWNLOAD_DIR
 from core.song_cache import song_info_cache
+from backend.services.history_service import history_service
 # Celery tasks disabled for testing
 # from backend.workers.download import download_single_song_task, download_batch_songs_task
 
@@ -28,6 +29,15 @@ router = APIRouter(
 
 # 全局单例
 music_downloader = MusicDownloader()
+
+
+def _get_pjmp3_download_headers() -> dict:
+    """Headers required by pjmp3 direct media links."""
+    return {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Referer": "https://pjmp3.com/",
+        "Accept": "*/*",
+    }
 
 
 # ==================== Pydantic模型 ====================
@@ -292,6 +302,7 @@ async def _execute_download_stream(request: DownloadRequest):
                     song_id = song.get('song_id')
                     download_url = song.get('download_url')
                     ext = song.get('ext', 'mp3')
+                    source = song.get('source', '')
                     logger.info(f"[SSE下载] 下载 ({index+1}/{total_songs}): {song_name} - {singers}")
 
                     # 优先级1: 使用 song_id 从缓存获取 SongInfo 对象
@@ -302,9 +313,31 @@ async def _execute_download_stream(request: DownloadRequest):
                             logger.info(f"[缓存命中] song_id={song_id}, 直接下载")
                             try:
                                 music_downloader.download(
-                                    [{'song_info_obj': song_info_obj}],
+                                    [{
+                                        'song_info_obj': song_info_obj,
+                                        'source': source or getattr(song_info_obj, 'source', '')
+                                    }],
                                     download_dir=download_dir
                                 )
+
+                                # 记录下载历史
+                                try:
+                                    file_name = f"{song_name} - {singers}.mp3"
+                                    file_name = ''.join(c for c in file_name if c.isalnum() or c in (' ', '-', '_', '.'))
+                                    save_path = os.path.join(download_dir, file_name)
+                                    if os.path.exists(save_path):
+                                        file_size = os.path.getsize(save_path)
+                                        history_service.record_download(
+                                            song_name=song_name,
+                                            singers=singers,
+                                            file_path=save_path,
+                                            file_size=file_size,
+                                            source=song.get('source', ''),
+                                            similarity=0.0
+                                        )
+                                except Exception as hist_err:
+                                    logger.warning(f"记录下载历史失败: {hist_err}")
+
                                 completed_count += 1
                                 progress = {
                                     'completed': index + 1,
@@ -325,8 +358,14 @@ async def _execute_download_stream(request: DownloadRequest):
                     if download_url:
                         logger.info(f"[直接下载] 使用 download_url: {download_url[:50]}...")
                         try:
+                            request_headers = _get_pjmp3_download_headers() if source == 'Pjmp3Client' else None
                             # 使用 requests 直接下载
-                            response = requests.get(download_url, stream=True, timeout=60)
+                            response = requests.get(
+                                download_url,
+                                headers=request_headers,
+                                stream=True,
+                                timeout=60
+                            )
                             response.raise_for_status()
 
                             # 生成文件名
@@ -346,6 +385,20 @@ async def _execute_download_stream(request: DownloadRequest):
 
                             logger.info(f"[直接下载] 保存成功: {save_path}")
                             completed_count += 1
+
+                            # 记录下载历史
+                            try:
+                                file_size = os.path.getsize(save_path)
+                                history_service.record_download(
+                                    song_name=song_name,
+                                    singers=singers,
+                                    file_path=save_path,
+                                    file_size=file_size,
+                                    source=song.get('source', ''),
+                                    similarity=0.0
+                                )
+                            except Exception as hist_err:
+                                logger.warning(f"记录下载历史失败: {hist_err}")
 
                             # 发送进度更新
                             progress = {
@@ -403,6 +456,24 @@ async def _execute_download_stream(request: DownloadRequest):
                         raise Exception(f"未找到匹配的下载链接")
 
                     completed_count += 1
+
+                    # 记录下载历史
+                    try:
+                        file_name = f"{song_name} - {singers}.mp3"
+                        file_name = ''.join(c for c in file_name if c.isalnum() or c in (' ', '-', '_', '.'))
+                        save_path = os.path.join(download_dir, file_name)
+                        if os.path.exists(save_path):
+                            file_size = os.path.getsize(save_path)
+                            history_service.record_download(
+                                song_name=song_name,
+                                singers=singers,
+                                file_path=save_path,
+                                file_size=file_size,
+                                source=song.get('source', ''),
+                                similarity=0.0
+                            )
+                    except Exception as hist_err:
+                        logger.warning(f"记录下载历史失败: {hist_err}")
 
                     # 发送进度更新
                     progress = {

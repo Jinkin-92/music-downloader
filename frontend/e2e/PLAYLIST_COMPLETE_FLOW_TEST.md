@@ -62,7 +62,7 @@
 1. **启动后端服务**:
 ```bash
 cd backend
-python -m uvicorn main:app --host 0.0.0.0 --port 8002 --reload
+python -m uvicorn main:app --host 0.0.0.0 --port 8003 --reload
 ```
 
 2. **启动前端服务**:
@@ -72,7 +72,7 @@ npm run dev
 ```
 
 3. **验证服务可用**:
-- 后端: http://localhost:8002/docs
+- 后端: http://localhost:8003/docs
 - 前端: http://localhost:5173
 
 ### 运行命令
@@ -199,7 +199,7 @@ for (let i = 0; i < 120; i++) {
 **症状**: `Test timeout of 300000ms exceeded`
 
 **解决方案**:
-1. 检查后端服务是否运行: `curl http://localhost:8002/docs`
+1. 检查后端服务是否运行: `curl http://localhost:8003/docs`
 2. 检查前端服务是否运行: `curl http://localhost:5173`
 3. 增加超时时间: `test.setTimeout(600000)`
 
@@ -282,7 +282,7 @@ jobs:
       - name: Start Backend Server
         run: |
           cd backend
-          python -m uvicorn main:app --host 0.0.0.0 --port 8002 &
+          python -m uvicorn main:app --host 0.0.0.0 --port 8003 &
           sleep 10
 
       - name: Setup Node.js

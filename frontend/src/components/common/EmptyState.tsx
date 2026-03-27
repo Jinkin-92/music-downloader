@@ -4,12 +4,12 @@
  * 当没有搜索结果时的占位提示
  */
 import { Empty, Button, Typography, Space } from 'antd';
-import { PlusOutlined, SearchOutlined, CloudDownloadOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, CloudDownloadOutlined, HistoryOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;
 
 interface EmptyStateProps {
-  type?: 'search' | 'download' | 'default';
+  type?: 'search' | 'download' | 'history' | 'default';
   actionText?: string;
   onAction?: () => void;
 }
@@ -33,6 +33,13 @@ function EmptyState({
           icon: <CloudDownloadOutlined style={{ fontSize: 64 }} />,
           actionText: actionText || '查看下载',
         };
+      case 'history':
+        return {
+          description: '暂无下载记录',
+          subDescription: '下载歌曲后将自动记录',
+          icon: <HistoryOutlined style={{ fontSize: 64, color: '#d9d9d9' }} />,
+          actionText: actionText || '去下载',
+        };
       default:
         return {
           description: '暂无数据',
@@ -50,6 +57,11 @@ function EmptyState({
       description={
         <Space direction="vertical" size="small" align="center">
           <Text type="secondary">{config.description}</Text>
+          {config.subDescription && (
+            <Text type="secondary" style={{ fontSize: 12, color: 'rgba(0,0,0,0.45)' }}>
+              {config.subDescription}
+            </Text>
+          )}
           {onAction && actionText && (
             <Button type="primary" icon={<PlusOutlined />} onClick={onAction}>
               {actionText}

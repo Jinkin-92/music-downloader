@@ -7,7 +7,6 @@ import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout, Typography, Menu } from 'antd';
 import { useUIStore } from './stores/useUIStore';
 import BatchDownloadPage from './pages/BatchDownloadPage';
-import PlaylistImportPage from './pages/PlaylistImportPage';
 import DownloadHistoryPage from './pages/DownloadHistoryPage';
 
 const { Title, Text } = Typography;
@@ -20,10 +19,6 @@ function App() {
     {
       key: '/batch',
       label: '批量下载',
-    },
-    {
-      key: '/playlist',
-      label: '歌单导入',
     },
     {
       key: '/history',
@@ -79,11 +74,14 @@ function App() {
             {/* 批量下载页 */}
             <Route path="/batch" element={<BatchDownloadPage />} />
 
-            {/* 歌单导入页 */}
-            <Route path="/playlist" element={<PlaylistImportPage />} />
+            {/* 兼容旧的歌单导入入口，当前功能已合并到批量下载页 */}
+            <Route path="/playlist" element={<Navigate to="/batch" replace />} />
 
             {/* 下载历史页 */}
             <Route path="/history" element={<DownloadHistoryPage />} />
+
+            {/* 未匹配路径统一回到主入口，避免内容区白屏 */}
+            <Route path="*" element={<Navigate to="/batch" replace />} />
           </Routes>
         </Layout.Content>
       </Layout>

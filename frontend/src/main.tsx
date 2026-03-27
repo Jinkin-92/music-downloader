@@ -12,6 +12,9 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { antDesignTheme } from './styles/theme';
 import './styles/global.css';
+import './styles/micro-interactions.css';
+import './styles/visual-hierarchy.css';
+import './styles/emotional-colors.css';
 
 /**
  * React Query客户端
@@ -35,7 +38,10 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter future={{
+        v7_relativeSplatPath: true,
+        v7_startTransition: true,
+      }}>
         <ConfigProvider
           theme={antDesignTheme}
           locale={zhCN}

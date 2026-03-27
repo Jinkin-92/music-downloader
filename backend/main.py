@@ -129,11 +129,15 @@ logger.info(f"后端日志文件: {os.path.join(LOG_DIR, 'backend.log')}")
 # 添加父目录到路径
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
+# 导入配置
+from core.config import DEFAULT_SOURCES, SOURCE_LABELS
+
 # 导入API路由
 from backend.api.search import router as search_router
 from backend.api.batch import router as batch_router
 from backend.api.download import router as download_router
 from backend.api.playlist import router as playlist_router
+from backend.api.history import router as history_router
 from backend.api.logs import router as logs_router
 
 # ==================== FastAPI应用 ====================
@@ -168,6 +172,7 @@ app.include_router(batch_router)
 app.include_router(download_router)
 app.include_router(playlist_router)
 app.include_router(logs_router)
+app.include_router(history_router)
 
 # 静态文件（前端）
 frontend_dir = os.path.join(BASE_DIR, 'backend', 'static')
@@ -206,6 +211,16 @@ async def health_check():
     }
 
 
+@app.get("/api/sources")
+async def get_sources():
+    """获取可用音乐源列表"""
+    sources = [
+        {"value": source, "label": SOURCE_LABELS.get(source, source)}
+        for source in DEFAULT_SOURCES
+    ]
+    return {"sources": sources}
+
+
 # ==================== 启动配置 ====================
 
 if __name__ == "__main__":
@@ -216,7 +231,7 @@ if __name__ == "__main__":
     uvicorn.run(
         "backend.main:app",
         host="0.0.0.0",
-        port=8002,  # 修复：使用8002端口匹配前端代理配置
+        port=8003,  # 使用8003端口匹配前端代理配置
         reload=False,  # 修复：reload=True会导致文件变化时自动重启，中断正在执行的下载
         log_level="info"
     )

@@ -614,7 +614,7 @@ See `README.md` roadmap section:
 **运行完整的Web端测试**：
 ```bash
 # 确保前后端都在运行
-# 后端: http://localhost:8002
+# 后端: http://localhost:8003
 # 前端: http://localhost:5173
 
 # 运行完整E2E测试

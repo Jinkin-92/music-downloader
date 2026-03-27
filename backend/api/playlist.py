@@ -13,6 +13,7 @@ import asyncio
 
 from core import BatchSongMatch, DEFAULT_SOURCES, SOURCE_LABELS, PlaylistParserFactory
 from backend.workers.concurrent_search import AsyncConcurrentSearcher
+from backend.services.history_service import history_service
 
 logger = logging.getLogger(__name__)
 
@@ -121,6 +122,8 @@ class PlaylistBatchSearchRequest(BaseModel):
     songs: List[PlaylistSongForSearch] = Field(..., description='歌曲列表')
     sources: Optional[List[str]] = Field(default=None, description='音乐源列表')
     concurrency: int = Field(default=8, description='并发数')  # 优化为8，平衡性能与API限流
+    filter_duplicates: bool = Field(default=False, description='过滤已下载的歌曲')
+    similarity_threshold: Optional[float] = Field(default=None, description='相似度阈值 (0.0-1.0)，默认0.6')
 
 
 class MatchCandidate(BaseModel):
@@ -286,8 +289,8 @@ async def batch_search_playlist(request: PlaylistBatchSearchRequest):
         batch_text = '\n'.join([f"{s.name} - {get_artist(s)}" for s in request.songs])
         logger.info(f"[DEBUG V2] Batch text: {batch_text[:100]}...")
 
-        # 2. 复用AsyncConcurrentSearcher，添加默认相似度阈值0.3（30%）提高匹配率
-        similarity_threshold = 0.3  # 默认30%相似度阈值
+        # 2. 复用AsyncConcurrentSearcher，使用请求的相似度阈值
+        similarity_threshold = request.similarity_threshold if request.similarity_threshold is not None else 0.6
         searcher = AsyncConcurrentSearcher(
             concurrency=request.concurrency,
             similarity_threshold=similarity_threshold
@@ -660,14 +663,61 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
         songs_data = [s.model_dump() for s in request.songs]
         source_list = _map_source_names(request.sources) if request.sources else DEFAULT_SOURCES
         concurrency = request.concurrency or 8
+        filter_duplicates = request.filter_duplicates
+        similarity_threshold = request.similarity_threshold if request.similarity_threshold is not None else 0.6
 
-        logger.info(f"[后台搜索] 启动批量搜索: {len(songs_data)} 首歌曲, 源: {source_list}")
+        logger.info(f"[DEBUG] Received similarity_threshold from request: {request.similarity_threshold}")
+        logger.info(f"[DEBUG] Using similarity_threshold: {similarity_threshold}")
+
+        logger.info(f"[后台搜索] 启动批量搜索: {len(songs_data)} 首歌曲, 源: {source_list}, 阈值: {similarity_threshold}, 过滤重复: {filter_duplicates}")
+
+        # 过滤已下载的歌曲
+        skipped_songs = []
+        if filter_duplicates:
+            original_count = len(songs_data)
+            songs_to_search = []
+            for song in songs_data:
+                song_name = song.get('name', '')
+                singer = song.get('artist', '')
+                if history_service.check_duplicate(song_name, singer):
+                    skipped_songs.append({
+                        'name': song_name,
+                        'artist': singer,
+                        'reason': '已下载'
+                    })
+                    logger.info(f"[后台搜索] 跳过已下载: {song_name} - {singer}")
+                else:
+                    songs_to_search.append(song)
+            songs_data = songs_to_search
+            logger.info(f"[后台搜索] 过滤后剩余 {len(songs_data)} 首歌曲 (跳过 {len(skipped_songs)} 首)")
+
+        # 所有歌曲都被“过滤已下载”跳过时，直接返回完成态，避免空输入再次进入解析器
+        if not songs_data:
+            task_id = task_manager.create_task('search', {
+                'songs': [],
+                'sources': source_list,
+                'concurrency': concurrency,
+                'skipped_songs': skipped_songs
+            }, total=0)
+            task_manager.complete_task(task_id, {
+                'total': 0,
+                'matched': 0,
+                'matches': {},
+                'skipped_songs': skipped_songs
+            })
+            logger.info(f"[后台搜索] 无需搜索，全部歌曲已跳过: {task_id}, 跳过 {len(skipped_songs)} 首")
+            return {
+                'task_id': task_id,
+                'status': 'completed',
+                'total': 0
+            }
 
         # 创建任务
         task_id = task_manager.create_task('search', {
             'songs': songs_data,
             'sources': source_list,
-            'concurrency': concurrency
+            'concurrency': concurrency,
+            'skipped_songs': skipped_songs
         }, total=len(songs_data))
 
         # 启动后台任务
@@ -683,7 +733,7 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
                 # 创建搜索器
                 searcher = AsyncConcurrentSearcher(
                     concurrency=concurrency,
-                    similarity_threshold=0.3
+                    similarity_threshold=similarity_threshold
                 )
 
                 matches_dict = {}
@@ -767,14 +817,19 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
                     for original_line, match in matches_dict.items()
                 }
 
+                # 获取跳过的歌曲列表
+                task = task_manager.get_task(task_id)
+                skipped_songs = task.params.get('skipped_songs', []) if task else []
+
                 # 标记任务完成
                 result = {
                     'total': len(songs_data),
                     'matched': matched_count,
-                    'matches': matches_serializable
+                    'matches': matches_serializable,
+                    'skipped_songs': skipped_songs
                 }
                 task_manager.complete_task(task_id, result)
-                logger.info(f"[后台搜索] 任务完成: {task_id}, 匹配 {matched_count}/{len(songs_data)}")
+                logger.info(f"[后台搜索] 任务完成: {task_id}, 匹配 {matched_count}/{len(songs_data)}, 跳过 {len(skipped_songs)} 首已下载")
 
             except Exception as e:
                 logger.error(f"[后台搜索] 任务失败: {task_id}, 错误: {e}")

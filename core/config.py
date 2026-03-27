@@ -24,7 +24,8 @@ DEFAULT_SOURCES = [
     "NeteaseMusicClient",
     "KugouMusicClient",
     "KuwoMusicClient",
-    "MiguMusicClient",  # 新增：咪咕音乐，提供更多版权歌曲
+    "MiguMusicClient",
+    "Pjmp3Client",    # 新增：pjmp3.com 备用源
 ]
 
 # Source labels for display
@@ -34,11 +35,18 @@ SOURCE_LABELS = {
     "KugouMusicClient": "酷狗",
     "KuwoMusicClient": "酷我",
     "MiguMusicClient": "咪咕",
+    "Pjmp3Client": "pjmp3",
 }
 
 # Batch Download Configuration
 BATCH_MAX_SONGS = 200
 BATCH_MATCH_SIMILARITY_THRESHOLD = 0.6
+
+# Duration Filter Configuration - 过滤试听片段
+MIN_DURATION_SECONDS = 35  # 最小时长（秒），过滤35秒以下的试听片段
+
+# Download History Database Configuration
+HISTORY_DB_PATH = BASE_DIR / "data" / "download_history.db"
 
 # Batch Search Configuration
 BATCH_SEARCH_ALL_SOURCES = True

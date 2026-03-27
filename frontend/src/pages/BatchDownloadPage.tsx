@@ -1,9 +1,12 @@
 /**
- * 批量下载页面
+ * 批量下载页面 V2
  *
- * 支持批量文本输入、智能匹配、实时进度显示
+ * 新布局：
+ * - 上方：文本输入板块 + 歌单导入板块（并列）
+ * - 下方：匹配设置板块（匹配模式、音乐源、下载目录、过滤选项、批量搜索按钮）
+ * - 结果：匹配结果表格（相似度在操作列显示）
  */
-import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import {
   Card,
   Space,
@@ -12,53 +15,77 @@ import {
   Progress,
   Row,
   Col,
-  Table,
-  Dropdown,
   Alert,
   Tag,
-  Tooltip,
-  Input,
-  Select,
 } from 'antd';
-import { SearchOutlined, DownloadOutlined, CheckSquareOutlined, BorderOutlined, ClearOutlined, SwapOutlined, FileTextOutlined, SettingFilled } from '@ant-design/icons';
+import {
+  DownloadOutlined,
+  CheckSquareOutlined,
+  BorderOutlined,
+  ClearOutlined,
+  FileTextOutlined,
+} from '@ant-design/icons';
 import { App } from 'antd';
 import { useUIStore } from '../stores/useUIStore';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import BatchTextInput from '../components/batch/BatchTextInput';
-import MatchSettings from '../components/batch/MatchSettings';
+import MatchSettingsPanel from '../components/batch/MatchSettingsPanel';
+import PlaylistImportSection from '../components/batch/PlaylistImportSection';
+import BatchResultsTable from '../components/batch/BatchResultsTable';
 import { playlistApi, downloadApi } from '../services/api';
 import { parseLineCount } from '../utils/format';
-import { BatchMatchInfo, MATCH_MODES } from '../types';
+import { BatchMatchInfo } from '../types';
 
 const { Title, Text } = Typography;
+
+// 歌单歌曲类型
+interface PlaylistSong {
+  key: number;
+  name: string;
+  artist: string;
+  album: string;
+  duration: string;
+}
 
 function BatchDownloadPage() {
   const { message } = App.useApp();
   const { selectedSources, matchMode } = useUIStore();
 
-  // Persistent state (survives page navigation)
+  // ========== 文本输入状态 ==========
   const [batchText, setBatchText] = useLocalStorage('batch-download-text', '');
+  const parsedCount = useMemo(() => parseLineCount(batchText), [batchText]);
+
+  // ========== 歌单导入状态 ==========
+  const [playlistSongs, setPlaylistSongs] = useState<PlaylistSong[]>([]);
+
+  // ========== 搜索状态 ==========
   const [searchResults, setSearchResults] = useLocalStorage<BatchMatchInfo[]>('batch-download-results', []);
   const [hasSearched, setHasSearched] = useLocalStorage('batch-download-searched', false);
   const [selectedRows, setSelectedRows, clearSelectedRows] = useLocalStorage<string[]>('batch-download-selected', []);
-
-  // Temporary state (not persisted)
-  const [parsedCount, setParsedCount] = useState(0);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchProgress, setSearchProgress] = useState(0);
-  const [downloadLoading, setDownloadLoading] = useState(false);
-  const [downloadDir, setDownloadDir] = useState('');  // 下载目录路径
 
-  // 下载进度状态
+  // ========== 下载状态 ==========
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [downloadDir, setDownloadDir] = useState('');
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [downloadCurrentSong, setDownloadCurrentSong] = useState('');
   const [downloadCompleted, setDownloadCompleted] = useState(0);
   const [downloadTotal, setDownloadTotal] = useState(0);
   const [showDownloadProgress, setShowDownloadProgress] = useState(false);
 
+  // ========== 过滤选项 ==========
+  const [filterShortTracks, setFilterShortTracks] = useLocalStorage('filter-short-tracks', true);
+  const [filterDuplicates, setFilterDuplicates] = useLocalStorage('filter-duplicates', true);
+
   // SSE连接引用
   const eventSourceRef = useRef<EventSource | null>(null);
   const downloadEventSourceRef = useRef<EventSource | null>(null);
+
+  // 计算总歌曲数（文本 + 歌单）
+  const totalSongCount = useMemo(() => {
+    return parsedCount + playlistSongs.length;
+  }, [parsedCount, playlistSongs.length]);
 
   // 组件卸载时清理SSE连接
   useEffect(() => {
@@ -74,9 +101,31 @@ function BatchDownloadPage() {
     };
   }, []);
 
+  // ========== 歌单解析回调 ==========
+  const handlePlaylistParsed = useCallback((songs: PlaylistSong[]) => {
+    setPlaylistSongs(songs);
+  }, []);
+
+  // ========== 批量搜索 ==========
   const handleBatchSearch = useCallback(async () => {
-    if (!batchText.trim()) {
-      message.warning('请输入批量歌曲列表');
+    // 合并文本输入和歌单导入的歌曲
+    const textSongs = batchText.split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const parts = line.split('-');
+        return { name: parts[0]?.trim() || '', artist: parts[1]?.trim() || '', album: '' };
+      });
+
+    const playlistSongsList = playlistSongs.map(s => ({
+      name: s.name,
+      artist: s.artist,
+      album: s.album,
+    }));
+
+    const allSongs = [...textSongs, ...playlistSongsList];
+
+    if (allSongs.length === 0) {
+      message.warning('请输入歌曲列表或导入歌单');
       return;
     }
     if (selectedSources.length === 0) {
@@ -97,148 +146,158 @@ function BatchDownloadPage() {
     setSelectedRows([]);
 
     try {
-      const lines = batchText.split('\n').filter(line => line.trim());
-      const songs = lines.map(line => {
-        const parts = line.split('-');
-        return { name: parts[0]?.trim() || '', artist: parts[1]?.trim() || '', album: '' };
+      // 将 matchMode 转换为阈值
+      const thresholdMap: Record<string, number> = {
+        'strict': 0.8,
+        'standard': 0.6,
+        'loose': 0.4,
+      };
+      const similarityThreshold = thresholdMap[matchMode] || 0.6;
+
+      // 使用后台任务API（支持页面切换后继续执行）
+      const response = await playlistApi.startBatchSearch({
+        songs: allSongs,
+        sources: selectedSources,
+        concurrency: 5,
+        filter_duplicates: filterDuplicates,
+        similarity_threshold: similarityThreshold,
       });
 
-      // 构建SSE URL
-      const songsJson = JSON.stringify(songs);
-      const sources = selectedSources.join(',');
-      const threshold = MATCH_MODES[matchMode].value;
-      const sseUrl = playlistApi.batchSearchStreamUrl(songsJson, sources, 5, threshold);
+      const taskId = response.data.task_id;
+      console.log('[后台任务] 启动:', taskId);
 
-      console.log('[SSE] 连接:', sseUrl);
-
-      // 创建SSE连接
-      const eventSource = new EventSource(sseUrl);
-      eventSourceRef.current = eventSource;
-
-
-      eventSource.addEventListener('start', (e: MessageEvent) => {
+      // 轮询任务状态
+      const pollInterval = setInterval(async () => {
         try {
-          const data = JSON.parse(e.data);
-          console.log('[SSE] 开始:', data);
-        } catch (err) {
-          console.error('[SSE] 解析start事件失败:', err);
-        }
-      });
+          const statusResponse = await playlistApi.getBatchSearchStatus(taskId);
+          const status = statusResponse.data;
 
-      eventSource.addEventListener('progress', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          console.log('[SSE] 进度:', data);
-          setSearchProgress(data.percent || 0);
-        } catch (err) {
-          console.error('[SSE] 解析progress事件失败:', err);
-        }
-      });
+          console.log('[后台任务] 状态:', status);
 
-      eventSource.addEventListener('complete', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          console.log('[SSE] 完成:', data);
+          if (status.status === 'running') {
+            setSearchProgress(status.progress?.percent || 0);
+          } else if (status.status === 'completed') {
+            clearInterval(pollInterval);
 
-          // 转换结果格式，保存完整的候选数据
-          const matches = data.matches || {};
-          const results: BatchMatchInfo[] = Object.entries(matches).map(([key, match]: [string, any]) => {
-            const current = match.current_match;
-            const allMatches = match.all_matches || {};
+            // 获取跳过的歌曲（已下载的重复歌曲）
+            const skippedSongs = status.result?.skipped_songs || [];
+            const skippedCount = skippedSongs.length;
 
-            // 计算候选数量
-            const totalCandidates = Object.values(allMatches).reduce((sum: number, candidates: any) => {
-              return sum + (Array.isArray(candidates) ? candidates.length : 0);
-            }, 0);
+            // 转换结果格式
+            const matches = status.result?.matches || {};
+            const results: BatchMatchInfo[] = Object.entries(matches).map(([key, match]: [string, any]) => {
+              const current = match.current_match;
+              const allMatches = match.all_matches || {};
 
-            return {
-              query_name: match.query?.name || key,
-              query_singer: match.query?.singer || '',
-              song_name: current?.song_name || '未找到',
-              singers: current?.singers || '-',
-              album: current?.album || '-',
-              size: current?.file_size || current?.size || '-',
-              duration: current?.duration || '-',
-              source: current?.source || '-',
-              similarity: current?.similarity_score || current?.similarity || 0,
-              has_candidates: totalCandidates > 1,
-              all_candidates: allMatches,
-              _raw_match: match, // 保存原始数据用于切换
-            };
-          });
+              // 计算候选数量
+              const totalCandidates = Object.values(allMatches).reduce((sum: number, candidates: any) => {
+                return sum + (Array.isArray(candidates) ? candidates.length : 0);
+              }, 0);
 
-          // 不再根据相似度过滤，显示所有结果
-          setSearchResults(results);
-          setSelectedRows(results.map((_, idx) => `${results[idx].query_name}-${idx}`));
-          setHasSearched(true);
-          setSearchLoading(false);
+              return {
+                query_name: match.query?.name || key,
+                query_singer: match.query?.singer || '',
+                song_name: current?.song_name || '未找到',
+                singers: current?.singers || '-',
+                album: current?.album || '-',
+                size: current?.file_size || current?.size || '-',
+                duration: current?.duration || '-',
+                source: current?.source || '-',
+                similarity: current?.similarity_score || current?.similarity || 0,
+                has_candidates: totalCandidates > 1,
+                all_candidates: allMatches,
+                _raw_match: match,
+              };
+            });
 
-          eventSource.close();
-          eventSourceRef.current = null;
+            // 过滤逻辑
+            let filteredResults = results;
 
-          const matchedCount = results.filter(r => r.source !== '-').length;
-          if (matchedCount > 0) {
-            message.success(`搜索完成，找到 ${matchedCount} 首匹配歌曲`);
-          } else {
-            message.warning('未找到匹配的歌曲');
+            // 过滤35秒以下试听片段
+            if (filterShortTracks) {
+              filteredResults = filteredResults.filter(r => {
+                if (r.source === '-') return true; // 保留未匹配的
+                const duration = r.duration || '';
+                // 解析时长格式 (如 "03:45" 或 "00:03:45" 或 "00:00:11" 或 "225秒")
+                if (duration.includes(':')) {
+                  const parts = duration.split(':');
+                  let seconds = 0;
+                  if (parts.length === 3) {
+                    // HH:MM:SS 格式
+                    seconds = parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]);
+                  } else if (parts.length === 2) {
+                    // MM:SS 格式
+                    seconds = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+                  }
+                  // 过滤掉35秒以下的试听片段
+                  return seconds >= 35;
+                }
+                return true;
+              });
+            }
+
+            setSearchResults(filteredResults);
+            setSelectedRows(filteredResults.map((_, idx) => `${filteredResults[idx].query_name}-${idx}`));
+            setHasSearched(true);
+            setSearchLoading(false);
+
+            const matchedCount = filteredResults.filter(r => r.source !== '-').length;
+
+            // 构建完成消息，包含过滤信息
+            let completeMsg = `搜索完成，找到 ${matchedCount} 首匹配歌曲`;
+            if (skippedCount > 0) {
+              completeMsg += `，已过滤 ${skippedCount} 首已下载歌曲`;
+            }
+            message.success(completeMsg);
+
+            // 如果有跳过的歌曲，显示详情
+            if (skippedCount > 0) {
+              console.log('[下载历史过滤] 跳过的歌曲:', skippedSongs);
+            }
+          } else if (status.status === 'failed') {
+            clearInterval(pollInterval);
+            message.error(status.error || '搜索失败');
+            setSearchLoading(false);
           }
         } catch (err) {
-          console.error('[SSE] 解析complete事件失败:', err);
-          message.error('解析搜索结果失败');
-          setSearchLoading(false);
+          console.error('[后台任务] 轮询错误:', err);
         }
-      });
-
-      eventSource.addEventListener('error', (e: MessageEvent) => {
-        try {
-          const data = JSON.parse(e.data);
-          console.error('[SSE] 错误:', data);
-          message.error(data.error || '搜索连接失败');
-        } catch {
-          console.error('[SSE] 连接错误');
-          message.error('搜索连接失败');
-        }
-        setSearchLoading(false);
-        eventSource.close();
-        eventSourceRef.current = null;
-      });
-
-      eventSource.onerror = (err) => {
-        console.error('[SSE] EventSource错误:', err);
-        message.error('搜索连接中断');
-        setSearchLoading(false);
-        eventSource.close();
-        eventSourceRef.current = null;
-      };
+      }, 2000); // 每2秒轮询一次
 
     } catch (err: any) {
       console.error('[批量搜索] 错误:', err);
       message.error(err.message || '批量搜索失败');
       setSearchLoading(false);
     }
-  }, [batchText, selectedSources, matchMode, message]);
+  }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, filterDuplicates, message]);
 
-  // 全选/反选/清除选择
+  // ========== 全选/反选/清除 ==========
   const handleSelectAll = useCallback(() => {
     setSelectedRows(searchResults.map((record, idx) => `${record.query_name}-${idx}`));
-  }, [searchResults]);
+  }, [searchResults, setSelectedRows]);
 
   const handleSelectInvert = useCallback(() => {
     const allKeys = searchResults.map((record, idx) => `${record.query_name}-${idx}`);
     const newSelected = allKeys.filter(key => !selectedRows.includes(key));
     setSelectedRows(newSelected);
-  }, [searchResults, selectedRows]);
+  }, [searchResults, selectedRows, setSelectedRows]);
 
   const handleSelectClear = useCallback(() => {
     clearSelectedRows();
   }, [clearSelectedRows]);
 
-  // 候选源切换（支持源内多候选切换）
-  const handleSwitchCandidate = useCallback((index: number, source: string, candidate: any, candidateIndex: number = 0) => {
+  // ========== 候选源切换 ==========
+  const handleSwitchCandidate = useCallback((index: number, source: string, candidate: any, _candidateIndex: number = 0) => {
+    const sourceLabels: Record<string, string> = {
+      'QQMusicClient': 'QQ音乐',
+      'NeteaseMusicClient': '网易云',
+      'KugouMusicClient': '酷狗',
+      'KuwoMusicClient': '酷我',
+    };
+
     const updatedResults = [...searchResults];
     const record = updatedResults[index];
 
-    // 更新为选中的候选
     updatedResults[index] = {
       ...record,
       song_name: candidate.song_name,
@@ -250,12 +309,28 @@ function BatchDownloadPage() {
       similarity: candidate.similarity_score || candidate.similarity || 0,
     };
 
-    const candidateCount = record.all_candidates?.[source]?.length || 1;
-    const candidateLabel = candidateCount > 1 ? ` (#${candidateIndex + 1})` : '';
     setSearchResults(updatedResults);
-    message.success(`已切换到 ${sourceLabels[source] || source}${candidateLabel} 的匹配结果`);
-  }, [searchResults, message]);
+    message.success(`已切换到 ${sourceLabels[source] || source} 的匹配结果`);
+  }, [searchResults, setSearchResults, message]);
 
+  // ========== 单曲下载 ==========
+  const handleSingleDownload = useCallback(async (record: BatchMatchInfo) => {
+    try {
+      await downloadApi.startDownload([{
+        song_name: record.song_name,
+        singers: record.singers,
+        album: record.album,
+        size: record.size,
+        duration: record.duration,
+        source: record.source,
+      }]);
+      message.success(`已提交下载: ${record.song_name}`);
+    } catch {
+      message.error('下载失败');
+    }
+  }, [message]);
+
+  // ========== 批量下载 ==========
   const handleBatchDownload = useCallback(async () => {
     if (selectedRows.length === 0) {
       message.warning('请选择要下载的歌曲');
@@ -268,7 +343,6 @@ function BatchDownloadPage() {
       downloadEventSourceRef.current = null;
     }
 
-    // 重置下载进度状态
     setDownloadLoading(true);
     setShowDownloadProgress(true);
     setDownloadProgress(0);
@@ -277,13 +351,11 @@ function BatchDownloadPage() {
     setDownloadTotal(selectedRows.length);
 
     try {
-      // 解析string rowKey到实际记录
       const songsToDownload = selectedRows.map(key => {
         const record = searchResults.find(r => key === `${r.query_name}-${searchResults.indexOf(r)}`);
         return record!;
       });
 
-      // 构建SSE下载URL
       const streamUrl = downloadApi.streamDownloadUrl(
         songsToDownload.map(song => ({
           song_name: song.song_name,
@@ -293,12 +365,11 @@ function BatchDownloadPage() {
           duration: song.duration,
           source: song.source,
         })),
-        downloadDir || undefined  // 传递下载目录
+        downloadDir || undefined
       );
 
       console.log('[SSE下载] 连接:', streamUrl);
 
-      // 创建SSE连接
       const eventSource = new EventSource(streamUrl);
       downloadEventSourceRef.current = eventSource;
 
@@ -343,7 +414,6 @@ function BatchDownloadPage() {
             message.success(`下载完成：成功 ${data.completed} 首歌曲`);
           }
 
-          // 3秒后隐藏进度条
           setTimeout(() => {
             setShowDownloadProgress(false);
           }, 3000);
@@ -382,363 +452,77 @@ function BatchDownloadPage() {
       setDownloadLoading(false);
       setShowDownloadProgress(false);
     }
-  }, [selectedRows, searchResults, message]);
-
-  const sourceLabels: Record<string, string> = {
-    'QQMusicClient': 'QQ音乐',
-    'NeteaseMusicClient': '网易云',
-    'KugouMusicClient': '酷狗',
-    'KuwoMusicClient': '酷我',
-  };
-
-  // 获取相似度标签颜色
-  const getSimilarityTag = (similarity: number) => {
-    if (similarity >= 0.8) return { color: 'success', text: `${(similarity * 100).toFixed(0)}%` };
-    if (similarity >= 0.6) return { color: 'warning', text: `${(similarity * 100).toFixed(0)}%` };
-    return { color: 'error', text: `${(similarity * 100).toFixed(0)}%` };
-  };
-
-  const columns = useMemo(() => [
-    {
-      title: '查询',
-      key: 'query',
-      width: 180,
-      render: (_: any, record: BatchMatchInfo) => (
-        <div>
-          <Text strong style={{ fontSize: 14 }}>{record.query_name}</Text>
-          <br />
-          <Text type="secondary" style={{ fontSize: 12 }}>{record.query_singer || '-'}</Text>
-        </div>
-      ),
-    },
-    {
-      title: '匹配结果',
-      key: 'result',
-      width: 320,
-      render: (_: any, record: BatchMatchInfo, index: number) => {
-        const hasCandidates = record.has_candidates && record.all_candidates;
-        const candidateSources = hasCandidates ? Object.keys(record.all_candidates || {}) : [];
-        const similarityTag = getSimilarityTag(record.similarity);
-
-        // 如果有多个候选源，显示二级下拉菜单
-        if (hasCandidates && candidateSources.length > 1) {
-          // 构建嵌套菜单：第一级选择源，第二级选择该源的具体候选
-          const _menuItems = candidateSources.map((source: string) => {
-            const candidates = record.all_candidates![source] || [];
-            return {
-              key: source,
-              label: `${sourceLabels[source] || source}`,
-              children: candidates.map((candidate: any, idx: number) => ({
-                key: `${source}-${idx}`,
-                label: candidate.song_name || `候选 #${idx + 1}`,
-                onClick: () => handleSwitchCandidate(index, source, candidate, idx),
-              })),
-            };
-          });
-          void _menuItems; // avoid unused warning
-
-          return (
-            <Space direction="vertical" size={4}>
-              <Space>
-                <Text strong style={{ fontSize: 14 }}>{record.song_name}</Text>
-                {record.source !== '-' && (
-                  <Dropdown
-                    trigger={['click']}
-                    dropdownRender={() => (
-                      <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px 0 rgba(0, 0, 0, 0.12), 0 9px 28px 8px 0 rgba(0, 0, 0, 0.05)' }}>
-                        {candidateSources.map((source: string) => {
-                          const candidates = record.all_candidates![source] || [];
-                          return (
-                            <div key={source}>
-                              <div style={{ padding: '8px 12px', fontWeight: 'bold', color: '#1890ff' }}>
-                                {sourceLabels[source] || source}
-                              </div>
-                              {candidates.map((candidate: any, idx: number) => (
-                                <div
-                                  key={`${source}-${idx}`}
-                                  style={{
-                                    padding: '8px 12px 8px 24px',
-                                    cursor: 'pointer',
-                                    transition: 'background 0.2s',
-                                  }}
-                                  onClick={() => handleSwitchCandidate(index, source, candidate, idx)}
-                                  onMouseEnter={(e) => e.currentTarget.style.background = '#f5f5f5'}
-                                  onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                                >
-                                  {candidate.song_name || `候选 #${idx + 1}`}
-                                </div>
-                              ))}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  >
-                    <Button
-                      type="text"
-                      size="small"
-                      icon={<SwapOutlined />}
-                      style={{ padding: '0 4px', fontSize: 12 }}
-                    >
-                      切换
-                    </Button>
-                  </Dropdown>
-                )}
-              </Space>
-              <Text type="secondary" style={{ fontSize: 12 }}>{record.singers}</Text>
-            </Space>
-          );
-        }
-
-        return (
-          <Space direction="vertical" size={4}>
-            <Space>
-              <Text strong style={{ fontSize: 14 }}>{record.song_name}</Text>
-              {record.source !== '-' && (
-                <Tooltip
-                  title={
-                    record.name_similarity !== undefined ? (
-                      <div style={{ fontSize: 12 }}>
-                        <div>歌名: {(record.name_similarity * 100).toFixed(0)}%</div>
-                        <div>歌手: {((record.singer_similarity ?? 0) * 100).toFixed(0)}%</div>
-                        <div>专辑: {((record.album_similarity ?? 0) * 100).toFixed(0)}%</div>
-                        <div style={{ marginTop: 4, paddingTop: 4, borderTop: '1px solid #eee' }}>
-                          <strong>总计: {(record.similarity * 100).toFixed(0)}%</strong>
-                        </div>
-                      </div>
-                    ) : similarityTag.text
-                  }
-                >
-                  <Tag color={similarityTag.color} style={{ fontSize: 11, cursor: 'help' }}>
-                    {similarityTag.text}
-                  </Tag>
-                </Tooltip>
-              )}
-            </Space>
-            <Text type="secondary" style={{ fontSize: 12 }}>{record.singers}</Text>
-          </Space>
-        );
-      },
-    },
-    {
-      title: '来源',
-      dataIndex: 'source',
-      key: 'source',
-      width: 100,
-      render: (source: string) => {
-        const sourceLabel = sourceLabels[source] || source;
-        if (source === '-') {
-          return <Text type="secondary" style={{ fontSize: 12 }}>未匹配</Text>;
-        }
-        return <Tag color="blue" style={{ fontSize: 12 }}>{sourceLabel}</Tag>;
-      },
-    },
-    {
-      title: '专辑',
-      dataIndex: 'album',
-      key: 'album',
-      width: 150,
-      ellipsis: true,
-      render: (album: string) => (
-        <Text type="secondary" style={{ fontSize: 12 }} ellipsis={{ tooltip: album }}>
-          {album || '-'}
-        </Text>
-      ),
-    },
-    {
-      title: '大小',
-      dataIndex: 'size',
-      key: 'size',
-      width: 80,
-      render: (size: string) => (
-        <Text type="secondary" style={{ fontSize: 12 }}>{size || '-'}</Text>
-      ),
-    },
-    {
-      title: '时长',
-      dataIndex: 'duration',
-      key: 'duration',
-      width: 80,
-      render: (duration: string) => (
-        <Text type="secondary" style={{ fontSize: 12 }}>{duration || '-'}</Text>
-      ),
-    },
-    {
-      title: '操作',
-      key: 'action',
-      width: 80,
-      fixed: 'right' as const,
-      render: (_: any, record: BatchMatchInfo) => (
-        <Button
-          type="primary"
-          size="small"
-          icon={<DownloadOutlined />}
-          disabled={record.source === '-'}
-          onClick={async () => {
-            try {
-              await downloadApi.startDownload([{
-                song_name: record.song_name,
-                singers: record.singers,
-                album: record.album,
-                size: record.size,
-                duration: record.duration,
-                source: record.source,
-              }]);
-              message.success(`已提交下载: ${record.song_name}`);
-            } catch {
-              message.error('下载失败');
-            }
-          }}
-        >
-          下载
-        </Button>
-      ),
-    },
-  ], [handleSwitchCandidate, sourceLabels, message]);
+  }, [selectedRows, searchResults, downloadDir, message]);
 
   return (
     <div className="page">
       <Title level={2} className="page-title">批量下载</Title>
 
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {/* 歌曲输入卡片 */}
-        <Card
-          title={
-            <Space>
-              <FileTextOutlined />
-              <Text strong>1. 输入歌曲列表</Text>
-            </Space>
-          }
-        >
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <div>
-              <Text strong style={{ display: 'block', marginBottom: 12 }}>
-                每行一首歌曲，格式：歌名 - 歌手
-              </Text>
-              <BatchTextInput
-                value={batchText}
-                onChange={(value) => {
-                  setBatchText(value);
-                  setParsedCount(parseLineCount(value));
-                }}
-              />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Space>
-                <Text type="secondary">
-                  已识别 <Text strong style={{ color: parsedCount > 0 ? '#52c41a' : undefined }}>
-                    {parsedCount}
-                  </Text> 首歌曲
-                </Text>
+        {/* 上方：文本输入 + 歌单导入（并列） */}
+        <Row gutter={16}>
+          {/* 文本输入板块 */}
+          <Col xs={24} lg={12}>
+            <Card
+              title={
+                <Space>
+                  <FileTextOutlined />
+                  <Text strong>文本输入</Text>
+                </Space>
+              }
+              extra={
+                batchText && (
+                  <Button
+                    size="small"
+                    icon={<ClearOutlined />}
+                    onClick={() => setBatchText('')}
+                  >
+                    清空
+                  </Button>
+                )
+              }
+            >
+              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <div>
+                  <Text strong style={{ display: 'block', marginBottom: 12 }}>
+                    每行一首歌曲，格式：歌名 - 歌手
+                  </Text>
+                  <BatchTextInput
+                    value={batchText}
+                    onChange={setBatchText}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text type="secondary">
+                    已识别 <Text strong style={{ color: parsedCount > 0 ? '#52c41a' : undefined }}>
+                      {parsedCount}
+                    </Text> 首歌曲
+                  </Text>
+                </div>
               </Space>
-              {batchText && (
-                <Button
-                  size="small"
-                  icon={<ClearOutlined />}
-                  onClick={() => {
-                    setBatchText('');
-                    setParsedCount(0);
-                  }}
-                >
-                  清空输入
-                </Button>
-              )}
-            </div>
-          </Space>
-        </Card>
+            </Card>
+          </Col>
 
-        {/* 匹配设置卡片 */}
-        <Card
-          title={
-            <Space>
-              <SettingFilled />
-              <Text strong>2. 匹配设置</Text>
-            </Space>
-          }
-        >
-          <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <MatchSettings />
+          {/* 歌单导入板块 */}
+          <Col xs={24} lg={12}>
+            <PlaylistImportSection onParsed={handlePlaylistParsed} />
+          </Col>
+        </Row>
 
-            {/* 下载路径选择 */}
-            <div>
-              <Text strong style={{ display: 'block', marginBottom: 8 }}>
-                下载目录（可选）：
-              </Text>
-              <Space.Compact style={{ width: '420px' }}>
-                <Input
-                  placeholder="下载目录（支持完整路径或快捷名称）"
-                  value={downloadDir}
-                  onChange={(e) => setDownloadDir(e.target.value)}
-                  style={{ width: '280px' }}
-                />
-                <Select
-                  placeholder="快捷选择"
-                  value={null}
-                  onChange={(value) => setDownloadDir(value || '')}
-                  style={{ width: '140px' }}
-                  options={[
-                    { label: '桌面', value: '桌面' },
-                    { label: '文档', value: '文档' },
-                    { label: '下载', value: '下载' },
-                    { label: '音乐', value: '音乐' },
-                    { label: '视频', value: '视频' },
-                    { label: '图片', value: '图片' },
-                  ]}
-                />
-              </Space.Compact>
-              <Text type="secondary" style={{ fontSize: 12, marginTop: 4, display: 'block' }}>
-                留空使用默认目录，可输入完整路径或使用快捷选择
-              </Text>
-            </div>
-          </Space>
-        </Card>
-
-        {/* 搜索操作卡片 */}
-        <Card
-          title={
-            <Space>
-              <SearchOutlined />
-              <Text strong>3. 开始批量搜索</Text>
-            </Space>
-          }
-        >
-          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-            <Row gutter={[16, 16]} align="middle">
-              <Col>
-                <Button
-                  type="primary"
-                  size="large"
-                  icon={<SearchOutlined />}
-                  onClick={handleBatchSearch}
-                  loading={searchLoading}
-                  disabled={!batchText || parsedCount === 0}
-                >
-                  开始批量搜索
-                </Button>
-              </Col>
-              <Col>
-                {searchLoading && (
-                  <Space>
-                    <Progress
-                      type="circle"
-                      percent={searchProgress}
-                      width={50}
-                      status="active"
-                    />
-                    <Text type="secondary">搜索中...</Text>
-                  </Space>
-                )}
-              </Col>
-            </Row>
-            {parsedCount > 0 && !searchLoading && (
-              <Alert
-                message={`即将搜索 ${parsedCount} 首歌曲，预计耗时 ${Math.ceil(parsedCount * 0.8)} 秒`}
-                type="info"
-                showIcon
-                style={{ marginTop: 8 }}
-              />
-            )}
-          </Space>
+        {/* 下方：匹配设置板块 */}
+        <Card title={<Text strong><DownloadOutlined /> 匹配设置</Text>}>
+          <MatchSettingsPanel
+            downloadDir={downloadDir}
+            onDownloadDirChange={setDownloadDir}
+            filterShortTracks={filterShortTracks}
+            onFilterShortTracksChange={setFilterShortTracks}
+            filterDuplicates={filterDuplicates}
+            onFilterDuplicatesChange={setFilterDuplicates}
+            onBatchSearch={handleBatchSearch}
+            searchLoading={searchLoading}
+            searchDisabled={totalSongCount === 0 || selectedSources.length === 0}
+            parsedCount={totalSongCount}
+          />
         </Card>
 
         {/* 搜索进度 */}
@@ -760,7 +544,7 @@ function BatchDownloadPage() {
             title={
               <Space>
                 <CheckSquareOutlined />
-                <Text strong>4. 搜索结果 ({searchResults.length} 首)</Text>
+                <Text strong>搜索结果 ({searchResults.length} 首)</Text>
               </Space>
             }
             extra={
@@ -833,17 +617,13 @@ function BatchDownloadPage() {
               />
 
               {/* 结果表格 */}
-              <Table
-                columns={columns}
-                dataSource={searchResults}
-                rowKey={(record, index) => `${record.query_name}-${index ?? 0}`}
-                pagination={false}
-                size="middle"
-                scroll={{ x: 1200 }}
+              <BatchResultsTable
+                data={searchResults}
+                onDownload={handleSingleDownload}
+                onSwitchCandidate={handleSwitchCandidate}
                 rowSelection={{
                   selectedRowKeys: selectedRows,
-                  onChange: (keys) => setSelectedRows(keys as string[]),
-                  columnWidth: 50,
+                  onChange: (keys) => setSelectedRows(keys),
                 }}
               />
             </Space>
@@ -891,11 +671,9 @@ function BatchDownloadPage() {
                   )}
                 </Space>
                 {!downloadLoading && downloadProgress === 100 && (
-                  <Alert
-                    message="下载完成！"
-                    type="success"
-                    showIcon
-                  />
+                  <Tag color="success" style={{ fontSize: 14, padding: '4px 12px' }}>
+                    下载完成
+                  </Tag>
                 )}
               </div>
             </Space>

@@ -1,7 +1,7 @@
 """线程安全的搜索结果收集器"""
 from PyQt6.QtCore import QMutex, QMutexLocker
 from typing import Dict
-from ..batch.models import BatchSongMatch
+from core.models import BatchSongMatch
 import logging
 
 logger = logging.getLogger(__name__)
