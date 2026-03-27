@@ -416,6 +416,6 @@ const SimilarityDisplay = ({ score }: { score: number }) => {
 
 ## 10. 参考
 
-- [设计审计报告](./.gstack/design-reports/design-audit-music-downloader-2026-03-19.md)
+- 设计审计报告属于本地 QA 产物，不再纳入 GitHub 仓库版本控制
 - [Ant Design 设计系统](https://ant.design/docs/spec/introduce)
 - [PyQt6 文档](https://www.riverbankcomputing.com/static/Docs/PyQt6/)

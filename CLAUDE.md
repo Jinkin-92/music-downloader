@@ -618,7 +618,8 @@ See `README.md` roadmap section:
 # 前端: http://localhost:5173
 
 # 运行完整E2E测试
-node e2e_test_playlist.js
+cd frontend
+npm run test:e2e -- playlist-complete-flow.spec.ts
 ```
 
 **E2E测试验证项**：
@@ -632,16 +633,16 @@ node e2e_test_playlist.js
 
 | 文件类型 | 用途 | 是否验证Web UI |
 |---------|------|-----------------|
-| `e2e_test_playlist.js` | **完整E2E测试** | ✅ 是 |
+| `frontend/e2e/playlist-complete-flow.spec.ts` | **完整E2E测试** | ✅ 是 |
 | `test_full_flow.py` | 后端API测试 | ❌ 否 |
 | `test_sse_stream.py` | SSE流测试 | ❌ 否 |
 
-**只有 `e2e_test_playlist.js` 的结果才算作正式测试通过**
+**只有 `frontend/e2e/playlist-complete-flow.spec.ts` 的结果才算作正式测试通过**
 
 ### 修复验证流程
 
 **用户报告问题时**：
-1. 在 `e2e_test_playlist.js` 中添加测试用例
+1. 在 `frontend/e2e/` 中添加或更新对应 Playwright 测试用例
 2. 运行测试确认问题
 3. 修复代码
 4. **再次运行E2E测试确认修复**
@@ -654,7 +655,8 @@ node e2e_test_playlist.js
 # 1. 修复代码
 # 2. 重启服务
 # 3. 运行E2E测试
-node e2e_test_playlist.js
+cd frontend
+npm run test:e2e -- playlist-complete-flow.spec.ts
 
 # 4. 确认所有测试通过
 # 5. 标记任务完成

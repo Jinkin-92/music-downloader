@@ -34,6 +34,7 @@ test_*.py
 !backend/tests/test_*.py
 test_downloads/
 .gstack/
+.claude/settings.local.json
 
 # Frontend/browser test artifacts
 frontend/playwright-report/
@@ -57,3 +58,24 @@ frontend/frontend_dev.log
 frontend/frontend_test.log
 test_result.png
 test_search_failed.png
+backend_restart_debug*.log
+frontend_run.log
+
+# Local one-off debug and verification scripts
+/e2e_screenshot_test.js
+/e2e_test_*.js
+/frontend/e2e/test-yang-naiwen-download*
+/pjmp3_*.txt
+/test_*.py
+
+# Local helper scripts
+/启动Web端_新.bat
+/查看后端日志.bat
+/重启服务_加载修复.bat
+
+# Backup files
+*.bak
+
+# Root-only local Node sandbox
+/package.json
+/package-lock.json
