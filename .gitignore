@@ -30,5 +30,29 @@ Thumbs.db
 # Test files
 test_*.py
 !tests/
+!backend/tests/
+!backend/tests/test_*.py
 test_downloads/
 .gstack/
+
+# Frontend/browser test artifacts
+frontend/playwright-report/
+frontend/test-results/
+frontend/screenshots/
+frontend/e2e/screenshots/
+e2e/screenshots/
+
+# Local runtime artifacts
+data/*.db
+backend/*.log
+backend/logs/
+batch_page_*.png
+e2e_debug_screenshot.png
+e2e_full_run.log
+e2e_test_run.log
+frontend/console.log
+frontend/frontend.log
+frontend/frontend_dev.log
+frontend/frontend_test.log
+test_result.png
+test_search_failed.png
