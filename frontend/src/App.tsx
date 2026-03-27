@@ -3,9 +3,10 @@
  *
  * 定义路由和布局
  */
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Layout, Typography, Menu } from 'antd';
 import { useUIStore } from './stores/useUIStore';
+import SingleSearchPage from './pages/SingleSearchPage';
 import BatchDownloadPage from './pages/BatchDownloadPage';
 import DownloadHistoryPage from './pages/DownloadHistoryPage';
 
@@ -13,9 +14,14 @@ const { Title, Text } = Typography;
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const selectedSources = useUIStore((state) => state.selectedSources);
 
   const menuItems = [
+    {
+      key: '/single',
+      label: '单曲搜索',
+    },
     {
       key: '/batch',
       label: '批量下载',
@@ -59,7 +65,11 @@ function App() {
         >
           <Menu
             mode="inline"
-            defaultSelectedKeys={['/batch']}
+            selectedKeys={[location.pathname.startsWith('/history')
+              ? '/history'
+              : location.pathname.startsWith('/batch') || location.pathname === '/playlist'
+                ? '/batch'
+                : '/single']}
             style={{ borderRight: 0 }}
             items={menuItems}
             onClick={handleMenuClick}
@@ -68,8 +78,11 @@ function App() {
 
         <Layout.Content style={{ padding: '24px' }}>
           <Routes>
-            {/* 默认重定向到批量下载 */}
-            <Route path="/" element={<Navigate to="/batch" replace />} />
+            {/* 默认重定向到单曲搜索 */}
+            <Route path="/" element={<Navigate to="/single" replace />} />
+
+            {/* 单曲搜索页 */}
+            <Route path="/single" element={<SingleSearchPage />} />
 
             {/* 批量下载页 */}
             <Route path="/batch" element={<BatchDownloadPage />} />
@@ -81,7 +94,7 @@ function App() {
             <Route path="/history" element={<DownloadHistoryPage />} />
 
             {/* 未匹配路径统一回到主入口，避免内容区白屏 */}
-            <Route path="*" element={<Navigate to="/batch" replace />} />
+            <Route path="*" element={<Navigate to="/single" replace />} />
           </Routes>
         </Layout.Content>
       </Layout>

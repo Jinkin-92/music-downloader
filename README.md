@@ -2,9 +2,17 @@
 
 Multi-source Chinese music downloader with a modern web UI for single-song search, batch matching, playlist import, and download history management.
 
+Docs: English | [简体中文](README.zh-CN.md)
+
 ## What This Repo Is
 
 This project started as a PyQt desktop downloader and now includes a web-first workflow built with FastAPI + React.
+
+Today the repo contains three runnable surfaces:
+
+- Web app: React frontend + FastAPI backend
+- Desktop app: local PyQt window
+- Desktop Docker mode: PyQt app in a container exposed through VNC
 
 It is designed for these common use cases:
 
@@ -40,7 +48,21 @@ It is designed for these common use cases:
 
 ## Quick Start
 
-### Option 1: Run frontend and backend locally
+### Option 1: Use the launcher scripts
+
+From the repo root:
+
+```powershell
+START.bat
+```
+
+Launcher entries:
+
+- `START_WEB.bat`: start the React frontend and FastAPI backend locally
+- `START_DESKTOP.bat`: start the local PyQt window
+- `START_DOCKER_DESKTOP.bat`: start the legacy PyQt Docker/VNC container
+
+### Option 2: Run frontend and backend locally
 
 Backend:
 
@@ -61,16 +83,22 @@ Open:
 - Web UI: `http://localhost:5173`
 - API docs: `http://localhost:8003/docs`
 
-### Option 2: Build the frontend
+### Option 3: Run the desktop app locally
+
+```powershell
+python -m pyqt_ui.main
+```
+
+### Option 4: Build the frontend
 
 ```powershell
 npm --prefix frontend install
 npm --prefix frontend run build
 ```
 
-### Option 3: Docker-based startup
+### Option 5: Docker-based desktop startup
 
-The repo includes Docker assets and startup scripts for containerized runs.
+The checked-in Docker compose file is for the PyQt desktop container, not the React web app.
 
 Relevant files:
 
@@ -119,7 +147,9 @@ docs/        Supporting technical notes
 If you are new to the repo, start with:
 
 - `frontend/src/pages/BatchDownloadPage.tsx`
+- `frontend/src/pages/SingleSearchPage.tsx`
 - `backend/api/playlist.py`
+- `backend/api/search.py`
 - `backend/api/download.py`
 - `core/downloader.py`
 
@@ -142,6 +172,7 @@ Recent work shipped in this repo includes:
 
 ## Notes
 
+- The recommended day-to-day entrypoint is the web app.
+- The desktop app still exists and shares the same core search/download logic.
 - Some legacy files and scripts remain because the project is evolving from desktop-first to web-first.
 - The default branch is now `main`, and older feature branches remain available for history/reference.
-
