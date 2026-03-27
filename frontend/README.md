@@ -33,9 +33,9 @@ npm run build
 
 ---
 
-## ✅ 已实现功能
+## ✅ 当前前端状态
 
-### Phase 2 前端开发 (完成度: 40%)
+当前以 Web 主界面为准，已落地的主要页面是：
 
 #### 核心架构 ✅
 - [x] React + TypeScript + Vite 配置
@@ -46,28 +46,19 @@ npm run build
 - [x] API 客户端封装
 - [x] SSE 实时进度 Hook
 
-#### 单曲搜索页面 ✅
-- [x] `SingleSearchPage.tsx` - 主页面
+- [x] `BatchDownloadPage.tsx` - Web 主页面，包含批量文本输入与歌单导入
+- [x] `DownloadHistoryPage.tsx` - 下载历史页面
+- [x] `PlaylistImportSection.tsx` - 集成在批量下载页中的歌单导入板块
+- [x] `BatchResultsTable.tsx` - 匹配结果表格
+- [x] `MatchSettingsPanel.tsx` - 匹配设置与搜索入口
 - [x] `SourceSelector.tsx` - 音乐源选择
-- [x] `SearchInput.tsx` - 搜索输入（带示例提示）
-- [x] `SearchResultsTable.tsx` - 结果表格
+- [x] `api.ts` - API 客户端封装
+- [x] `useUIStore.ts` - 全局 UI 状态
 
-#### 批量下载页面 ⏳
-- [ ] `BatchDownloadPage.tsx`
-- [ ] `BatchTextInput.tsx`
-- [ ] `MatchSettings.tsx`
-- [ ] `BatchResultsTable.tsx`
-- [ ] `SimilarityBadge.tsx`
+说明：
 
-#### 歌单导入页面 ⏳
-- [ ] `PlaylistImportPage.tsx`
-- [ ] `PlaylistUrlInput.tsx`
-- [ ] `PlaylistSongsTable.tsx`
-
-#### 人性化组件 ⏳
-- [ ] `ErrorAlert.tsx` - 智能错误提示
-- [ ] `LoadingSpinner.tsx` - 加载动画
-- [ ] `EmptyState.tsx` - 空状态提示
+- 仓库里仍保留后端单曲搜索 API，但当前 React 主界面不再把单曲搜索作为导航主入口
+- 前端文档中早期关于 `SingleSearchPage.tsx`、`PlaylistImportPage.tsx` 的规划已过时，应以 `src/pages/` 和 `src/components/batch/` 现状为准
 
 ---
 
@@ -77,18 +68,11 @@ npm run build
 frontend/
 ├── src/
 │   ├── pages/
-│   │   ├── SingleSearchPage.tsx      ✅ 单曲搜索页
-│   │   ├── BatchDownloadPage.tsx    ⏳ 批量下载页
-│   │   ├── PlaylistImportPage.tsx    ⏳ 歌单导入页
-│   │   └── DownloadHistoryPage.tsx   ⏳ 下载历史页
+│   │   ├── BatchDownloadPage.tsx      ✅ Web 主页面
+│   │   └── DownloadHistoryPage.tsx    ✅ 下载历史页
 │   ├── components/
-│   │   ├── search/
-│   │   │   ├── SourceSelector.tsx     ✅ 音乐源选择
-│   │   │   ├── SearchInput.tsx        ✅ 搜索输入
-│   │   │   └── SearchResultsTable.tsx  ✅ 结果表格
-│   │   ├── batch/                     ⏳ 批量模块组件
-│   │   ├── playlist/                  ⏳ 歌单模块组件
-│   │   └── common/                     ⏳ 通用组件
+│   │   ├── batch/                     ✅ 批量下载与歌单导入组件
+│   │   └── common/                    ✅ 通用组件
 │   ├── hooks/
 │   │   └── useSSE.ts                   ✅ SSE Hook
 │   ├── stores/
@@ -135,15 +119,6 @@ frontend/
 ---
 
 ## 🔌 API 集成示例
-
-### 单曲搜索
-```typescript
-import { searchApi } from '../services/api';
-
-// 搜索
-const result = await searchApi.searchMusic('周杰伦 晴天');
-console.log(result.data.songs); // 歌曲列表
-```
 
 ### 批量搜索（SSE）
 ```typescript
@@ -203,20 +178,10 @@ python -m backend.main
 
 ## 📝 下一步开发任务
 
-### 高优先级（本周）
-1. ⏳ 实现批量下载页面
-   - 批量文本输入（带格式示例）
-   - 相似度颜色编码
-   - ▼按钮切换候选
-
-2. ⏳ 实现人性化组件
-   - ErrorAlert - 智能错误提示
-   - LoadingSpinner - 加载动画
-
-### 中优先级（下周）
-3. ⏳ 实现歌单导入页面
-4. ⏳ 实现下载历史页面
-5. ⏳ Docker集成
+### 建议后续方向
+1. 对齐 `frontend/README.md` 与真实页面结构，避免再引用已删除的规划页
+2. 继续完善 Web 端 E2E 覆盖，围绕批量下载、歌单导入、下载历史三条主流程
+3. 将 PyQt 相关说明继续迁出前端文档，减少界面基线混淆
 
 ---
 

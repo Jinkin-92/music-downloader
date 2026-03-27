@@ -46,20 +46,14 @@ frontend/
     ├── main.tsx
     ├── App.tsx
     ├── pages/
-    │   ├── SingleSearchPage.tsx
     │   ├── BatchDownloadPage.tsx
-    │   ├── PlaylistImportPage.tsx
     │   └── DownloadHistoryPage.tsx
     ├── components/
-    │   ├── search/
-    │   │   ├── SourceSelector.tsx
-    │   │   ├── SearchInput.tsx
-    │   │   └── SearchResultsTable.tsx
     │   ├── batch/
     │   │   ├── BatchTextInput.tsx
-    │   │   ├── MatchSettings.tsx
+    │   │   ├── MatchSettingsPanel.tsx
     │   │   ├── BatchResultsTable.tsx
-    │   │   └── SimilarityBadge.tsx
+    │   │   └── PlaylistImportSection.tsx
     │   └── common/
     │       ├── ErrorAlert.tsx
     │       ├── LoadingSpinner.tsx
@@ -104,21 +98,23 @@ npm run preview
 - 相似度颜色编码（绿≥80%、黄60-79%、红<60%）
 - 圆角、阴影、间距设计令牌
 
-### 2. 单曲搜索页面
-
-文件：`src/pages/SingleSearchPage.tsx`
-- 音乐源选择器（Checkbox.Group）
-- 搜索输入框（带示例提示："输入歌曲名或歌手，例如：周杰伦 晴天"）
-- 搜索结果表格（Ant Design Table）
-- 下载按钮
-
-### 3. 批量下载页面
+### 2. 批量下载页面
 
 文件：`src/pages/BatchDownloadPage.tsx`
-- 批量文本输入（TextArea，带格式示例）
-- 匹配设置（Slider调整相似度阈值）
-- 批量搜索按钮（显示预计歌曲数）
-- 批量结果表格（相似度颜色编码、▼切换按钮）
+- 批量文本输入
+- 歌单导入板块
+- 匹配设置面板
+- 批量搜索按钮
+- 批量结果表格
+- 下载进度显示
+
+### 3. 下载历史页面
+
+文件：`src/pages/DownloadHistoryPage.tsx`
+- 历史记录列表
+- 状态筛选
+- 清理失效记录
+- 打开文件夹
 
 ### 4. 人性化功能
 
@@ -179,15 +175,6 @@ export const queryClient = new QueryClient({
 ### 使用示例
 
 ```typescript
-// 单曲搜索
-const { data, isLoading, mutate } = useMutation({
-  mutationFn: (keyword: string) =>
-    api.post('/search/', { keyword, sources: ['QQMusicClient'] }),
-  onSuccess: (data) => {
-    console.log('搜索结果:', data.data.songs);
-  },
-});
-
 // 批量搜索（SSE进度）
 const { data, progress } = useBatchSearch();
 await search(batchText);

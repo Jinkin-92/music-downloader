@@ -4,12 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A **desktop music downloader** built with Python, PyQt6, and musicdl - providing a graphical interface to search, batch download, and import playlists from multiple Chinese platforms (QQ Music, Netease, Kugou, Kuwo).
+A **web-first music downloader** built with FastAPI, React, and a shared Python music engine - supporting batch download, playlist import, and download history across multiple Chinese platforms.
 
-**Current Status**: Production-ready v1.1.0 with full-featured PyQt6 desktop UI
+**Current Status**: Web UI is the product baseline; PyQt6 desktop UI remains as a compatibility surface
 
 **Key Features**:
-- Single song search across multiple platforms
 - Batch download mode with intelligent matching
 - Playlist import (Netease, QQ Music)
 - Multi-source fallback for copyright protection
@@ -17,7 +16,8 @@ A **desktop music downloader** built with Python, PyQt6, and musicdl - providing
 
 ## Technology Stack
 
-- **UI Framework**: PyQt6 (desktop application)
+- **Primary UI Framework**: React + Ant Design (web application)
+- **Legacy UI Framework**: PyQt6 (desktop compatibility app)
 - **Music Engine**: musicdl (multi-platform music search and download)
 - **Concurrency**: QThread, QThreadPool for background operations
 - **Data Models**: dataclasses, type hints
@@ -27,7 +27,7 @@ A **desktop music downloader** built with Python, PyQt6, and musicdl - providing
 
 ### High-Level Architecture
 
-The application follows a **threaded MVC pattern** with modular design:
+The repository now follows a **shared-core, multi-surface architecture**:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
