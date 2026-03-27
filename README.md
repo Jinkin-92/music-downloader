@@ -11,7 +11,7 @@ This project started as a PyQt desktop downloader and now includes a web-first w
 Today the repo contains three runnable surfaces:
 
 - Web app: React frontend + FastAPI backend
-- Desktop app: local PyQt window
+- Desktop app: local PyQt window for legacy/compatibility usage
 - Desktop Docker mode: PyQt app in a container exposed through VNC
 
 It is designed for these common use cases:
@@ -56,10 +56,12 @@ From the repo root:
 START.bat
 ```
 
-Launcher entries:
+`START.bat` launches the current primary product surface: the web app.
+
+Other launcher entries:
 
 - `START_WEB.bat`: start the React frontend and FastAPI backend locally
-- `START_DESKTOP.bat`: start the local PyQt window
+- `START_DESKTOP.bat`: start the legacy local PyQt window
 - `START_DOCKER_DESKTOP.bat`: start the legacy PyQt Docker/VNC container
 
 ### Option 2: Run frontend and backend locally
@@ -98,7 +100,7 @@ npm --prefix frontend run build
 
 ### Option 5: Docker-based desktop startup
 
-The checked-in Docker compose file is for the PyQt desktop container, not the React web app.
+The checked-in Docker compose file is for the legacy PyQt desktop container, not the React web app.
 
 Relevant files:
 
@@ -147,9 +149,7 @@ docs/        Supporting technical notes
 If you are new to the repo, start with:
 
 - `frontend/src/pages/BatchDownloadPage.tsx`
-- `frontend/src/pages/SingleSearchPage.tsx`
 - `backend/api/playlist.py`
-- `backend/api/search.py`
 - `backend/api/download.py`
 - `core/downloader.py`
 
@@ -172,7 +172,7 @@ Recent work shipped in this repo includes:
 
 ## Notes
 
-- The recommended day-to-day entrypoint is the web app.
-- The desktop app still exists and shares the same core search/download logic.
+- The recommended and canonical day-to-day entrypoint is the web app.
+- The desktop app still exists and shares core search/download logic, but the web UI is the product baseline.
 - Some legacy files and scripts remain because the project is evolving from desktop-first to web-first.
 - The default branch is now `main`, and older feature branches remain available for history/reference.

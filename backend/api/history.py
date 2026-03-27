@@ -49,12 +49,6 @@ class OpenFolderResponse(BaseModel):
     message: str
 
 
-class DeleteRecordResponse(BaseModel):
-    """Delete history record response"""
-    success: bool
-    message: str
-
-
 # ==================== API Endpoints ====================
 
 @router.get('')
@@ -159,32 +153,3 @@ async def get_stats():
         logger.error(f"[History] Failed to get stats: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
-@router.delete('/{record_id}', response_model=DeleteRecordResponse)
-async def delete_record(record_id: int, delete_file: bool = False):
-    """
-    Delete a history record, optionally deleting the local file too.
-
-    Args:
-        record_id: History record ID
-        delete_file: Whether to remove the file from disk as well
-
-    Returns:
-        Success status
-    """
-    try:
-        success = history_service.delete_file_and_record(record_id, delete_file=delete_file)
-        if not success:
-            raise HTTPException(status_code=404, detail='记录不存在')
-
-        action = '记录和文件' if delete_file else '记录'
-        logger.info(f"[History] Deleted {action}: id={record_id}")
-        return DeleteRecordResponse(
-            success=True,
-            message=f'已删除{action}'
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"[History] Failed to delete record {record_id}: {e}")
-        raise HTTPException(status_code=500, detail=str(e))

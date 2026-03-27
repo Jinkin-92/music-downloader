@@ -35,7 +35,6 @@ import {
   ClearOutlined,
   WarningOutlined,
   CheckCircleOutlined,
-  DeleteOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
@@ -131,27 +130,6 @@ function DownloadHistoryPage() {
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: async ({ recordId, deleteFile }: { recordId: number; deleteFile: boolean }) => {
-      const response = await fetch(`/api/history/${recordId}?delete_file=${deleteFile}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.detail || '删除失败');
-      }
-      return response.json();
-    },
-    onSuccess: (data: { message?: string }) => {
-      message.success(data.message || '删除成功');
-      queryClient.invalidateQueries({ queryKey: ['downloadHistory'] });
-      queryClient.invalidateQueries({ queryKey: ['historyStats'] });
-    },
-    onError: (error: Error) => {
-      message.error(error.message || '删除失败');
-    },
-  });
-
   // 打开文件夹
   const handleOpenFolder = async (filePath: string) => {
     try {
@@ -187,19 +165,6 @@ function DownloadHistoryPage() {
       okType: 'danger',
       cancelText: '取消',
       onOk: () => cleanMutation.mutate(),
-    });
-  };
-
-  const handleDeleteConfirm = (record: DownloadRecord, deleteFile: boolean) => {
-    Modal.confirm({
-      title: deleteFile ? '删除记录和文件' : '删除记录',
-      content: deleteFile
-        ? `确定删除“${record.song_name} - ${record.singers}”的历史记录，并尝试删除本地文件吗？`
-        : `确定删除“${record.song_name} - ${record.singers}”的历史记录吗？文件会保留在本地。`,
-      okText: deleteFile ? '删除记录和文件' : '删除记录',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: () => deleteMutation.mutate({ recordId: record.id, deleteFile }),
     });
   };
 
@@ -346,22 +311,6 @@ function DownloadHistoryPage() {
               />
             </Tooltip>
           )}
-          <Tooltip title="删除记录">
-            <Button
-              type="text"
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => handleDeleteConfirm(record, false)}
-            />
-          </Tooltip>
-          <Tooltip title="删除记录和文件">
-            <Button
-              type="text"
-              danger
-              icon={<ClearOutlined />}
-              onClick={() => handleDeleteConfirm(record, true)}
-            />
-          </Tooltip>
         </Space>
       ),
     },
