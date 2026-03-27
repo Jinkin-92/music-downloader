@@ -1,8 +1,8 @@
 """
 FastAPI 后端服务主入口
 
-PyQt6 音乐下载器的 Web 版本后端
-提供RESTful API和SSE实时推送功能
+Music Downloader Web 后端
+提供 RESTful API 和 SSE 实时推送功能
 """
 # ==================== 关键：禁用 rich 进度条 ====================
 # 必须在任何 musicdl 导入之前执行，解决多线程并发冲突
@@ -143,8 +143,8 @@ from backend.api.logs import router as logs_router
 # ==================== FastAPI应用 ====================
 
 app = FastAPI(
-    title="PyQt6 音乐下载器 API",
-    description="Web版本的后端API服务 - 支持单曲搜索、批量下载、歌单导入",
+    title="Music Downloader Web API",
+    description="Web 版本后端 API - 支持批量下载、歌单导入、下载历史及相关搜索能力",
     version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -189,7 +189,7 @@ else:
 async def root():
     """根路径"""
     return {
-        "message": "PyQt6 音乐下载器 API",
+        "message": "Music Downloader Web API",
         "version": "2.0.0",
         "docs": "/docs",
         "status": "running",

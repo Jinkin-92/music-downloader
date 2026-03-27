@@ -117,6 +117,10 @@ pyqt_ui/     PyQt 桌面界面（兼容入口）
 docs/        补充文档
 ```
 
+补充：
+
+- `docs/legacy/` 用来记录遗留入口和历史产物说明
+
 ## 建议阅读入口
 
 - `frontend/src/pages/BatchDownloadPage.tsx`

@@ -2,7 +2,7 @@
   "name": "music-downloader-frontend",
   "version": "2.0.0",
   "type": "module",
-  "description": "PyQt6音乐下载器Web版前端",
+  "description": "音乐下载器 Web 前端",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
