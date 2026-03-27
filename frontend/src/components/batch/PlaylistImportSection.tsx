@@ -19,7 +19,7 @@ import {
   Form,
   Input as FormInput,
 } from 'antd';
-import { LinkOutlined, SearchOutlined, LoadingOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { LinkOutlined, SearchOutlined, LoadingOutlined, EditOutlined } from '@ant-design/icons';
 import { App } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { TableRowSelection } from 'antd/es/table/interface';

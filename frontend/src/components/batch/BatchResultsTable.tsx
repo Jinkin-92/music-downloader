@@ -125,9 +125,7 @@ function BatchResultsTable({
       title: '匹配结果',
       key: 'result',
       width: 350,
-      render: (_, record, index) => {
-        const simDisplay = getSimilarityDisplay(record.similarity);
-
+      render: (_, record) => {
         return (
           <div>
             <div>

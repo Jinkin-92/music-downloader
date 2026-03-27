@@ -241,7 +241,7 @@ export const playlistApi = {
   batchSearchStreamUrl: (songsJson: string, sources?: string, concurrency = 5, similarityThreshold?: number) => {
     const params = new URLSearchParams({
       songs_json: songsJson,
-      concurrency: concurrency,
+      concurrency: concurrency.toString(),
     });
     if (sources) {
       params.append('sources', sources);

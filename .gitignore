@@ -40,6 +40,7 @@ frontend/playwright-report/
 frontend/test-results/
 frontend/screenshots/
 frontend/e2e/screenshots/
+frontend/dist/
 e2e/screenshots/
 
 # Local runtime artifacts

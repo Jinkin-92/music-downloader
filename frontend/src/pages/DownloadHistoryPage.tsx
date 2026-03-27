@@ -25,21 +25,19 @@ import {
   Statistic,
   Row,
   Col,
+  Empty,
 } from 'antd';
 import {
   FolderOpenOutlined,
   ReloadOutlined,
-  DeleteOutlined,
   FileOutlined,
   RedoOutlined,
   ClearOutlined,
-  SearchOutlined,
   WarningOutlined,
   CheckCircleOutlined,
 } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { downloadApi } from '../services/api';
 import EmptyState from '../components/common/EmptyState';
 
 const { Title, Text } = Typography;
@@ -95,7 +93,6 @@ function DownloadHistoryPage() {
     data: historyData,
     isLoading,
     isError,
-    refetch,
   } = useQuery({
     queryKey: ['downloadHistory'],
     queryFn: async () => {
@@ -207,7 +204,7 @@ function DownloadHistoryPage() {
   });
 
   // 表格列定义
-  const columns = [
+  const columns: import('antd/es/table').ColumnsType<DownloadRecord> = [
     {
       title: '文件名称',
       key: 'name',
@@ -292,7 +289,7 @@ function DownloadHistoryPage() {
       title: '操作',
       key: 'action',
       width: 180,
-      fixed: 'right',
+      fixed: 'right' as const,
       render: (_: any, record: DownloadRecord) => (
         <Space size="small">
           <Tooltip title="重新下载">

@@ -34,7 +34,7 @@ import PlaylistImportSection from '../components/batch/PlaylistImportSection';
 import BatchResultsTable from '../components/batch/BatchResultsTable';
 import { playlistApi, downloadApi } from '../services/api';
 import { parseLineCount } from '../utils/format';
-import { BatchMatchInfo, MATCH_MODES } from '../types';
+import { BatchMatchInfo } from '../types';
 
 const { Title, Text } = Typography;
 
@@ -144,9 +144,6 @@ function BatchDownloadPage() {
     setSearchResults([]);
     setHasSearched(false);
     setSelectedRows([]);
-
-    // 显示原始歌曲数量
-    const originalCount = allSongs.length;
 
     try {
       // 将 matchMode 转换为阈值
@@ -290,7 +287,7 @@ function BatchDownloadPage() {
   }, [clearSelectedRows]);
 
   // ========== 候选源切换 ==========
-  const handleSwitchCandidate = useCallback((index: number, source: string, candidate: any, candidateIndex: number = 0) => {
+  const handleSwitchCandidate = useCallback((index: number, source: string, candidate: any, _candidateIndex: number = 0) => {
     const sourceLabels: Record<string, string> = {
       'QQMusicClient': 'QQ音乐',
       'NeteaseMusicClient': '网易云',
