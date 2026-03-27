@@ -53,7 +53,7 @@ function BatchDownloadPage() {
 
   // ========== 文本输入状态 ==========
   const [batchText, setBatchText] = useLocalStorage('batch-download-text', '');
-  const [parsedCount, setParsedCount] = useState(0);
+  const parsedCount = useMemo(() => parseLineCount(batchText), [batchText]);
 
   // ========== 歌单导入状态 ==========
   const [playlistSongs, setPlaylistSongs] = useState<PlaylistSong[]>([]);
@@ -478,10 +478,7 @@ function BatchDownloadPage() {
                   <Button
                     size="small"
                     icon={<ClearOutlined />}
-                    onClick={() => {
-                      setBatchText('');
-                      setParsedCount(0);
-                    }}
+                    onClick={() => setBatchText('')}
                   >
                     清空
                   </Button>
@@ -495,10 +492,7 @@ function BatchDownloadPage() {
                   </Text>
                   <BatchTextInput
                     value={batchText}
-                    onChange={(value) => {
-                      setBatchText(value);
-                      setParsedCount(parseLineCount(value));
-                    }}
+                    onChange={setBatchText}
                   />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

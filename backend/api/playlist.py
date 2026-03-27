@@ -691,6 +691,27 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
             songs_data = songs_to_search
             logger.info(f"[后台搜索] 过滤后剩余 {len(songs_data)} 首歌曲 (跳过 {len(skipped_songs)} 首)")
 
+        # 所有歌曲都被“过滤已下载”跳过时，直接返回完成态，避免空输入再次进入解析器
+        if not songs_data:
+            task_id = task_manager.create_task('search', {
+                'songs': [],
+                'sources': source_list,
+                'concurrency': concurrency,
+                'skipped_songs': skipped_songs
+            }, total=0)
+            task_manager.complete_task(task_id, {
+                'total': 0,
+                'matched': 0,
+                'matches': {},
+                'skipped_songs': skipped_songs
+            })
+            logger.info(f"[后台搜索] 无需搜索，全部歌曲已跳过: {task_id}, 跳过 {len(skipped_songs)} 首")
+            return {
+                'task_id': task_id,
+                'status': 'completed',
+                'total': 0
+            }
+
         # 创建任务
         task_id = task_manager.create_task('search', {
             'songs': songs_data,
