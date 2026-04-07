@@ -12,6 +12,7 @@ import os
 import json
 import asyncio
 import requests
+from concurrent.futures import ThreadPoolExecutor
 
 from core import MusicDownloader, DOWNLOAD_DIR
 from core.song_cache import song_info_cache
@@ -38,6 +39,40 @@ def _get_pjmp3_download_headers() -> dict:
         "Referer": "https://pjmp3.com/",
         "Accept": "*/*",
     }
+
+
+def _is_downloadable_song(song: dict) -> bool:
+    """Reject placeholder rows that represent unmatched search results."""
+    source = (song.get('source') or '').strip()
+    song_name = (song.get('song_name') or '').strip()
+    singers = (song.get('singers') or '').strip()
+
+    if source in ('', '-'):
+        return False
+    if song_name in ('', '未找到'):
+        return False
+    if singers == '-' and not song.get('download_url') and not song.get('song_id'):
+        return False
+    return True
+
+
+def _search_download_candidates(song_name: str, singers: str, source: str):
+    """Search candidates with source-specific fallback behavior."""
+    if source == 'Pjmp3Client' and getattr(music_downloader, '_pjmp3_client', None):
+        pjmp3_results = music_downloader._pjmp3_client.search_with_artist_filter(
+            song_name=song_name,
+            artist=singers,
+            limit=20
+        )
+        return {
+            'Pjmp3Client': [
+                music_downloader._pjmp3_songinfo_to_dict(song) for song in pjmp3_results
+            ]
+        }
+
+    search_keyword = f"{song_name} {singers}".strip()
+    # 使用 search_single_source 直接搜索指定源，避免搜索所有源
+    return music_downloader.search_single_source(search_keyword, source)
 
 
 # ==================== Pydantic模型 ====================
@@ -279,12 +314,16 @@ async def stream_download(request: DownloadRequest):
 
 
 async def _execute_download_stream(request: DownloadRequest):
+    # 创建线程池用于执行阻塞的下载操作
+    thread_pool = ThreadPoolExecutor(max_workers=4)
+
     async def download_stream():
         """SSE下载进度流"""
         try:
             songs_dict = [song.model_dump() for song in request.songs]
             total_songs = len(songs_dict)
             download_dir = request.download_dir or DOWNLOAD_DIR
+            loop = asyncio.get_event_loop()
 
             logger.info(f"[SSE下载] 开始下载 {total_songs} 首歌曲")
 
@@ -306,18 +345,36 @@ async def _execute_download_stream(request: DownloadRequest):
                     logger.info(f"[SSE下载] 下载 ({index+1}/{total_songs}): {song_name} - {singers}")
 
                     # 优先级1: 使用 song_id 从缓存获取 SongInfo 对象
+                    if not _is_downloadable_song(song):
+                        failed_count += 1
+                        logger.warning(f"[SSE-download] skip invalid item: {song_name} - {singers} (source={source})")
+                        progress = {
+                            'completed': index + 1,
+                            'total': total_songs,
+                            'percent': round((index + 1) / total_songs * 100),
+                            'song_name': song_name,
+                            'success': False,
+                            'error': 'invalid download item'
+                        }
+                        yield f"event: progress\ndata: {json.dumps(progress)}\n\n"
+                        continue
+
                     if song_id:
                         cached_info = song_info_cache.get_info(song_id)
                         if cached_info:
                             song_info_obj = cached_info['song_info_obj']
                             logger.info(f"[缓存命中] song_id={song_id}, 直接下载")
                             try:
-                                music_downloader.download(
-                                    [{
-                                        'song_info_obj': song_info_obj,
-                                        'source': source or getattr(song_info_obj, 'source', '')
-                                    }],
-                                    download_dir=download_dir
+                                # 在线程池中执行阻塞下载
+                                await loop.run_in_executor(
+                                    thread_pool,
+                                    lambda: music_downloader.download(
+                                        [{
+                                            'song_info_obj': song_info_obj,
+                                            'source': source or getattr(song_info_obj, 'source', '')
+                                        }],
+                                        download_dir=download_dir
+                                    )
                                 )
 
                                 # 记录下载历史
@@ -415,10 +472,14 @@ async def _execute_download_stream(request: DownloadRequest):
 
                     # 优先级3: Fallback - 重新搜索获取下载链接
                     logger.info(f"[Fallback] 重新搜索获取下载链接: {song_name} - {singers}")
-                    search_keyword = f"{song_name} {singers}".strip()
-                    search_results = music_downloader.search(
-                        search_keyword,
-                        sources=[song['source']]
+                    # 在线程池中执行阻塞的搜索
+                    search_results = await loop.run_in_executor(
+                        thread_pool,
+                        lambda: _search_download_candidates(
+                            song_name=song_name,
+                            singers=singers,
+                            source=song['source']
+                        )
                     )
 
                     # 尝试精确匹配（歌名+歌手）
@@ -431,7 +492,11 @@ async def _execute_download_stream(request: DownloadRequest):
                             # 匹配逻辑：歌名完全匹配，歌手部分匹配
                             if (s_name == song_name and
                                 singers in s_singers):
-                                music_downloader.download([s], download_dir=download_dir)
+                                # 在线程池中执行阻塞下载
+                                await loop.run_in_executor(
+                                    thread_pool,
+                                    lambda: music_downloader.download([s], download_dir=download_dir)
+                                )
                                 found = True
                                 logger.info(f"下载成功: {song_name} - {singers}")
                                 break
@@ -444,7 +509,11 @@ async def _execute_download_stream(request: DownloadRequest):
                             for s in songs_list:
                                 s_name = s.get('song_name', '')
                                 if s_name == song_name:
-                                    music_downloader.download([s], download_dir=download_dir)
+                                    # 在线程池中执行阻塞下载
+                                    await loop.run_in_executor(
+                                        thread_pool,
+                                        lambda: music_downloader.download([s], download_dir=download_dir)
+                                    )
                                     found = True
                                     logger.info(f"下载成功（歌名匹配）: {song_name}")
                                     break
@@ -516,6 +585,10 @@ async def _execute_download_stream(request: DownloadRequest):
             import traceback
             logger.error(traceback.format_exc())
             yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
+        finally:
+            # 清理线程池
+            thread_pool.shutdown(wait=False)
+            logger.info("[SSE下载] 线程池已关闭")
 
     return StreamingResponse(
         download_stream(),

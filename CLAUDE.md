@@ -575,6 +575,22 @@ results = client.search("test song")
 4. **Network Dependency**: Requires active internet connection
 5. **Platform Limits**: Some platforms may have rate limits
 
+### ⚠️ Critical API Behaviors (避免踩坑)
+
+**1. Backend 必须先启动再测试 Web UI**
+- Backend 运行在 `python -m backend.main`，端口 8003
+- 测试前端前确认 backend 已在运行，否则返回 500 错误
+
+**2. musicdl 单个源返回 list 不是 dict**
+- `client.search('keyword', sources=['NeteaseMusicClient'])` 返回 `[SongInfo]` 列表
+- 不是 `{source: [songs]}` 字典格式
+- 需要手动包装：`return {source: [self._songinfo_to_dict(song) for song in raw_results]}`
+
+**3. 搜索单个源必须用 `search_single_source()`**
+- 用 `search()` 搜索单个源会触发全源搜索（每个源 180s 超时）
+- 50 首歌可能需要 1+ 小时
+- 正确做法：`search_single_source(keyword, source)` 直接搜索指定源
+
 ### Testing
 
 **Unit Tests**: Located in `tests/`

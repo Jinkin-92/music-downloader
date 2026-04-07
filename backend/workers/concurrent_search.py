@@ -44,7 +44,8 @@ class AsyncConcurrentSearcher:
         self.semaphore = asyncio.Semaphore(concurrency)
         self.downloader = MusicDownloader()
         self.matcher = SongMatcher()
-        self.thread_pool = ThreadPoolExecutor(max_workers=concurrency)
+        # 线程池大小 = 歌曲并发数 × 每首歌的源数量，确保每个源搜索任务有独立线程
+        self.thread_pool = ThreadPoolExecutor(max_workers=concurrency * 10)
         self.similarity_threshold = similarity_threshold
 
         # ⚠️ DEBUG: Print to stdout for debugging

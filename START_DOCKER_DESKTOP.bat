@@ -3,35 +3,36 @@ setlocal
 cd /d "%~dp0"
 
 echo ==========================================
-echo   Music Downloader Desktop Docker
+echo   Music Downloader Legacy Desktop Docker
 echo ==========================================
 echo.
-echo 该模式启动的是桌面版 PyQt 容器，不是 React Web 版。
-echo 通过 VNC 访问容器桌面，端口：5901
+echo This mode starts the legacy PyQt desktop container over VNC.
+echo It does NOT start the current React Web UI.
+echo VNC port: 5901
 echo.
 
 docker info >nul 2>&1
 if errorlevel 1 (
-    echo Docker 未运行，请先启动 Docker Desktop。
+    echo Docker is not running. Please start Docker Desktop first.
     pause
     exit /b 1
 )
 
-docker-compose up -d --build
+docker compose -f docker-compose.legacy-desktop.yml up -d --build
 
 if errorlevel 1 (
     echo.
-    echo Docker 桌面版启动失败。
+    echo Legacy desktop Docker startup failed.
     pause
     exit /b 1
 )
 
 echo.
-echo 已启动桌面版 Docker 容器。
-echo 查看日志：
-echo   docker-compose logs -f
-echo 停止服务：
-echo   docker-compose down
+echo Legacy desktop container started.
+echo Logs:
+echo   docker compose -f docker-compose.legacy-desktop.yml logs -f
+echo Stop:
+echo   docker compose -f docker-compose.legacy-desktop.yml down
 echo.
 pause
 endlocal

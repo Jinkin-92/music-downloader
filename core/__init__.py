@@ -26,6 +26,7 @@ from .config import (
     BATCH_SEARCH_ALL_SOURCES,
     BATCH_MAX_CANDIDATES_PER_SOURCE,
     BATCH_STATUS_LABELS,
+    CDP_SOURCES,
 )
 from .models import MatchCandidate, BatchSongMatch, BatchSearchResult, MatchSource
 from .parser import BatchParser
@@ -47,6 +48,7 @@ __all__ = [
     "BATCH_SEARCH_ALL_SOURCES",
     "BATCH_MAX_CANDIDATES_PER_SOURCE",
     "BATCH_STATUS_LABELS",
+    "CDP_SOURCES",
     # Models
     "MatchCandidate",
     "BatchSongMatch",

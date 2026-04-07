@@ -104,8 +104,9 @@ except ImportError:
 
 import threading
 from musicdl.musicdl import MusicClient
-from .config import DOWNLOAD_DIR, DEFAULT_SOURCES
+from .config import DOWNLOAD_DIR, DEFAULT_SOURCES, CDP_SOURCES
 from .pjmp3_client import Pjmp3Client, Pjmp3SongInfo, get_pjmp3_client
+from .sources.cdp_browser_source import create_cdp_source, get_all_cdp_sources
 import logging
 
 logger = logging.getLogger(__name__)
@@ -118,6 +119,7 @@ class MusicDownloader:
     _lock = threading.Lock()
     _client = None
     _pjmp3_client = None  # Pjmp3 独立客户端
+    _cdp_sources = {}  # CDP浏览器源字典 {name: CdpBrowserSource}
 
     def __new__(cls):
         """Ensure only one instance exists"""
@@ -133,13 +135,15 @@ class MusicDownloader:
             self._initialize_client()
         if self._pjmp3_client is None:
             self._pjmp3_client = get_pjmp3_client()
+        if not self._cdp_sources:
+            self._initialize_cdp_sources()
 
     def _initialize_client(self):
         """Initialize MusicClient singleton"""
         try:
             logger.info("Initializing MusicClient...")
             # 只使用 musicdl 支持的源（排除 Pjmp3Client 和 SpotifyClient）
-            musicdl_supported_sources = [s for s in DEFAULT_SOURCES if s not in ("SpotifyClient", "Pjmp3Client")]
+            musicdl_supported_sources = [s for s in DEFAULT_SOURCES if s not in ("SpotifyClient", "Pjmp3Client") and s not in CDP_SOURCES]
             logger.info(f"[DEBUG] MusicClient will use sources: {musicdl_supported_sources}")
             # 设置超时为180秒，避免API响应慢导致超时（musicdl搜索很慢）
             request_overrides = {
@@ -159,6 +163,16 @@ class MusicDownloader:
             logger.error(f"Failed to initialize MusicClient: {e}")
             raise
 
+    def _initialize_cdp_sources(self):
+        """初始化CDP浏览器源"""
+        for source_name in CDP_SOURCES:
+            cdp_source = create_cdp_source(source_name)
+            if cdp_source:
+                self._cdp_sources[source_name] = cdp_source
+                logger.info(f"CDP源已初始化: {source_name} ({cdp_source.display_name})")
+            else:
+                logger.warning(f"CDP源初始化失败: {source_name}")
+
     def search(self, keyword, sources=None):
         """
         Search for music
@@ -174,13 +188,16 @@ class MusicDownloader:
             self._initialize_client()
         if self._pjmp3_client is None:
             self._pjmp3_client = get_pjmp3_client()
+        if not self._cdp_sources:
+            self._initialize_cdp_sources()
 
         sources = sources or DEFAULT_SOURCES
         logger.info(f"Searching for '{keyword}' from {sources}")
 
-        # 分离 musicdl 源和 Pjmp3 源
-        musicdl_sources = [s for s in sources if s != 'Pjmp3Client']
+        # 分离 musicdl 源、Pjmp3 源和 CDP 源
+        musicdl_sources = [s for s in sources if s != 'Pjmp3Client' and s not in CDP_SOURCES]
         pjmp3_sources = [s for s in sources if s == 'Pjmp3Client']
+        cdp_sources = [s for s in sources if s in CDP_SOURCES]
 
         formatted_results = {}
 
@@ -201,6 +218,23 @@ class MusicDownloader:
                     formatted_results['Pjmp3Client'] = [
                         self._pjmp3_songinfo_to_dict(song) for song in pjmp3_results
                     ]
+
+            # 搜索 CDP 浏览器源
+            if cdp_sources:
+                for source_name in cdp_sources:
+                    cdp_source = self._cdp_sources.get(source_name)
+                    if cdp_source and cdp_source.is_available():
+                        try:
+                            cdp_results = cdp_source.search(keyword)
+                            if cdp_results:
+                                formatted_results[source_name] = [
+                                    self._cdp_songinfo_to_dict(song) for song in cdp_results
+                                ]
+                                logger.info(f"CDP源 {source_name} 搜索到 {len(cdp_results)} 首歌曲")
+                        except Exception as e:
+                            logger.error(f"CDP源 {source_name} 搜索失败: {e}")
+                    else:
+                        logger.warning(f"CDP源 {source_name} 不可用")
 
             return formatted_results
         except Exception as e:
@@ -234,6 +268,22 @@ class MusicDownloader:
                     }
             return {}
 
+        # 特殊处理 CDP 浏览器源（jgwav, flmp3, jcpoo, tgws）
+        if source in CDP_SOURCES:
+            if not self._cdp_sources:
+                self._initialize_cdp_sources()
+            cdp_source = self._cdp_sources.get(source)
+            if cdp_source and cdp_source.is_available():
+                try:
+                    cdp_results = cdp_source.search(keyword)
+                    if cdp_results:
+                        return {
+                            source: [self._cdp_songinfo_to_dict(song) for song in cdp_results]
+                        }
+                except Exception as e:
+                    logger.error(f"CDP源 {source} 搜索失败: {e}")
+            return {}
+
         if self._client is None:
             self._initialize_client()
 
@@ -244,12 +294,25 @@ class MusicDownloader:
             keyword = keyword.encode('utf-8', errors='ignore').decode('utf-8')
 
             # 使用主客户端的特定源客户端直接搜索
-            if hasattr(self._client, 'music_clients') and source in self._client.music_clients:
+            has_music_clients = hasattr(self._client, 'music_clients')
+            source_in_music_clients = source in self._client.music_clients if has_music_clients else False
+            logger.info(f"[DEBUG] source={source}, has_music_clients={has_music_clients}, source_in_music_clients={source_in_music_clients}")
+            if has_music_clients and source_in_music_clients:
                 mc = self._client.music_clients.get(source)
-                if mc and hasattr(mc, 'search'):
+                has_search = hasattr(mc, 'search') if mc else False
+                logger.info(f"[DEBUG] mc={mc is not None}, has_search={has_search}")
+                if mc and has_search:
                     # 直接调用特定源的客户端
                     raw_results = mc.search(keyword)
-                    if raw_results and source in raw_results:
+                    logger.info(f"[DEBUG] raw_results type: {type(raw_results)}")
+                    # 单个源的search()返回list，需要包装成{source: [songs]}格式
+                    if isinstance(raw_results, list):
+                        formatted_results = {
+                            source: [self._songinfo_to_dict(song) for song in raw_results]
+                        }
+                        logger.info(f"Found {len(formatted_results.get(source, []))} results from {source}")
+                        return formatted_results
+                    elif raw_results and source in raw_results:
                         formatted_results = {
                             source: [self._songinfo_to_dict(song) for song in raw_results[source]]
                         }
@@ -310,6 +373,24 @@ class MusicDownloader:
             'file_size': getattr(song_info, 'file_size', ''),
             'duration': getattr(song_info, 'duration', ''),
             'source': 'Pjmp3Client',
+            'ext': getattr(song_info, 'ext', 'mp3'),
+            'download_url': getattr(song_info, 'download_url', None),
+            'duration_s': getattr(song_info, 'duration_s', 0),
+            'song_info_obj': song_info,  # Keep reference for download
+            'song_id': getattr(song_info, 'song_id', ''),
+            'cover_url': getattr(song_info, 'cover_url', ''),
+            'preview_url': getattr(song_info, 'preview_url', None),
+        }
+
+    def _cdp_songinfo_to_dict(self, song_info):
+        """Convert CDP source SongInfo object to dictionary"""
+        return {
+            'song_name': getattr(song_info, 'song_name', ''),
+            'singers': getattr(song_info, 'singers', ''),
+            'album': getattr(song_info, 'album', ''),
+            'file_size': getattr(song_info, 'file_size', ''),
+            'duration': getattr(song_info, 'duration', ''),
+            'source': getattr(song_info, 'source', ''),
             'ext': getattr(song_info, 'ext', 'mp3'),
             'download_url': getattr(song_info, 'download_url', None),
             'duration_s': getattr(song_info, 'duration_s', 0),

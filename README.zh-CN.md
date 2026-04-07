@@ -2,15 +2,15 @@
 
 [English](README.md) | 简体中文
 
-这是一个多音源中文音乐下载项目，当前以 Web 端为产品基准，同时保留 PyQt 桌面版作为兼容入口。
+这是一个多音源中文音乐下载项目，当前以 Web 版为产品基线，同时保留 PyQt 桌面版作为兼容入口。
 
 - Web 版：React + FastAPI，是当前主界面
 - 桌面版：PyQt 本地窗口，用于兼容旧流程
-- Docker 桌面模式：本质上仍是 PyQt 桌面版，只是通过 VNC 访问
+- 桌面 Docker 模式：本质上仍是 PyQt 桌面版，只是通过 VNC 访问
 
 ## 当前架构
 
-项目不是两套互相独立的实现，而是“共享核心能力 + 多个界面层”：
+项目不是两套彼此独立的实现，而是“共享核心能力 + 多个界面层”：
 
 - `core/`
   负责搜索、匹配、下载、音源客户端、批量解析等核心逻辑
@@ -29,7 +29,7 @@
 
 ## 当前产品基线
 
-这次重新对齐后的原则是：
+重新对齐后的原则是：
 
 - 以 Web 端当前界面为准
 - Web 主流程围绕：批量下载、歌单导入、下载历史
@@ -38,20 +38,14 @@
 
 ## `START.bat` 现在做什么
 
-之前的 `START.bat` 语义不清，而且还指向了仓库里不存在的 `docker-compose.web.yml`。现在已经重新明确：
-
-```bat
-START.bat
-```
-
-它默认启动 Web 主界面。
+现在的 `START.bat` 默认启动 Web 主界面。
 
 如果你要启动遗留桌面版，请使用：
 
 - `START_DESKTOP.bat`
 - `START_DOCKER_DESKTOP.bat`
 
-因此现在的答案很明确：
+因此现在的结论是：
 
 - `START.bat`：启动 Web 版
 - `START_DESKTOP.bat`：启动本地 PyQt 桌面版
@@ -88,20 +82,44 @@ START_DESKTOP.bat
 python -m pyqt_ui.main
 ```
 
-### 方式 4：Docker 桌面模式
+## Docker 部署
+
+默认的 `docker-compose.yml` 现在对应 Web 版，而不是旧的桌面 VNC 容器。
+
+当前 Compose 架构：
+
+- `backend`：FastAPI，默认端口 `8003`
+- `frontend`：Nginx + React 构建产物，默认端口 `8080`
+
+启动：
 
 ```powershell
-START_DOCKER_DESKTOP.bat
+docker compose up -d --build
 ```
 
-注意：
+默认地址：
 
-- 当前仓库里的 `docker-compose.yml` 对应的是桌面版容器
-- 它不是 React Web 版的 docker-compose
+- Web 前端：`http://localhost:8080`
+- 后端文档：`http://localhost:8003/docs`
+- 也可通过前端代理访问：`http://localhost:8080/docs`
+
+旧的 PyQt 桌面 Docker 已经移到：
+
+- `docker-compose.legacy-desktop.yml`
+- `Dockerfile.legacy-desktop`
+
+如果你要部署到绿联 NAS，请看：
+
+- `docs/deploy/UGREEN-NAS.zh-CN.md`
+
+另外也提供了更适合 NAS 的 Compose 变体：
+
+- `docker-compose.nas.yml`：只对外暴露 Web 端口，后端仅容器内可见
+- `docker-compose.nas-auth.yml`：在上面的基础上增加 HTTP Basic 鉴权
 
 ## 功能关系
 
-当前应这样理解：
+当前应该这样理解：
 
 - Web 主界面当前聚焦：批量下载、歌单导入、下载历史
 - 后端仍然保留单曲搜索 API 能力

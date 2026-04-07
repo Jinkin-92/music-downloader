@@ -40,6 +40,7 @@ interface BatchResultsTableProps {
   rowSelection?: {
     selectedRowKeys: string[];
     onChange: (keys: string[]) => void;
+    isRowSelectable?: (record: BatchMatchInfo) => boolean;
   };
 }
 
@@ -246,6 +247,9 @@ function BatchResultsTable({
         selectedRowKeys: rowSelection.selectedRowKeys,
         onChange: (keys) => rowSelection.onChange(keys as string[]),
         columnWidth: 50,
+        getCheckboxProps: (record) => ({
+          disabled: rowSelection.isRowSelectable ? !rowSelection.isRowSelectable(record) : false,
+        }),
       } : undefined}
     />
   );

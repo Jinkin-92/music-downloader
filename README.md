@@ -12,7 +12,7 @@ Today the repo contains three runnable surfaces:
 
 - Web app: React frontend + FastAPI backend
 - Desktop app: local PyQt window for legacy/compatibility usage
-- Desktop Docker mode: PyQt app in a container exposed through VNC
+- Desktop Docker mode: legacy PyQt app in a container exposed through VNC
 
 It is designed for these common use cases:
 
@@ -98,15 +98,37 @@ npm --prefix frontend install
 npm --prefix frontend run build
 ```
 
-### Option 5: Docker-based desktop startup
+### Option 5: Docker-based web startup
 
-The checked-in Docker compose file is for the legacy PyQt desktop container, not the React web app.
+The default checked-in `docker-compose.yml` now targets the web app:
 
-Relevant files:
+- `backend`: FastAPI on port `8003`
+- `frontend`: Nginx serving the built React app on port `8080`
 
-- `Dockerfile`
-- `docker-compose.yml`
-- `START.bat`
+Start it with:
+
+```powershell
+docker compose up -d --build
+```
+
+Open:
+
+- Web UI: `http://localhost:8080`
+- API docs: `http://localhost:8003/docs`
+
+Legacy desktop Docker mode is still available in:
+
+- `docker-compose.legacy-desktop.yml`
+- `Dockerfile.legacy-desktop`
+
+For UGREEN NAS deployment, see:
+
+- `docs/deploy/UGREEN-NAS.zh-CN.md`
+
+NAS-oriented compose variants:
+
+- `docker-compose.nas.yml`: expose only the web port, keep backend internal, support custom host paths
+- `docker-compose.nas-auth.yml`: same as above, but with HTTP basic auth enabled at the frontend proxy
 
 ## Common Development Commands
 

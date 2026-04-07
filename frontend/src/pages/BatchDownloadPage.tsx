@@ -51,6 +51,16 @@ function BatchDownloadPage() {
   const { message } = App.useApp();
   const { selectedSources, matchMode } = useUIStore();
 
+  const isDownloadableResult = useCallback((record: BatchMatchInfo) => {
+    return Boolean(
+      record &&
+      record.source &&
+      record.source !== '-' &&
+      record.song_name &&
+      record.song_name !== '未找到'
+    );
+  }, []);
+
   // ========== 文本输入状态 ==========
   const [batchText, setBatchText] = useLocalStorage('batch-download-text', '');
   const parsedCount = useMemo(() => parseLineCount(batchText), [batchText]);
@@ -237,7 +247,12 @@ function BatchDownloadPage() {
             }
 
             setSearchResults(filteredResults);
-            setSelectedRows(filteredResults.map((_, idx) => `${filteredResults[idx].query_name}-${idx}`));
+            setSelectedRows(
+              filteredResults
+                .map((record, idx) => ({ record, key: `${record.query_name}-${idx}` }))
+                .filter(({ record }) => isDownloadableResult(record))
+                .map(({ key }) => key)
+            );
             setHasSearched(true);
             setSearchLoading(false);
 
@@ -269,18 +284,26 @@ function BatchDownloadPage() {
       message.error(err.message || '批量搜索失败');
       setSearchLoading(false);
     }
-  }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, filterDuplicates, message]);
+  }, [batchText, playlistSongs, selectedSources, matchMode, filterShortTracks, filterDuplicates, message, isDownloadableResult]);
 
   // ========== 全选/反选/清除 ==========
   const handleSelectAll = useCallback(() => {
-    setSelectedRows(searchResults.map((record, idx) => `${record.query_name}-${idx}`));
-  }, [searchResults, setSelectedRows]);
+    setSelectedRows(
+      searchResults
+        .map((record, idx) => ({ record, key: `${record.query_name}-${idx}` }))
+        .filter(({ record }) => isDownloadableResult(record))
+        .map(({ key }) => key)
+    );
+  }, [searchResults, setSelectedRows, isDownloadableResult]);
 
   const handleSelectInvert = useCallback(() => {
-    const allKeys = searchResults.map((record, idx) => `${record.query_name}-${idx}`);
+    const allKeys = searchResults
+      .map((record, idx) => ({ record, key: `${record.query_name}-${idx}` }))
+      .filter(({ record }) => isDownloadableResult(record))
+      .map(({ key }) => key);
     const newSelected = allKeys.filter(key => !selectedRows.includes(key));
     setSelectedRows(newSelected);
-  }, [searchResults, selectedRows, setSelectedRows]);
+  }, [searchResults, selectedRows, setSelectedRows, isDownloadableResult]);
 
   const handleSelectClear = useCallback(() => {
     clearSelectedRows();
@@ -354,7 +377,14 @@ function BatchDownloadPage() {
       const songsToDownload = selectedRows.map(key => {
         const record = searchResults.find(r => key === `${r.query_name}-${searchResults.indexOf(r)}`);
         return record!;
-      });
+      }).filter((record) => isDownloadableResult(record));
+
+      if (songsToDownload.length === 0) {
+        message.warning('当前选中的歌曲都没有可用下载源');
+        setDownloadLoading(false);
+        setShowDownloadProgress(false);
+        return;
+      }
 
       const streamUrl = downloadApi.streamDownloadUrl(
         songsToDownload.map(song => ({
@@ -452,7 +482,7 @@ function BatchDownloadPage() {
       setDownloadLoading(false);
       setShowDownloadProgress(false);
     }
-  }, [selectedRows, searchResults, downloadDir, message]);
+  }, [selectedRows, searchResults, downloadDir, message, isDownloadableResult]);
 
   return (
     <div className="page">
@@ -624,6 +654,7 @@ function BatchDownloadPage() {
                 rowSelection={{
                   selectedRowKeys: selectedRows,
                   onChange: (keys) => setSelectedRows(keys),
+                  isRowSelectable: (record) => isDownloadableResult(record),
                 }}
               />
             </Space>
