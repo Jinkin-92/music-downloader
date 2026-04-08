@@ -635,9 +635,22 @@ function BatchDownloadPage() {
                       </Text> 首
                     </span>
                     <span>
-                      高相似度(≥80%)：<Text strong style={{ color: '#52c41a' }}>
-                        {searchResults.filter(r => r.similarity >= 0.8).length}
-                      </Text> 首
+                      {(() => {
+                        const modeConfig: Record<string, { label: string; threshold: number }> = {
+                          'strict': { label: '精确模式', threshold: 0.8 },
+                          'standard': { label: '标准模式', threshold: 0.6 },
+                          'loose': { label: '宽松模式', threshold: 0.4 },
+                        };
+                        const config = modeConfig[matchMode] || modeConfig['standard'];
+                        return (
+                          <>
+                            {config.label}(≥{config.threshold * 100}%)：
+                            <Text strong style={{ color: '#52c41a' }}>
+                              {searchResults.filter(r => r.similarity >= config.threshold).length}
+                            </Text> 首
+                          </>
+                        );
+                      })()}
                     </span>
                   </Space>
                 }
