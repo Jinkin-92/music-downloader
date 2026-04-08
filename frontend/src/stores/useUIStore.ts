@@ -15,10 +15,6 @@ const FALLBACK_SOURCES = [
   'KuwoMusicClient',
   'MiguMusicClient',
   'Pjmp3Client',
-  'jgwav',
-  'flmp3',
-  'jcpoo',
-  'tgws',
 ];
 
 // 音乐源标签映射
@@ -29,10 +25,6 @@ const SOURCE_LABELS: Record<string, string> = {
   'KuwoMusicClient': '酷我',
   'MiguMusicClient': '咪咕',
   'Pjmp3Client': 'pjmp3',
-  'jgwav': '极光音乐',
-  'flmp3': 'FLMP3',
-  'jcpoo': 'JCPOO音乐',
-  'tgws': '糖果无损',
 };
 
 /**

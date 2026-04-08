@@ -26,10 +26,6 @@ DEFAULT_SOURCES = [
     "KuwoMusicClient",
     "MiguMusicClient",
     "Pjmp3Client",    # pjmp3.com HTTP API源
-    "jgwav",          # 极光音乐 (CDP浏览器源)
-    "flmp3",          # FLMP3 (CDP浏览器源)
-    "jcpoo",          # JCPOO音乐 (CDP浏览器源)
-    "tgws",           # 糖果无损音乐 (CDP浏览器源)
 ]
 
 # Source labels for display
@@ -40,14 +36,10 @@ SOURCE_LABELS = {
     "KuwoMusicClient": "酷我",
     "MiguMusicClient": "咪咕",
     "Pjmp3Client": "pjmp3",
-    "jgwav": "极光音乐",
-    "flmp3": "FLMP3",
-    "jcpoo": "JCPOO音乐",
-    "tgws": "糖果无损",
 }
 
-# CDP浏览器源列表
-CDP_SOURCES = ["jgwav", "flmp3", "jcpoo", "tgws"]
+# CDP浏览器源列表 (已禁用)
+CDP_SOURCES = []
 
 # Batch Download Configuration
 BATCH_MAX_SONGS = 200

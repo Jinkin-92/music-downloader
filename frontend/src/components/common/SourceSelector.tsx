@@ -16,10 +16,6 @@ export const MUSIC_SOURCES = [
   { value: 'KuwoMusicClient', label: '酷我' },
   { value: 'MiguMusicClient', label: '咪咕' },
   { value: 'Pjmp3Client', label: 'pjmp3' },
-  { value: 'jgwav', label: '极光音乐' },
-  { value: 'flmp3', label: 'FLMP3' },
-  { value: 'jcpoo', label: 'JCPOO音乐' },
-  { value: 'tgws', label: '糖果无损' },
 ] as const;
 
 interface SourceSelectorProps {

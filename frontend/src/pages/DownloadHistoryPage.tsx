@@ -71,10 +71,6 @@ const SOURCE_LABELS: Record<string, string> = {
   'KuwoMusicClient': '酷我',
   'MiguMusicClient': '咪咕',
   'Pjmp3Client': 'pjmp3',
-  'jgwav': '极光音乐',
-  'flmp3': 'FLMP3',
-  'jcpoo': 'JCPOO音乐',
-  'tgws': '糖果无损',
 };
 
 // 音乐源颜色
@@ -85,10 +81,6 @@ const SOURCE_COLORS: Record<string, string> = {
   'KuwoMusicClient': 'orange',
   'MiguMusicClient': 'purple',
   'Pjmp3Client': 'cyan',
-  'jgwav': 'gold',
-  'flmp3': 'lime',
-  'jcpoo': 'magenta',
-  'tgws': 'orange',
 };
 
 function DownloadHistoryPage() {
