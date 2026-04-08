@@ -1,0 +1,284 @@
+/**
+ * 全局样式
+ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f7;
+  color: #000;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Ant Design全局样式调整 */
+.ant-layout {
+  background: #f5f5f7;
+}
+
+.ant-card {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.ant-table {
+  background: #fff;
+}
+
+/* 页面容器 */
+.page {
+  min-height: 100vh;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 页面标题 */
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #000;
+}
+
+/* 卡片容器 */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* 空状态 */
+.empty-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: #8e8e93;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}
+
+/* ==================== 歌单导入页面优化样式 ==================== */
+
+/* 表格斑马纹 */
+.playlist-table .ant-table-tbody > tr:nth-child(even) > td {
+  background: #fafafa;
+}
+
+.playlist-table .ant-table-tbody > tr:hover > td {
+  background: #e6f4ff !important;
+}
+
+/* 匹配成功行高亮 */
+.playlist-table .ant-table-tbody > tr.matched-row > td {
+  background: #f6ffed !important;
+}
+
+.playlist-table .ant-table-tbody > tr.matched-row:hover > td {
+  background: #d9f7be !important;
+}
+
+/* 未匹配行灰显 */
+.playlist-table .ant-table-tbody > tr.unmatched-row > td {
+  color: #bfbfbf;
+}
+
+.playlist-table .ant-table-tbody > tr.unmatched-row:hover > td {
+  background: #f5f5f5 !important;
+}
+
+/* 匹配源下拉菜单优化 */
+.source-dropdown .ant-dropdown-menu-item {
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin: 2px 4px;
+}
+
+.source-dropdown .ant-dropdown-menu-item:hover {
+  background: #e6f4ff;
+}
+
+/* 进度条动画 */
+.progress-active .ant-progress-bg {
+  transition: width 0.3s ease;
+}
+
+/* 搜索进度指示器 */
+.search-progress-container {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 成功状态动画 */
+@keyframes success-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.success-icon {
+  animation: success-pulse 0.3s ease-out;
+}
+
+/* 按钮悬浮效果 */
+.ant-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+/* 操作按钮组 */
+.action-buttons .ant-btn {
+  margin-right: 8px;
+  border-radius: 8px;
+  padding: 4px 12px;
+  height: 36px;
+}
+
+/* 状态标签 */
+.status-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 0 8px;
+}
+
+/* 卡片头部优化 */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #000;
+}
+
+/* 统计信息栏 */
+.stats-bar {
+  display: flex;
+  gap: 24px;
+  padding: 12px 16px;
+  background: #f5f5f7;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.stats-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-item .label {
+  color: #8e8e93;
+  font-size: 13px;
+}
+
+.stats-item .value {
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+}
+
+.stats-item .value.success {
+  color: #34c759;
+}
+
+.stats-item .value.warning {
+  color: #ff9500;
+}
+
+/* 加载骨架屏 */
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background: #f0f0f0;
+}
+
+.skeleton-text {
+  flex: 1;
+  height: 14px;
+  margin: 0 12px;
+  border-radius: 4px;
+  background: #f0f0f0;
+}

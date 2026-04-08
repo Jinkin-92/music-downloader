@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Downloader 旧版静态页面（Legacy）</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #f5f5f5;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea.form-control {
+            min-height: 200px;
+            font-family: monospace;
+        }
+
+        .sources {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .source-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .batch-song {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .similarity-high {
+            border-left: 4px solid #28a745;
+        }
+
+        .similarity-medium {
+            border-left: 4px solid #ffc107;
+        }
+
+        .similarity-low {
+            border-left: 4px solid #dc3545;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                border-radius: 0;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .tab {
+                font-size: 14px;
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Music Downloader Legacy</h1>
+            <p>旧版静态调试页面，仅作兼容保留，不代表当前 React Web 主界面</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('search')">🔍 单曲搜索</div>
+            <div class="tab" onclick="switchTab('batch')">📋 批量下载</div>
+            <div class="tab" onclick="switchTab('playlist')">🎵 歌单导入</div>
+        </div>
+
+        <!-- 单曲搜索 -->
+        <div id="tab-search" class="tab-content active">
+            <div class="form-group">
+                <label>选择音乐源</label>
+                <div class="sources" id="search-sources">
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="search-source-qq" checked>
+                        <label for="search-source-qq">QQ音乐</label>
+                    </div>
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="search-source-netease" checked>
+                        <label for="search-source-netease">网易云音乐</label>
+                    </div>
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="search-source-kugou" checked>
+                        <label for="search-source-kugou">酷狗音乐</label>
+                    </div>
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="search-source-kuwo" checked>
+                        <label for="search-source-kuwo">酷我音乐</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>搜索关键词</label>
+                <input type="text" id="search-keyword" class="form-control" placeholder="输入歌曲名、歌手或关键词">
+            </div>
+
+            <button class="btn btn-primary" onclick="searchMusic()">🔍 搜索</button>
+
+            <div id="search-results" class="results"></div>
+        </div>
+
+        <!-- 批量下载 -->
+        <div id="tab-batch" class="tab-content">
+            <div class="form-group">
+                <label>选择音乐源</label>
+                <div class="sources" id="batch-sources">
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="batch-source-qq" checked>
+                        <label for="batch-source-qq">QQ音乐</label>
+                    </div>
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="batch-source-netease" checked>
+                        <label for="batch-source-netease">网易云音乐</label>
+                    </div>
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="batch-source-kugou" checked>
+                        <label for="batch-source-kugou">酷狗音乐</label>
+                    </div>
+                    <div class="source-checkbox">
+                        <input type="checkbox" id="batch-source-kuwo" checked>
+                        <label for="batch-source-kuwo">酷我音乐</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>批量歌曲列表（每行一首，格式：歌名 - 歌手）</label>
+                <textarea id="batch-text" class="form-control" placeholder="夜曲 - 周杰伦&#10;七里香 - 周杰伦&#10;稻香 - 周杰伦"></textarea>
+            </div>
+
+            <button class="btn btn-primary" onclick="batchSearch()">🔍 批量搜索</button>
+
+            <div id="batch-results" class="results"></div>
+        </div>
+
+        <!-- 歌单导入 -->
+        <div id="tab-playlist" class="tab-content">
+            <div class="form-group">
+                <label>歌单链接</label>
+                <input type="text" id="playlist-url" class="form-control" placeholder="粘贴网易云或QQ音乐歌单链接">
+                <small style="color: #666; display: block; margin-top: 8px;">
+                    示例: https://music.163.com/m/playlist?id=123456
+                </small>
+            </div>
+
+            <button class="btn btn-primary" onclick="parsePlaylist()">📋 解析歌单</button>
+
+            <div id="playlist-results" class="results"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8003/api';
+
+        // 切换标签页
+        function switchTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // 显示当前标签
+            document.getElementById('tab-' + tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // 显示加载状态
+        function showLoading(containerId) {
+            document.getElementById(containerId).innerHTML = '<div class="loading">⏳ 正在加载...</div>';
+        }
+
+        // 显示错误
+        function showError(containerId, message) {
+            document.getElementById(containerId).innerHTML = `<div class="status error">❌ ${message}</div>`;
+        }
+
+        // 单曲搜索
+        async function searchMusic() {
+            const keyword = document.getElementById('search-keyword').value.trim();
+            if (!keyword) {
+                alert('请输入搜索关键词');
+                return;
+            }
+
+            const sources = getSelectedSources('search');
+            showLoading('search-results');
+
+            try {
+                const response = await fetch(`${API_BASE}/search`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({keyword, sources, max_results: 20})
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.total > 0) {
+                    displaySearchResults(data.songs);
+                } else {
+                    showError('search-results', '未找到相关歌曲');
+                }
+            } catch (error) {
+                showError('search-results', `搜索失败: ${error.message}`);
+            }
+        }
+
+        // 显示搜索结果
+        function displaySearchResults(songs) {
+            let html = '<table class="table"><thead><tr><th><input type="checkbox" onchange="toggleAll(this)"></th><th>#</th><th>歌名</th><th>歌手</th><th>专辑</th><th>大小</th><th>时长</th><th>来源</th></tr></thead><tbody>';
+
+            songs.forEach((song, index) => {
+                html += `<tr>
+                    <td><input type="checkbox" class="song-checkbox" data-song='${JSON.stringify(song)}'></td>
+                    <td>${index + 1}</td>
+                    <td>${song.song_name}</td>
+                    <td>${song.singers}</td>
+                    <td>${song.album || '-'}</td>
+                    <td>${song.size || '-'}</td>
+                    <td>${song.duration || '-'}</td>
+                    <td>${song.source}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            html += '<br><button class="btn btn-primary" onclick="downloadSelected()">⬇️ 下载选中</button>';
+
+            document.getElementById('search-results').innerHTML = html;
+        }
+
+        // 批量搜索
+        async function batchSearch() {
+            const text = document.getElementById('batch-text').value.trim();
+            if (!text) {
+                alert('请输入歌曲列表');
+                return;
+            }
+
+            const sources = getSelectedSources('batch');
+            showLoading('batch-results');
+
+            try {
+                // 解析
+                const parseResponse = await fetch(`${API_BASE}/batch-parse`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({text})
+                });
+
+                const parseData = await parseResponse.json();
+
+                if (!parseData.success) {
+                    showError('batch-results', '解析失败');
+                    return;
+                }
+
+                // 搜索匹配
+                const matchResponse = await fetch(`${API_BASE}/batch-match`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({songs: parseData.songs, sources})
+                });
+
+                const matchData = await matchResponse.json();
+
+                if (matchData.success) {
+                    displayBatchResults(matchData.results);
+                } else {
+                    showError('batch-results', '批量搜索失败');
+                }
+            } catch (error) {
+                showError('batch-results', `批量搜索失败: ${error.message}`);
+            }
+        }
+
+        // 显示批量结果
+        function displayBatchResults(results) {
+            let html = '';
+
+            results.forEach((result, index) => {
+                const similarityClass = result.source ? 'similarity-high' : 'similarity-low';
+                html += `<div class="batch-song ${similarityClass}">
+                    <div>
+                        <strong>${index + 1}. ${result.name}</strong> - ${result.singer}
+                        ${result.album ? `<br><small>${result.album}</small>` : ''}
+                    </div>
+                    <div>
+                        <small>${result.source || '未匹配'}</small>
+                    </div>
+                </div>`;
+            });
+
+            html += '<br><button class="btn btn-primary" onclick="alert("下载功能开发中...")">⬇️ 下载全部</button>';
+
+            document.getElementById('batch-results').innerHTML = html;
+        }
+
+        // 解析歌单
+        async function parsePlaylist() {
+            const url = document.getElementById('playlist-url').value.trim();
+            if (!url) {
+                alert('请输入歌单链接');
+                return;
+            }
+
+            showLoading('playlist-results');
+
+            try {
+                const response = await fetch(`${API_BASE}/playlist/parse`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({url})
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.total > 0) {
+                    displayPlaylistResults(data.songs, data.playlist_name);
+                } else {
+                    showError('playlist-results', '解析失败或歌单为空');
+                }
+            } catch (error) {
+                showError('playlist-results', `解析失败: ${error.message}`);
+            }
+        }
+
+        // 显示歌单结果
+        function displayPlaylistResults(songs, playlistName) {
+            let html = `<h3>${playlistName}</h3>`;
+            html += `<p>共 ${songs.length} 首歌曲</p>`;
+            html += '<table class="table"><thead><tr><th>#</th><th>歌名</th><th>歌手</th><th>专辑</th></tr></thead><tbody>';
+
+            songs.slice(0, 50).forEach((song, index) => {
+                html += `<tr>
+                    <td>${index + 1}</td>
+                    <td>${song.name}</td>
+                    <td>${song.singer}</td>
+                    <td>${song.album || '-'}</td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            html += '<br><button class="btn btn-primary" onclick="alert("批量搜索功能开发中...")">🔍 批量搜索并下载</button>';
+
+            document.getElementById('playlist-results').innerHTML = html;
+        }
+
+        // 获取选中的音乐源
+        function getSelectedSources(prefix) {
+            const sources = [];
+            if (document.getElementById(`${prefix}-source-qq`).checked) sources.push('QQMusicClient');
+            if (document.getElementById(`${prefix}-source-netease`).checked) sources.push('NeteaseMusicClient');
+            if (document.getElementById(`${prefix}-source-kugou`).checked) sources.push('KugouMusicClient');
+            if (document.getElementById(`${prefix}-source-kuwo`).checked) sources.push('KuwoMusicClient');
+            return sources;
+        }
+
+        // 下载选中
+        async function downloadSelected() {
+            const checkboxes = document.querySelectorAll('.song-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('请选择要下载的歌曲');
+                return;
+            }
+
+            const songs = Array.from(checkboxes).map(cb => JSON.parse(cb.dataset.song));
+
+            if (confirm(`确定下载 ${songs.length} 首歌曲吗？`)) {
+                try {
+                    const response = await fetch(`${API_BASE}/download`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({songs})
+                    });
+
+                    const data = await response.json();
+                    alert(data.message);
+                } catch (error) {
+                    alert(`下载失败: ${error.message}`);
+                }
+            }
+        }
+
+        // 全选/取消全选
+        function toggleAll(checkbox) {
+            document.querySelectorAll('.song-checkbox').forEach(cb => {
+                cb.checked = checkbox.checked;
+            });
+        }
+
+        // 页面加载时获取音乐源
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('Music Downloader legacy static page loaded');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+services:
+  music-downloader:
+    build:
+      context: .
+      dockerfile: Dockerfile.legacy-desktop
+    container_name: pyqt6-music-downloader
+    ports:
+      - "5901:5901"
+    volumes:
+      - ./musicdl_outputs:/app/musicdl_outputs
+      - ./logs:/app/logs
+      - ./data:/app/data
+    environment:
+      - DISPLAY=:1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐下载器 Web版 - UI预览</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            background: #F2F2F7;
+            color: #000;
+        }
+        .header {
+            background: #fff;
+            padding: 16px 24px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo { font-size: 20px; font-weight: 600; color: #007AFF; }
+        .nav { display: flex; gap: 24px; }
+        .nav-item { color: #8E8E93; text-decoration: none; padding: 8px 16px; border-radius: 8px; }
+        .nav-item.active { color: #007AFF; background: #F0F8FF; }
+
+        .main { padding: 24px; max-width: 1200px; margin: 0 auto; }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .card-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+        .input-hint {
+            background: #F0F8FF;
+            border: 1px solid #B3D9FF;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #007AFF;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 1px solid #D9D9D9;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        textarea:focus { outline: none; border-color: #007AFF; }
+
+        .btn {
+            background: #007AFF;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        .btn:hover { background: #0051D5; }
+
+        .table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .table th { text-align: left; padding: 12px; background: #FAFAFA; font-weight: 600; }
+        .table td { padding: 12px; border-top: 1px solid #F0F0F0; }
+
+        .tag { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .tag-green { background: #E6F7E6; color: #34C759; }
+        .tag-yellow { background: #FFF7E6; color: #FF9500; }
+        .tag-red { background: #FFE6E6; color: #FF3B30; }
+
+        .alert {
+            background: #FFE6E6;
+            border: 1px solid #FFB3B3;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 16px;
+        }
+        .alert-title { font-weight: 600; color: #FF3B30; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🎵 音乐下载器</div>
+        <nav class="nav">
+            <a href="#" class="nav-item active">单曲搜索</a>
+            <a href="#" class="nav-item">批量下载</a>
+            <a href="#" class="nav-item">歌单导入</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <div class="card">
+            <div class="card-title">批量下载</div>
+            <div class="input-hint">
+                💡 格式提示：每行一首歌曲，格式为 "歌名 - 歌手"<br>
+                示例：夜曲 - 周杰伦
+            </div>
+            <textarea placeholder="夜曲 - 周杰伦&#10;晴天 - 周杰伦&#10;七里香 - 周杰伦"></textarea>
+            <button class="btn">批量搜索 (预计3首)</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">搜索结果</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>歌名</th>
+                        <th>歌手</th>
+                        <th>相似度</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>夜曲</td>
+                        <td>周杰伦</td>
+                        <td><span class="tag tag-green">92%</span></td>
+                        <td><button class="btn" style="padding: 4px 12px; font-size: 14px;">下载</button></td>
+                    </tr>
+                    <tr>
+                        <td>晴天</td>
+                        <td>周杰伦</td>
+                        <td><span class="tag tag-green">88%</span></td>
+                        <td><button class="btn" style="padding: 4px 12px; font-size: 14px;">下载</button></td>
+                    </tr>
+                    <tr>
+                        <td>七里香</td>
+                        <td>周杰伦</td>
+                        <td><span class="tag tag-yellow">75%</span></td>
+                        <td><button class="btn" style="padding: 4px 12px; font-size: 14px;">下载</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert">
+            <div class="alert-title">⚠️ 版权保护</div>
+            该歌曲受版权保护，正在尝试切换其他音乐源...
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.btn').addEventListener('click', function() {
+            alert('这是UI预览版，完整功能请使用Docker容器版本！');
+        });
+    </script>
+</body>
+</html>
