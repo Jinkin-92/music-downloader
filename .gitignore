@@ -73,6 +73,11 @@ frontend_run.log
 /查看后端日志.bat
 /重启服务_加载修复.bat
 
+# Docker files (NAS deployment only, build locally or use release zip)
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+
 # Backup files
 *.bak
 
