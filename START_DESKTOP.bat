@@ -6,14 +6,14 @@ echo ==========================================
 echo   Music Downloader Desktop
 echo ==========================================
 echo.
-echo 启动 PyQt 本地窗口...
-python -m pyqt_ui.main
+echo Starting PyQt desktop window...
+"C:\Python313\python.exe" -m pyqt_ui.main
 
 if errorlevel 1 (
     echo.
-    echo 桌面版启动失败。请确认：
-    echo   1. 已安装 Python 依赖
-    echo   2. 已安装 PyQt6
+    echo Desktop version failed. Please check:
+    echo   1. Python dependencies installed
+    echo   2. PyQt6 installed
     echo.
     pause
 )
