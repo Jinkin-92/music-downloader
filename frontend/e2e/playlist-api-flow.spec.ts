@@ -93,6 +93,9 @@ test.describe('歌单导入 - API闭环测试', () => {
    * 测试3：批量搜索API调用（SSE）
    */
   test('批量搜索API调用', async ({ page }) => {
+    // 批量搜索涉及真实网络请求，慢网络下20首歌搜索可能超过10分钟
+    test.setTimeout(900000);
+
     // 先解析歌单
     const input = page.locator('input').first();
     await input.fill(TEST_PLAYLIST_URL);
@@ -136,21 +139,21 @@ test.describe('歌单导入 - API闭环测试', () => {
 
     console.log('搜索已点击，等待SSE...');
 
-    // 等待搜索完成（最多5分钟）
+    // 等待搜索完成（最多12.5分钟，批量搜索涉及真实网络请求，慢网络下每首歌可能耗时1分钟+）
     let completed = false;
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 150; i++) {
       await page.waitForTimeout(5000);
 
-      // 检查页面上的完成标志
+      // 检查页面上的完成标志（取第一个元素并容错，避免与即将消失的antd消息产生严格模式冲突）
       const completedText = page.getByText(/完成|成功|matched|搜索完成/i);
-      if (await completedText.isVisible({ timeout: 1000 })) {
+      if (await completedText.first().isVisible({ timeout: 1000 }).catch(() => false)) {
         completed = true;
         console.log('✅ 搜索完成');
         break;
       }
 
-      // 检查进度条
-      const progress = page.locator('.ant-progress, [class*="progress"]');
+      // 检查进度条（页面可能存在多个进度元素，取第一个）
+      const progress = page.locator('.ant-progress, [class*="progress"]').first();
       if (await progress.isVisible({ timeout: 1000 })) {
         console.log(`搜索进行中... (${i * 5}s)`);
       }
@@ -165,6 +168,9 @@ test.describe('歌单导入 - API闭环测试', () => {
    * 测试4：完整流程验证
    */
   test('完整流程 - 端到端', async ({ page }) => {
+    // 完整流程包含批量搜索，慢网络下20首歌搜索可能超过10分钟
+    test.setTimeout(900000);
+
     console.log('🚀 开始完整闭环测试...');
 
     // 步骤1: 解析歌单
@@ -213,9 +219,9 @@ test.describe('歌单导入 - API闭环测试', () => {
       await searchButton.click();
     }
 
-    // 等待搜索完成
+    // 等待搜索完成（最多12.5分钟，慢网络下批量搜索耗时较长）
     let searchCompleted = false;
-    for (let i = 0; i < 72; i++) { // 最多6分钟
+    for (let i = 0; i < 150; i++) { // 最多12.5分钟
       await page.waitForTimeout(5000);
 
       // 使用更精确的完成指示器

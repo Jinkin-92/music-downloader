@@ -26,8 +26,8 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     await page.goto('/playlist');
     await page.waitForLoadState('networkidle');
 
-    // 等待页面完全加载
-    await expect(page.locator('h1, h2').filter({ hasText: /歌单导入|批量搜索/ }).first()).toBeVisible({ timeout: 10000 });
+    // 等待页面完全加载（歌单导入已合并到批量下载页）
+    await expect(page.locator('h1, h2').filter({ hasText: /歌单导入|批量下载|批量搜索/ }).first()).toBeVisible({ timeout: 10000 });
   });
 
   /**
@@ -42,8 +42,8 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     // 音乐源checkbox只在有歌曲时显示，先解析歌单
     await parsePlaylist(page, TEST_PLAYLIST_URL);
 
-    // 等待音乐源区域可见
-    await expect(page.getByText('音乐源：')).toBeVisible({ timeout: 10000 });
+    // 等待音乐源区域可见（界面文案为"匹配源"）
+    await expect(page.getByText(/匹配源|音乐源/).first()).toBeVisible({ timeout: 10000 });
 
     // 验证网易云 checkbox
     const neteaseCheckbox = page.getByRole('checkbox', { name: /网易云/ });
@@ -125,14 +125,18 @@ test.describe('歌单导入 - 完整闭环测试', () => {
    * - 搜索完成统计
    */
   test('批量搜索和相似度显示验证', async ({ page }) => {
-    test.setTimeout(180000); // 3分钟超时
+    test.setTimeout(900000); // 15分钟超时（批量搜索涉及真实网络请求）
 
     // 先解析歌单
     await parsePlaylist(page, TEST_PLAYLIST_URL);
 
-    // 全选歌曲（批量搜索需要先选中歌曲）
+    // 全选歌曲（解析后默认全选；若存在"全选"按钮则点击，否则勾选表头全选checkbox）
     const selectAllButton = page.getByRole('button', { name: /全选/i });
-    await selectAllButton.click();
+    if (await selectAllButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await selectAllButton.click();
+    } else {
+      await page.locator('.ant-table-thead .ant-checkbox-input, .ant-table-thead input[type="checkbox"]').first().check().catch(() => {});
+    }
     await page.waitForTimeout(1000);
 
     // 点击批量搜索按钮
@@ -147,10 +151,10 @@ test.describe('歌单导入 - 完整闭环测试', () => {
       page.locator('[data-testid="sse-status"]')
     ).first()).toBeVisible({ timeout: 10000 });
 
-    // 等待搜索完成（最多3分钟）
+    // 等待搜索完成（最多15分钟，慢网络下20首歌批量搜索可能超过10分钟）
     await expect(page.getByText(/搜索完成|匹配成功|首歌曲匹配成功/i).or(
       page.locator('text=/\d+\/\d+/')
-    ).first()).toBeVisible({ timeout: 180000 });
+    ).first()).toBeVisible({ timeout: 900000 });
 
     // 等待结果表格渲染 - 排除隐藏的测量行
     await page.waitForTimeout(2000);
@@ -227,10 +231,10 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     await expect(downloadButton).toBeEnabled();
 
     // 查找下载路径输入框 - 匹配实际的placeholder文本
-    const pathInput = page.locator('input[placeholder*="默认"]').or(
-      page.locator('input[placeholder*="musicdl"]')
-    ).or(
-      page.locator('input').filter({ has: page.locator('.ant-input') })
+    const pathInput = page.locator('input[placeholder*="输入完整路径"]').or(
+      page.locator('input[placeholder*="默认"]').or(
+        page.locator('input[placeholder*="musicdl"]')
+      )
     ).first();
 
     await expect(pathInput).toBeVisible({ timeout: 10000 });
@@ -256,7 +260,7 @@ test.describe('歌单导入 - 完整闭环测试', () => {
    * - 下载完成统计
    */
   test('完整下载流程验证（仅前3首）', async ({ page }) => {
-    test.setTimeout(600000); // 10分钟超时（优化后）
+    test.setTimeout(900000); // 15分钟超时（搜索+下载涉及真实网络请求）
 
     // 解析并搜索
     await parsePlaylist(page, TEST_PLAYLIST_URL);
@@ -279,10 +283,10 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     }
 
     // 设置下载路径 - 匹配实际的placeholder文本
-    const pathInput = page.locator('input[placeholder*="默认"]').or(
-      page.locator('input[placeholder*="musicdl"]')
-    ).or(
-      page.locator('.ant-input').filter({ hasText: /./ })
+    const pathInput = page.locator('input[placeholder*="输入完整路径"]').or(
+      page.locator('input[placeholder*="默认"]').or(
+        page.locator('input[placeholder*="musicdl"]')
+      )
     ).first();
     await pathInput.fill(TEST_DOWNLOAD_DIR);
 
@@ -346,7 +350,8 @@ test.describe('歌单导入 - 完整闭环测试', () => {
    * - 切换后相似度更新
    */
   test('候选源切换功能验证', async ({ page }) => {
-    test.setTimeout(180000);
+    // 含完整批量搜索，慢网络下20首歌搜索可能超过10分钟
+    test.setTimeout(900000);
 
     // 解析并搜索
     await parsePlaylist(page, TEST_PLAYLIST_URL);
@@ -408,10 +413,8 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     test.slow();
 
     // 测试无效URL
-    const urlInput = page.locator('input[placeholder*="歌单链接"]').or(
-      page.locator('textarea').or(
-        page.locator('input.ant-input')
-      )
+    const urlInput = page.locator('input[placeholder*="歌单分享链接"]').or(
+      page.locator('input[placeholder*="歌单链接"]')
     ).first();
 
     await urlInput.fill('https://invalid-url.com/playlist');
@@ -429,7 +432,7 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     console.log('✅ 无效URL错误提示正常');
 
     // 测试清空功能
-    const clearButton = page.getByRole('button', { name: /清空|重置/i });
+    const clearButton = page.getByRole('button', { name: /清\s*空|重置/i });
     if (await clearButton.isVisible({ timeout: 5000 })) {
       await clearButton.click();
 
@@ -450,7 +453,8 @@ test.describe('歌单导入 - 完整闭环测试', () => {
    * 使用测试歌单，验证整个流程无异常
    */
   test('完整闭环流程验证', async ({ page }) => {
-    test.setTimeout(600000); // 10分钟超时
+    // 搜索（约10分钟）+ 下载监控，慢网络下全程可能超过20分钟
+    test.setTimeout(1800000); // 30分钟超时
 
     console.log('🚀 开始完整闭环测试...');
 
@@ -495,10 +499,10 @@ test.describe('歌单导入 - 完整闭环测试', () => {
     }
 
     // 设置下载路径 - 匹配实际的placeholder文本
-    const pathInput = page.locator('input[placeholder*="默认"]').or(
-      page.locator('input[placeholder*="musicdl"]')
-    ).or(
-      page.locator('.ant-input').filter({ hasText: /./ })
+    const pathInput = page.locator('input[placeholder*="输入完整路径"]').or(
+      page.locator('input[placeholder*="默认"]').or(
+        page.locator('input[placeholder*="musicdl"]')
+      )
     ).first();
     await pathInput.fill(TEST_DOWNLOAD_DIR);
 
@@ -555,10 +559,8 @@ test.describe('歌单导入 - 完整闭环测试', () => {
  * 辅助函数：解析歌单
  */
 async function parsePlaylist(page: any, url: string) {
-  const urlInput = page.locator('input[placeholder*="歌单链接"]').or(
-    page.locator('textarea').or(
-      page.locator('input.ant-input')
-    )
+  const urlInput = page.locator('input[placeholder*="歌单分享链接"]').or(
+    page.locator('input[placeholder*="歌单链接"]')
   ).first();
 
   await urlInput.fill(url);
@@ -600,8 +602,9 @@ async function searchPlaylist(page: any) {
   // 等待搜索开始
   await expect(page.getByText(/搜索进度/i)).toBeVisible({ timeout: 5000 });
 
-  // 等待搜索完成 - 增加到5分钟超时
-  await expect(page.getByText(/搜索完成|匹配成功/i)).toBeVisible({ timeout: 300000 });
+  // 等待搜索完成 - 增加到15分钟超时（慢网络下20首歌批量搜索可能超过10分钟）
+  // 取第一个匹配元素，避免与即将消失的antd message造成严格模式冲突
+  await expect(page.getByText(/搜索完成|匹配成功/i).first()).toBeVisible({ timeout: 900000 });
 
   // 等待结果稳定并等待下载区域出现 - 增加到10秒
   await page.waitForTimeout(10000);

@@ -83,11 +83,9 @@ test.describe('歌单导入 - 闭环测试', () => {
     console.log(`总行数: ${allCount}, 可见行: ${visibleRowCount}`);
     expect(visibleRowCount).toBeGreaterThan(0);
 
-    // 使用第一个可见行
-    const firstVisibleRow = allRows.filter({ hasNotText: 'measure-row' }).first();
+    // 使用第一个可见数据行（排除 Ant Design 隐藏的测量行）
+    const firstVisibleRow = page.locator('.ant-table-tbody tr:not([aria-hidden="true"])').first();
     await expect(firstVisibleRow).toBeVisible({ timeout: 10000 });
-
-    expect(rowCount).toBeGreaterThan(0);
 
     await page.screenshot({ path: 'screenshots/simple-parsed.png' });
   });
@@ -96,6 +94,9 @@ test.describe('歌单导入 - 闭环测试', () => {
    * 测试3：批量搜索
    */
   test('批量搜索', async ({ page }) => {
+    // 批量搜索涉及真实网络请求，耗时可能超过默认120秒
+    test.setTimeout(600000);
+
     // 先解析歌单
     await parsePlaylistSimple(page);
 
@@ -117,14 +118,14 @@ test.describe('歌单导入 - 闭环测试', () => {
       page.getByText(/搜索|进度/i)
     ).first()).toBeVisible({ timeout: 10000 });
 
-    // 等待搜索完成（最多5分钟）
+    // 等待搜索完成（最多10分钟，批量搜索涉及真实网络请求）
     let completed = false;
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 120; i++) {
       await page.waitForTimeout(5000);
 
-      // 检查是否有完成标志
+      // 检查是否有完成标志（取第一个元素并容错，避免与即将消失的antd消息产生严格模式冲突）
       const completedText = page.getByText(/完成|成功|matched/i);
-      if (await completedText.isVisible({ timeout: 1000 })) {
+      if (await completedText.first().isVisible({ timeout: 1000 }).catch(() => false)) {
         completed = true;
         console.log('✅ 搜索完成');
         break;
@@ -188,7 +189,7 @@ test.describe('歌单导入 - 闭环测试', () => {
     // 最终验证
     await page.waitForTimeout(3000);
 
-    const dataRows = page.locator('.ant-table-tbody tr').filter({ hasNotText: 'measure-row' });
+    const dataRows = page.locator('.ant-table-tbody tr:not([aria-hidden="true"])');
     const rowCount = await dataRows.count();
 
     const percentTags = page.locator('text=/\\d+%/');
@@ -218,8 +219,8 @@ async function parsePlaylistSimple(page: any) {
   await expect(parseButton).toBeVisible();
   await parseButton.click();
 
-  // 等待数据行出现
-  const dataRows = page.locator('.ant-table-tbody tr').filter({ hasNotText: 'measure-row' });
+  // 等待数据行出现（排除 Ant Design 隐藏的测量行）
+  const dataRows = page.locator('.ant-table-tbody tr:not([aria-hidden="true"])');
   await expect(dataRows.first()).toBeVisible({ timeout: 30000 });
 
   const rowCount = await dataRows.count();

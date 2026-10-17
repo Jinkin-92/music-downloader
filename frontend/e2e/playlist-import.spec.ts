@@ -16,8 +16,8 @@ test.describe('歌单导入功能', () => {
   });
 
   test('1. 页面导航和UI验证', async ({ page }) => {
-    // 验证页面标题
-    await expect(page.locator('h2').filter({ hasText: '歌单导入' })).toBeVisible();
+    // 验证歌单导入板块可见（歌单导入已合并到批量下载页，作为卡片板块展示）
+    await expect(page.locator('.ant-card').filter({ hasText: '歌单导入' })).toBeVisible();
 
     // 验证输入框存在
     const urlInput = page.locator('input[placeholder*="歌单链接"]').or(

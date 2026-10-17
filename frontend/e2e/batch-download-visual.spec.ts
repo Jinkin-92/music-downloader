@@ -35,8 +35,8 @@ test.describe('批量下载页面 - 视觉增强', () => {
     const searchButton = page.getByRole('button', { name: /批量搜索/ });
     await expect(searchButton).toBeEnabled();
 
-    // 测试清空按钮
-    const clearButton = page.getByRole('button', { name: /清空输入/ });
+    // 测试清空按钮（位于"文本输入"卡片中，按钮文案为"清空"）
+    const clearButton = page.locator('.ant-card', { hasText: '文本输入' }).getByRole('button', { name: /清空/ });
     await clearButton.click();
     await page.waitForTimeout(500);
 
@@ -284,8 +284,8 @@ test.describe('批量下载页面 - 错误处理', () => {
     // 应该识别1首
     await expect(page.locator('text=/已识别 1 首歌曲/')).toBeVisible();
 
-    // 清空
-    const clearButton = page.getByRole('button', { name: /清空输入/ });
+    // 清空（位于"文本输入"卡片中，按钮文案为"清空"）
+    const clearButton = page.locator('.ant-card', { hasText: '文本输入' }).getByRole('button', { name: /清空/ });
     await clearButton.click();
     await page.waitForTimeout(500);
 

@@ -739,35 +739,91 @@ async def start_batch_search_background(request: PlaylistBatchSearchRequest):
                 matches_dict = {}
                 matched_count = 0
 
-                # 逐个搜索
-                for idx, song in enumerate(parsed_songs):
+                # 并发搜索歌曲：使用信号量控制并发度（与SSE流式路径一致），
+                # 修复串行逐个搜索导致批量搜索过慢的问题（20首歌串行需10分钟+，并发仅需2-3分钟）
+                semaphore = asyncio.Semaphore(concurrency)
+
+                async def search_with_semaphore(song, index):
+                    """使用信号量包装的单歌搜索"""
+                    async with semaphore:
+                        # 检查任务是否被取消
+                        task = task_manager.get_task(task_id)
+                        if task.status == TaskStatus.CANCELLED:
+                            logger.info(f"[后台搜索] 任务已取消: {task_id}")
+                            return index, None
+                        try:
+                            # 搜索歌曲（search_single_song内部已有信号量，双信号量取最小值即concurrency）
+                            batch_match = await searcher.search_single_song(song, source_list)
+                            return index, batch_match
+                        except Exception as e:
+                            logger.error(f"[后台搜索] 搜索歌曲失败: {song}, 错误: {e}")
+                            return index, None
+
+                # 动态任务池：保持最多 concurrency 个并发搜索任务
+                pending_songs = list(enumerate(parsed_songs))
+                active_tasks = []
+                results_by_index = {}
+                completed_count = 0
+
+                # 启动第一批任务
+                while len(active_tasks) < concurrency and pending_songs:
+                    idx, song = pending_songs.pop(0)
+                    active_tasks.append(asyncio.create_task(search_with_semaphore(song, idx)))
+
+                logger.info(f"[后台搜索] 启动 {len(active_tasks)} 个并发搜索任务 (concurrency={concurrency})")
+
+                # 处理完成的任务并启动新任务
+                while active_tasks:
                     # 检查任务是否被取消
                     task = task_manager.get_task(task_id)
                     if task.status == TaskStatus.CANCELLED:
+                        for t in active_tasks:
+                            t.cancel()
                         logger.info(f"[后台搜索] 任务已取消: {task_id}")
                         return
 
-                    try:
-                        # 搜索歌曲
-                        batch_match = await searcher.search_single_song(song, source_list)
+                    done, _ = await asyncio.wait(
+                        active_tasks,
+                        return_when=asyncio.FIRST_COMPLETED
+                    )
 
-                        # 保存结果
-                        singer = song.get('singer') or song.get('artist', '')
-                        original_line = song.get('original_line', f"{song['name']} - {singer}")
-                        matches_dict[original_line] = batch_match
+                    for finished_task in done:
+                        try:
+                            index, batch_match = await finished_task
+                        except asyncio.CancelledError:
+                            continue
+                        except Exception as e:
+                            logger.error(f"[后台搜索] 任务异常: {e}")
+                            continue
 
-                        if batch_match.has_match:
-                            matched_count += 1
+                        if batch_match is not None:
+                            results_by_index[index] = batch_match
+                        completed_count += 1
+                        active_tasks.remove(finished_task)
 
-                        # 更新进度
+                        # 更新进度（用已完成数量，保证单调递增）
                         task_manager.update_progress(
                             task_id,
-                            idx + 1,
-                            f"搜索完成: {song.get('name', '')}"
+                            completed_count,
+                            f"搜索完成: {parsed_songs[index].get('name', '')}"
                         )
 
-                    except Exception as e:
-                        logger.error(f"[后台搜索] 搜索歌曲失败: {song}, 错误: {e}")
+                    # 启动新任务补足并发数
+                    while len(active_tasks) < concurrency and pending_songs:
+                        idx, song = pending_songs.pop(0)
+                        active_tasks.append(asyncio.create_task(search_with_semaphore(song, idx)))
+
+                # 按原始顺序整理结果
+                for idx, song in enumerate(parsed_songs):
+                    batch_match = results_by_index.get(idx)
+                    if batch_match is None:
+                        continue
+                    singer = song.get('singer') or song.get('artist', '')
+                    original_line = song.get('original_line', f"{song['name']} - {singer}")
+                    matches_dict[original_line] = batch_match
+
+                    if batch_match.has_match:
+                        matched_count += 1
 
                 # 转换结果为可序列化格式
                 def batch_match_to_dict(match) -> dict:
