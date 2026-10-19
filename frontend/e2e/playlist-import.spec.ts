@@ -304,8 +304,8 @@ test.describe('歌单导入 - 完整下载流程验证', () => {
   const playlistUrl = 'https://music.163.com/m/playlist?id=6922195323&creatorId=610906171';
 
   test('完整流程: 解析+搜索+下载前3首', async ({ page }) => {
-    // 设置测试超时为180秒(包含解析+搜索+下载)
-    test.setTimeout(180000);
+    // 搜索+下载涉及真实网络请求，慢网络下20首歌批量搜索可能超过10分钟
+    test.setTimeout(900000);
 
     // 重新导航到页面（确保是干净的初始状态）
     await page.goto('/playlist');
@@ -328,7 +328,7 @@ test.describe('歌单导入 - 完整下载流程验证', () => {
     await page.waitForTimeout(500);
 
     // 全选所有歌曲
-    await page.getByRole('button', { name: '全选' }).click();
+    await page.getByRole('button', { name: '全选' }).first().click();
     await page.waitForTimeout(500);
 
     // 点击批量搜索
@@ -336,8 +336,9 @@ test.describe('歌单导入 - 完整下载流程验证', () => {
     await batchSearchButton.click();
 
     console.log('等待批量搜索完成...');
-    // 等待搜索完成（搜索完成后会出现"重新搜索"按钮）
-    await page.waitForTimeout(90000);
+    // 等待搜索完成（最多10分钟；慢网络下每首歌可能耗时1分钟+）
+    // 取第一个匹配元素，避免与即将消失的antd消息造成严格模式冲突
+    await expect(page.getByText(/搜索完成|匹配成功/i).first()).toBeVisible({ timeout: 600000 });
 
     // 截图：搜索完成状态
     await page.screenshot({
@@ -345,26 +346,30 @@ test.describe('歌单导入 - 完整下载流程验证', () => {
       fullPage: true
     });
 
-    // 点击下载按钮
+    // 点击下载按钮（搜索完成后出现"下载选中歌曲 (N)"）
     const downloadButton = page.getByRole('button', { name: /下载选中/ });
-    const hasDownload = await downloadButton.count();
+    await expect(downloadButton).toBeVisible({ timeout: 30000 });
+    await expect(downloadButton).toBeEnabled();
+    await downloadButton.click();
+    console.log('已点击下载按钮');
 
-    console.log('Has download button:', hasDownload > 0);
+    // 等待下载进度出现（SSE建立连接后页面显示"正在下载歌曲..."区域）
+    await expect(page.getByText(/正在下载|下载进度/i).first()).toBeVisible({ timeout: 30000 });
+    console.log('下载已开始');
 
-    if (hasDownload > 0) {
-      await downloadButton.click();
-      console.log('已点击下载按钮');
-
-      // 等待下载完成（等待3分钟）
-      await page.waitForTimeout(180000);
-
-      // 截图：下载完成
-      await page.screenshot({
-        path: 'test-results/playlist-import-complete-flow-after-download.png',
-        fullPage: true
-      });
-
-      console.log('下载流程测试完成');
+    // 等待下载完成（最多3分钟；网络较慢时歌曲逐个下载）
+    const downloadComplete = page.getByText(/下载完成|全部完成|下载成功/i);
+    const completed = await downloadComplete.first().isVisible({ timeout: 3000 }).catch(() => false);
+    if (!completed) {
+      await page.waitForTimeout(120000);
     }
+
+    // 截图：下载完成
+    await page.screenshot({
+      path: 'test-results/playlist-import-complete-flow-after-download.png',
+      fullPage: true
+    });
+
+    console.log('下载流程测试完成');
   });
 });

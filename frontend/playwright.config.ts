@@ -6,6 +6,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './e2e',
+  globalSetup: './e2e/global-setup.ts', // 套件前重置测试下载状态，保证可重复执行
   fullyParallel: false, // 批量搜索需要串行执行
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
